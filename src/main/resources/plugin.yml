@@ -1,0 +1,10 @@
+name: IDK #插件名
+version: '${project.version}' #插件版本
+main: krincraft.idk.IDK #插件主类
+api-version: '1.20' #插件API版本
+commands: #命令
+  IDK: #命令名
+    description: "Main plugin command." #命令描述
+    permission: IDK.command.IDK #命令所需权限
+    #aliases: IDK #命令简写
+    usage: "Check /idk help" #命令用法(命令输错或不存在时输出的内容，不写则会报错)
