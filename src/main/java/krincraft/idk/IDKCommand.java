@@ -83,9 +83,9 @@ public class IDKCommand implements CommandExecutor {
         }
         if(strings.length == 1 && strings[0].equals("help")) { //检测参数长度是否为1并且第一个参数是否为help
             player.sendMessage("IDK plugin help:" +
+                    "\n/IDK help - This help message" +
                     "\n/IDK gm <number of gamemodes> - Change your gamemode" +
                     "\n/IDK open chest\\workbench - Open a chest or a workbench" +
-                    "\n/IDK help - This help message" +
                     "\n/IDK ping - check your ping in game"); //对玩家发送消息
             return true;
         }
