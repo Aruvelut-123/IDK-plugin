@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.TabCompleteEvent;
 import org.bukkit.inventory.Inventory;
 
 public class IDKListener implements Listener {
@@ -28,10 +29,15 @@ public class IDKListener implements Listener {
     @EventHandler //定义为事件处理
     public void click(InventoryClickEvent event) { //定义处理玩家背包点击事件
         Inventory inv = event.getInventory(); //获取事件对应的背包
-        if(inv.getSize() == 9 && event.getRawSlot() == 0) { //如果背包大小为9格且点击的为第一格
+        if(inv.getSize() == 9 && event.getRawSlot() == 1) { //如果背包大小为9格且点击的为第一格
             Player player = (Player) event.getWhoClicked(); //获取点击的玩家
-            player.performCommand("idk help"); //使玩家执行指令
             player.closeInventory(); //使玩家关闭背包
+            player.performCommand("idk help"); //使玩家执行指令
+            event.setCancelled(true); //取消点击事件(防止玩家将物品取出)
+        } else if(inv.getSize() == 9 && event.getRawSlot() == 7) { //否则如果背包大小为9格
+            Player player = (Player) event.getWhoClicked(); //获取点击的玩家
+            player.closeInventory(); //使玩家关闭背包
+            player.performCommand("idk open workbench"); //使玩家执行指令
             event.setCancelled(true); //取消点击事件(防止玩家将物品取出)
         } else if(inv.getSize() == 9) { //否则如果背包大小为9格
             event.setCancelled(true); //取消点击事件(防止玩家将物品取出)
