@@ -3,6 +3,8 @@ package krincraft.idk;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.logging.Logger;
+
 public final class IDK extends JavaPlugin {
     @Override
     public void onEnable() {
@@ -14,5 +16,7 @@ public final class IDK extends JavaPlugin {
     @Override
     public void onDisable() {
         //插件关闭逻辑
+        Logger logger = Bukkit.getLogger();
+        logger.info("Stopping...");
     }
 }
