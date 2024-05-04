@@ -88,6 +88,10 @@ public class IDKCommand implements CommandExecutor {
                     "\n/IDK help - This help message"); //对玩家发送消息
             return true;
         }
+        if(strings.length == 1 && strings[0].equals("ping")) {
+            player.sendMessage("Your ping is: " + player.getPing() + "ms!"); //给玩家发送消息
+            return true;
+        }
         return false;
     }
 }
