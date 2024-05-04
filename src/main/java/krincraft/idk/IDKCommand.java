@@ -85,7 +85,8 @@ public class IDKCommand implements CommandExecutor {
             player.sendMessage("IDK plugin help:" +
                     "\n/IDK gm <number of gamemodes> - Change your gamemode" +
                     "\n/IDK open chest\\workbench - Open a chest or a workbench" +
-                    "\n/IDK help - This help message"); //对玩家发送消息
+                    "\n/IDK help - This help message" +
+                    "\n/IDK ping - check your ping in game"); //对玩家发送消息
             return true;
         }
         if(strings.length == 1 && strings[0].equals("ping")) {
