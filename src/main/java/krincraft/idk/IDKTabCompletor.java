@@ -17,7 +17,9 @@ public class IDKTabCompletor implements TabCompleter {
             sub_commands.add("gm");
             sub_commands.add("open");
             sub_commands.add("help");
+            sub_commands.add("menu");
             sub_commands.add("ping");
+            sub_commands.add("reload");
             return sub_commands;
         }
         if(strings.length == 2 && strings[0].equals("gm")) {
@@ -30,7 +32,6 @@ public class IDKTabCompletor implements TabCompleter {
         }
         if(strings.length == 2 && strings[0].equals("open")) {
             List<String> sub_commands = new ArrayList<>();
-            sub_commands.add("chest");
             sub_commands.add("workbench");
             return sub_commands;
         }
