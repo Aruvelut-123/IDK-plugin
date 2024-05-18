@@ -11,8 +11,14 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class IDKCommand implements CommandExecutor {
@@ -29,9 +35,53 @@ public class IDKCommand implements CommandExecutor {
         Configuration config = IDK.idk.getConfig();
         if(commandSender instanceof Player) {
             Player player = (Player) commandSender; //获取执行玩家
-            if(strings.length == 1 & strings[0].equals("reload")) {
+            if(strings.length == 1 && strings[0].equals("plugins")) {
+                IDK.idk.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
+                player.sendMessage(messages.getString("available-plugins") + IDK.idk.plugins);
+                return true;
+            }
+            if(strings.length == 2 && strings[0].equals("disable")) {
+                String plugin_name = strings[1];
+                if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
+                    Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
+                    if (plugin != null) {
+                        try {
+                            Bukkit.getPluginManager().disablePlugin(plugin);
+                        } catch (Exception e) {
+                            player.sendMessage(messages.getString("plugin-disable-error"));
+                        }
+                        player.sendMessage(messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
+                    } else {
+                        player.sendMessage(messages.getString("plugin-not-found"));
+                    }
+                } else {
+                    player.sendMessage(messages.getString("plugin-disable-egg"));
+                }
+                return true;
+            }
+            if(strings.length == 2 && strings[0].equals("enable")) {
+                String plugin_name = strings[1];
+                if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
+                    Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
+                    if (plugin != null) {
+                        try {
+                            Bukkit.getPluginManager().enablePlugin(plugin);
+                        } catch (Exception e) {
+                            player.sendMessage(messages.getString("plugin-enable-error"));
+                        }
+                        player.sendMessage(messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
+                    } else {
+                        player.sendMessage(messages.getString("plugin-not-found"));
+                    }
+                } else {
+                    player.sendMessage(messages.getString("plugin-enable-egg"));
+                }
+                return true;
+            }
+            if(strings.length == 1 && strings[0].equals("reload")) {
                 try{
                     messages.save();
+                    IDK.idk.checking = true;
                     IDK.idk.check();
                     IDK.idk.reloadConfig();
                     messages.reload(filename);
@@ -80,7 +130,7 @@ public class IDKCommand implements CommandExecutor {
                 }
                 return true;
             }
-            if(strings[0].equals("menu")) {
+            if(strings.length == 1 && strings[0].equals("menu")) {
                 Inventory inv = Bukkit.createInventory(null, 9, config.getString("menu_title")); //创建一个大小为9格(必须为9或9的倍数)的背包，标题设置为IDK Chest
                 int left = inv.getSize(); //获取背包大小并赋值到left上
                 int slot = 0; //设置slot的值为0
@@ -124,7 +174,6 @@ public class IDKCommand implements CommandExecutor {
                                 i += 1;
                             }
                         } catch (IndexOutOfBoundsException e) {
-                            e.printStackTrace();
                         }
                     }
                 }
@@ -152,7 +201,114 @@ public class IDKCommand implements CommandExecutor {
                 return true;
             }
         } else{
-            System.out.println(messages.getString("no-console"));
+            if(strings.length == 1 && strings[0].equals("reload")) {
+                try{
+                    messages.save();
+                    IDK.idk.checking = true;
+                    IDK.idk.check();
+                    IDK.idk.reloadConfig();
+                    messages.reload(filename);
+                    // 测试是否有空值
+                    config.getString("IDK_Helper_name");
+                    config.getStringList("IDK_Helper_lore");
+                    config.getString("IDK_Workbench_name");
+                    config.getStringList("IDK_Workbench_lore");
+                    config.getString("menu_title");
+                    config.getString("workbench_title");
+                    messages.getString("failed");
+                    messages.getString("failed_p");
+                    messages.getString("survival");
+                    messages.getString("creative");
+                    messages.getString("adventure");
+                    messages.getString("spectator");
+                    System.out.println(messages.getString("reload"));
+                } catch (Exception e) {
+                    System.out.println(messages.getString("failed"));
+                    e.printStackTrace();
+                }
+                return true;
+            }
+            if(strings.length == 1 && strings[0].equals("plugins")) {
+                IDK.idk.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
+                System.out.println(messages.getString("available-plugins") + IDK.idk.plugins);
+                return true;
+            }
+            if(strings.length == 2 && strings[0].equals("load")) {
+                String folder = Bukkit.getPluginsFolder().getAbsolutePath();
+                if(!strings[1].isEmpty()) {
+                    String file_name = strings[1];
+                    String file_path = folder + "\\" + file_name;
+                    try {
+                        Plugin plugin = Bukkit.getPluginManager().loadPlugin(new File(file_path));
+                        Bukkit.getPluginManager().enablePlugin(plugin);
+                        System.out.println("Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
+                        return true;
+                    } catch (InvalidPluginException | InvalidDescriptionException e) {
+                        return true;
+                    }
+                } else {
+                    System.out.println("Error!");
+                    return true;
+                }
+            }
+            if(strings.length == 2 && strings[0].equals("disable")) {
+                String plugin_name = strings[1];
+                Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
+                if (plugin != null && plugin.isEnabled()) {
+                    if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
+                        try {
+                            Bukkit.getPluginManager().disablePlugin(plugin);
+                        } catch (Exception e) {
+                            System.out.println(messages.getString("plugin-disable-error"));
+                        }
+                        System.out.println(messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
+                    } else {
+                        System.out.println(messages.getString("plugin-disable-egg"));
+                    }
+                    return true;
+                }
+            }
+            if(strings.length == 2 && strings[0].equals("enable")) {
+                String plugin_name = strings[1];
+                Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
+                if (plugin != null && !plugin.isEnabled()) {
+                    if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
+                        try {
+                            Bukkit.getPluginManager().enablePlugin(plugin);
+                        } catch (Exception e) {
+                            System.out.println(messages.getString("plugin-enable-error"));
+                        }
+                        System.out.println(messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
+                    } else {
+                        System.out.println(messages.getString("plugin-enable-egg"));
+                    }
+                    return true;
+                }
+            }
+            if(strings.length == 2 && strings[0].equals("gm")) {
+                System.out.println(messages.getString("no-console"));
+                return true;
+            }
+            if(strings.length == 1 && strings[0].equals("menu")) {
+                System.out.println(messages.getString("no-console"));
+                return true;
+            }
+            if(strings.length == 2 && strings[0].equals("open")) {
+                System.out.println(messages.getString("no-console"));
+                return true;
+            }
+            if(strings.length == 1 && strings[0].equals("help")) {
+                List<String> help_msg = config.getStringList("Help");
+                String help_msg_string = help_msg.toString().replace("[", "");
+                String help_msg_fix = help_msg_string.replace("]", "");
+                String help_msg_fix2 = help_msg_fix.replace(",", "");
+                System.out.println(help_msg_fix2); //对玩家发送消息
+                return true;
+            }
+            if(strings.length == 1 && strings[0].equals("ping")) {
+                System.out.println(messages.getString("no-console"));
+                return true;
+            }
         }
         return false;
     }

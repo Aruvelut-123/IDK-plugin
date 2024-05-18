@@ -1,12 +1,15 @@
 package krincraft.idk;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class IDKTabCompletor implements TabCompleter {
@@ -20,6 +23,9 @@ public class IDKTabCompletor implements TabCompleter {
             sub_commands.add("menu");
             sub_commands.add("ping");
             sub_commands.add("reload");
+            sub_commands.add("plugins");
+            sub_commands.add("enable");
+            sub_commands.add("disable");
             return sub_commands;
         }
         if(strings.length == 2 && strings[0].equals("gm")) {

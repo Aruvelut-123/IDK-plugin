@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -12,10 +13,11 @@ public final class IDK extends JavaPlugin {
     int config_ver = 1;
     boolean checking = false;
     Configuration messages = null;
+    String plugins = null;
 
     @Override
     public void onLoad() {
-
+        this.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
     }
 
     @Override
@@ -32,7 +34,7 @@ public final class IDK extends JavaPlugin {
         while(checking) {
             int read_config_ver = this.getConfig().getInt("config-version");
             if (read_config_ver == config_ver) {
-                checking = true;
+                checking = false;
             } else {
                 List<String> emptylist = new ArrayList<>();
                 this.getConfig().set("config-version", 1);
@@ -58,7 +60,7 @@ public final class IDK extends JavaPlugin {
                 help_msg.add("\n/IDK reload - reload config file");
                 this.getConfig().set("Help", help_msg);
                 help_msg.clear();
-                checking = true;
+                checking = false;
             }
         }
     }

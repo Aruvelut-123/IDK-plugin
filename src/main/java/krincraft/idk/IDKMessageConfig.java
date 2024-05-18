@@ -27,7 +27,15 @@ public abstract class IDKMessageConfig {
                         "adventure: \"You're now in ADVENTURE!\"\n" +
                         "spectator: \"You're now in SPECTATOR!\"\n" +
                         "ping: \"Your ping is: \"\n" +
-                        "no-console: \"Console not avalible right now.\"");
+                        "no-console: \"Console not avalible right now.\"\n" +
+                        "available-plugins: \"Available plugins: \"\n" +
+                        "plugin-disable-error: \"Cannot disable this plugin or already disabled!\"\n" +
+                        "plugin-disabled: \"Plugin [plugin_name] disabled!\"\n" +
+                        "plugin-enable-error: \"Cannot enable this plugin or already enabled!\"\n" +
+                        "plugin-enabled: \"Plugin [plugin_name] enabled!\"\n" +
+                        "plugin-not-found: \"Plugin not found!\"\n" +
+                        "plugin-disable-egg: \"I cannot disable myself. Like you cannot make your heart stop.\"\n" +
+                        "plugin-enable-egg: \"I cannot enable myself. Like you cannot make dead alive.\"");
                 fw.close();
             } catch (IOException e) {
                 e.printStackTrace();
