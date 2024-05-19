@@ -3,9 +3,8 @@ package krincraft.idk;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.java.JavaPlugin;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import java.util.*;
 import java.util.logging.Logger;
 
 public final class IDK extends JavaPlugin {

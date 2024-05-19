@@ -5,7 +5,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -39,6 +38,24 @@ public class IDKCommand implements CommandExecutor {
                 IDK.idk.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
                 player.sendMessage(messages.getString("available-plugins") + IDK.idk.plugins);
                 return true;
+            }
+            if(strings.length == 2 && strings[0].equals("load")) {
+                String folder = Bukkit.getPluginsFolder().getAbsolutePath();
+                if(!strings[1].isEmpty()) {
+                    String file_name = strings[1];
+                    String file_path = folder + "\\" + file_name;
+                    try {
+                        Plugin plugin = Bukkit.getPluginManager().loadPlugin(new File(file_path));
+                        Bukkit.getPluginManager().enablePlugin(plugin);
+                        player.sendMessage("Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
+                        return true;
+                    } catch (InvalidPluginException | InvalidDescriptionException e) {
+                        return true;
+                    }
+                } else {
+                    player.sendMessage("Error!");
+                    return true;
+                }
             }
             if(strings.length == 2 && strings[0].equals("disable")) {
                 String plugin_name = strings[1];
