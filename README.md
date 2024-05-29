@@ -1,6 +1,21 @@
-### IDK-plugin  
-For minecraft bukkit 1.20.1  
-Feel free to use any code  
+# IDK插件
 
-If there has any bug, you can open an issues so that i can knew.  
-If you want to help me, that's better! You just need to open a PR!  
+### 他可以做什么
+
+照着作者说，这是一个全能插件，什么功能都可能会添加
+
+但是呢作者 是个学生所以这个插件更新速度可能会非常慢
+
+也别指望这个插件能整出什么大活来
+
+### 版本支持
+
+1.20.1可以加载
+
+其他版本未知，自己试着用吧
+
+### 一些废话
+
+如果遇到什么BUG，并且你有能力帮着写这个插件的话，作者很乐意你提交PR
+
+毕竟作者是个懒B，连README.MD都不更新(bushi)
