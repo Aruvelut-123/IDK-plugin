@@ -10,31 +10,6 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-        - name: 检查环境变量
-          run: env
-  
-        - name: 签出存储库
-          uses: actions/checkout@v3
-          with:
-            submodules: true
-
-        - uses: actions/checkout@v4
-        - name: 设置Maven库和Java
-          uses: actions/setup-java@v4
-          with:
-            java-version: '17'
-            distribution: 'temurin'
-            server-id: ossrh
-            server-username: MAVEN_USERNAME
-            server-password: MAVEN_PASSWORD
-  
-        - name: 构建
-          run: mvn --batch-mode package
   publish:
       runs-on: ubuntu-latest
       permissions:
