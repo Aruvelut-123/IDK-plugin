@@ -6,6 +6,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class IDKMessageConfig {
     protected IDK idk;
@@ -35,7 +37,31 @@ public abstract class IDKMessageConfig {
                         "plugin-enabled: \"Plugin [plugin_name] enabled!\"\n" +
                         "plugin-not-found: \"Plugin not found!\"\n" +
                         "plugin-disable-egg: \"I cannot disable myself. Like you cannot make your heart stop.\"\n" +
-                        "plugin-enable-egg: \"I cannot enable myself. Like you cannot make dead alive.\"");
+                        "plugin-enable-egg: \"I cannot enable myself. Like you cannot make dead alive.\"" +
+                        "IDK_Helper_name: \"IDK Help\"\n" +
+                        "IDK_Helper_lore:\n" +
+                        "  - \"\"\n" +
+                        "IDK_Workbench_name: \"IDK Workbench\"\n" +
+                        "IDK_Workbench_lore:\n" +
+                        "  - \"\"\n" +
+                        "menu_title: \"IDK Menu\"\n" +
+                        "workbench_title: \"IDK Workbench\"\n" +
+                        "Information_name: \"Information\"\n" +
+                        "Information_lore:\n" +
+                        "  - \"Author: MinecraftBaymax\"\n" +
+                        "  - \"Add by IDK plugin.\"\n" +
+                        "Help:\n" +
+                        "  -  \"IDK plugin help:\"\n" +
+                        "  -  \"\\n/IDK help - This help message\"\n" +
+                        "  -  \"\\n/IDK gm <number of gamemodes> - Change your gamemode\"\n" +
+                        "  -  \"\\n/IDK open workbench - Open a chest or a workbench\"\n" +
+                        "  -  \"\\n/IDK plugins - Check plugin list\"\n" +
+                        "  -  \"\\n/IDK load <plugin_name> - Load a plugin\"\n" +
+                        "  -  \"\\n/IDK disable <plugin_name> - Disable a plugin\"\n" +
+                        "  -  \"\\n/IDK enable <plugin_name> - Enable a plugin\"\n" +
+                        "  -  \"\\n/IDK menu - open IDK menu\"\n" +
+                        "  -  \"\\n/IDK ping - check your ping in game\"\n" +
+                        "  -  \"\\n/IDK reload - reload config file\"");
                 fw.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -64,5 +90,9 @@ public abstract class IDKMessageConfig {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public List<String> getStringList(String str) {
+        return this.config.getStringList(str);
     }
 }

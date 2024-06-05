@@ -6,7 +6,7 @@
 
   <groupId>krincraft</groupId>
   <artifactId>IDK</artifactId>
-  <version>1.2-pre3</version>
+  <version>1.2-pre4</version>
   <packaging>jar</packaging>
 
   <name>IDK</name>
@@ -76,6 +76,11 @@
           <groupId>org.apache.httpcomponents</groupId>
           <artifactId>httpcore</artifactId>
           <version>4.4.5</version>
+      </dependency>
+      <dependency>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+          <version>20180130</version>
       </dependency>
   </dependencies>
 
