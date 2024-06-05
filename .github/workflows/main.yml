@@ -1,0 +1,39 @@
+name: 发布到 Github
+
+on: [ pull_request, workflow_dispatch ]
+
+env: #环境变量，后续可以使用 ${{ env.MINECRAFT_VERSION }} 引用
+  MINECRAFT_VERSION: 1.20.1                        
+  JAVA_VERSION: 17    
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+        - name: 检查环境变量
+          run: env
+  
+        - name: 签出存储库
+          uses: actions/checkout@v3
+          with:
+            submodules: true
+  
+        - name: 设置 Java
+          uses: actions/setup-java@v2
+          with:
+            distribution: "temurin"
+            java-version: 17
+  
+        - name: 构建
+          run: maven package
+          
+        - uses: Kir-Antipov/mc-publish@v3.3
+          with:
+            # Only include this section if you wish to publish
+            # your assets on GitHub.
+            github-token: ${{ secrets.GITHUB_TOKEN }}
