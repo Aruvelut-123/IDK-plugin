@@ -8,10 +8,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.bukkit.Bukkit;
-
+import krincraft.idk.JSON.decoder;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 public class IDKnetHandler {
     private static final CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -20,10 +18,9 @@ public class IDKnetHandler {
         String categories = "spigot";
         String versions = Bukkit.getServer().getMinecraftVersion();
         String arg = "facets=[[\"categories:"+categories+"\"],[\"versions:"+versions+"\"],[\"project_type:plugin\"]]";
-        try {
-            URI uri = new URI(url+"limit=10&"+arg);
-        } catch (URISyntaxException ignored) {
-        }
+        String uri = url+"limit=10&"+arg;
+        String result = sendGet(uri);
+        decoder.decode_json(result,"");
     }
 
     public static String sendGet(String url) {

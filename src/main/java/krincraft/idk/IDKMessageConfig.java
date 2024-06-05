@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class IDKMessageConfig {
     protected IDK idk;
@@ -37,7 +38,7 @@ public abstract class IDKMessageConfig {
                         "plugin-enabled: \"Plugin [plugin_name] enabled!\"\n" +
                         "plugin-not-found: \"Plugin not found!\"\n" +
                         "plugin-disable-egg: \"I cannot disable myself. Like you cannot make your heart stop.\"\n" +
-                        "plugin-enable-egg: \"I cannot enable myself. Like you cannot make dead alive.\"" +
+                        "plugin-enable-egg: \"I cannot enable myself. Like you cannot make dead alive.\"\n" +
                         "IDK_Helper_name: \"IDK Help\"\n" +
                         "IDK_Helper_lore:\n" +
                         "  - \"\"\n" +
@@ -55,13 +56,16 @@ public abstract class IDKMessageConfig {
                         "  -  \"\\n/IDK help - This help message\"\n" +
                         "  -  \"\\n/IDK gm <number of gamemodes> - Change your gamemode\"\n" +
                         "  -  \"\\n/IDK open workbench - Open a chest or a workbench\"\n" +
-                        "  -  \"\\n/IDK plugins - Check plugin list\"\n" +
-                        "  -  \"\\n/IDK load <plugin_name> - Load a plugin\"\n" +
-                        "  -  \"\\n/IDK disable <plugin_name> - Disable a plugin\"\n" +
-                        "  -  \"\\n/IDK enable <plugin_name> - Enable a plugin\"\n" +
+                        "  -  \"\\n/IDK plugin - plugin commands\"\n" +
                         "  -  \"\\n/IDK menu - open IDK menu\"\n" +
                         "  -  \"\\n/IDK ping - check your ping in game\"\n" +
-                        "  -  \"\\n/IDK reload - reload config file\"");
+                        "  -  \"\\n/IDK reload - reload config file\"\n" +
+                        "Plugin_command_help:\n" +
+                        "  -  \"IDK plugin help:\"\n" +
+                        "  -  \"\\n/IDK plugin list - Check plugin list\"\n" +
+                        "  -  \"\\n/IDK plugin load <jar filename> - Load a unloaded jar plugin to server\"\n" +
+                        "  -  \"\\n/IDK plugin disable <plugin name> - Disable a plugin\"\n" +
+                        "  -  \"\\n/IDK plugin enable <plugin name> - Enable a plugin\"\n");
                 fw.close();
             } catch (IOException e) {
                 e.printStackTrace();

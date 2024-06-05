@@ -4,7 +4,7 @@
   <groupId>krincraft</groupId>
   <artifactId>IDK</artifactId>
   <name>IDK</name>
-  <version>1.2-pre3</version>
+  <version>1.2-pre4</version>
   <build>
     <resources>
       <resource>
@@ -57,7 +57,7 @@
     <repository>
       <id>github</id>
       <name>GitHub Packages</name>
-      <url>https://maven.pkg.github.com/octocat/hello-world</url>
+      <url>https://maven.pkg.github.com/Aruvelut-123/IDK-plugin</url>
     </repository>
   </distributionManagement>
   <properties>
