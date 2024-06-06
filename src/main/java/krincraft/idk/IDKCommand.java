@@ -1,5 +1,6 @@
 package krincraft.idk;
 
+import krincraft.idk.network.IDKnetHandler;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,6 +17,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,83 +33,104 @@ public class IDKCommand implements CommandExecutor {
             }
         };
         Configuration config = IDK.idk.getConfig();
+        Boolean plugin_manage = config.getBoolean("plugin-management");
         if(commandSender instanceof Player) {
             Player player = (Player) commandSender; //获取执行玩家
             if(strings.length >= 1 && strings[0].equals("plugin")) {
-                
-                if(strings.length == 2 && strings[1].equals("list")) {
-                    IDK.idk.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
-                    player.sendMessage(messages.getString("available-plugins") + IDK.idk.plugins);
-                    return true;
-                }
-                if(strings.length == 2 && strings[1].equals("load")) {
-                    return false;
-                }
-                if(strings.length == 3 && strings[1].equals("load")) {
-                    String folder = Bukkit.getPluginsFolder().getAbsolutePath();
-                    if(!strings[2].isEmpty()) {
-                        String file_name = strings[2];
-                        String file_path = folder + "\\" + file_name;
-                        try {
-                            Plugin plugin = Bukkit.getPluginManager().loadPlugin(new File(file_path));
-                            if (plugin != null) {
-                                Bukkit.getPluginManager().enablePlugin(plugin);
-                                player.sendMessage("Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
-                            }
-                            return true;
-                        } catch (InvalidPluginException | InvalidDescriptionException e) {
-                            return true;
-                        }
-                    } else {
-                        player.sendMessage("Error!");
+                if(plugin_manage) {
+                    if(strings.length == 2 && strings[1].equals("list")) {
+                        IDK.idk.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
+                        player.sendMessage(messages.getString("available-plugins") + IDK.idk.plugins);
                         return true;
                     }
-                }
-                if(strings.length == 2 && strings[1].equals("disable")) {
-                    return false;
-                }
-                if(strings.length == 3 && strings[1].equals("disable")) {
-                    String plugin_name = strings[2];
-                    if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
-                        Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
-                        if (plugin != null) {
-                            try {
-                                Bukkit.getPluginManager().disablePlugin(plugin);
-                            } catch (Exception e) {
-                                player.sendMessage(messages.getString("plugin-disable-error"));
-                            }
-                            player.sendMessage(messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
-                        } else {
-                            player.sendMessage(messages.getString("plugin-not-found"));
-                        }
-                    } else {
-                        player.sendMessage(messages.getString("plugin-disable-egg"));
+                    if(strings.length == 2 && strings[1].equals("load")) {
+                        return false;
                     }
+                    if(strings.length == 3 && strings[1].equals("load")) {
+                        String folder = Bukkit.getPluginsFolder().getAbsolutePath();
+                        if(!strings[2].isEmpty()) {
+                            String file_name = strings[2];
+                            String file_path = folder + "\\" + file_name;
+                            try {
+                                Plugin plugin = Bukkit.getPluginManager().loadPlugin(new File(file_path));
+                                if (plugin != null) {
+                                    Bukkit.getPluginManager().enablePlugin(plugin);
+                                    player.sendMessage("Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
+                                }
+                                return true;
+                            } catch (InvalidPluginException | InvalidDescriptionException e) {
+                                return true;
+                            }
+                        } else {
+                            player.sendMessage("Error!");
+                            return true;
+                        }
+                    }
+                    if(strings.length == 2 && strings[1].equals("disable")) {
+                        return false;
+                    }
+                    if(strings.length == 3 && strings[1].equals("disable")) {
+                        String plugin_name = strings[2];
+                        if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
+                            Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
+                            if (plugin != null) {
+                                try {
+                                    Bukkit.getPluginManager().disablePlugin(plugin);
+                                } catch (Exception e) {
+                                    player.sendMessage(messages.getString("plugin-disable-error"));
+                                }
+                                player.sendMessage(messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
+                            } else {
+                                player.sendMessage(messages.getString("plugin-not-found"));
+                            }
+                        } else {
+                            player.sendMessage(messages.getString("plugin-disable-egg"));
+                        }
+                        return true;
+                    }
+                    if(strings.length == 2 && strings[1].equals("enable")) {
+                        return false;
+                    }
+                    if(strings.length == 3 && strings[1].equals("enable")) {
+                        String plugin_name = strings[2];
+                        if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
+                            Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
+                            if (plugin != null) {
+                                try {
+                                    Bukkit.getPluginManager().enablePlugin(plugin);
+                                } catch (Exception e) {
+                                    player.sendMessage(messages.getString("plugin-enable-error"));
+                                }
+                                player.sendMessage(messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
+                            } else {
+                                player.sendMessage(messages.getString("plugin-not-found"));
+                            }
+                        } else {
+                            player.sendMessage(messages.getString("plugin-enable-egg"));
+                        }
+                        return true;
+                    }
+                    if(strings.length == 2 && strings[1].equals("search")) {
+                        try {
+                            IDKnetHandler.get_10_top_projects(player, false);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        return true;
+                    }
+                    if(strings.length == 3 && strings[1].equals("search")) {
+                        try {
+                            IDKnetHandler.get_projects_by_title(player, false, strings[2]);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        return true;
+                    }
+                    return false;
+                } else {
+                    player.sendMessage("Plugin management function is not enabled in config.");
                     return true;
                 }
-                if(strings.length == 2 && strings[1].equals("enable")) {
-                    return false;
-                }
-                if(strings.length == 3 && strings[1].equals("enable")) {
-                    String plugin_name = strings[2];
-                    if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
-                        Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
-                        if (plugin != null) {
-                            try {
-                                Bukkit.getPluginManager().enablePlugin(plugin);
-                            } catch (Exception e) {
-                                player.sendMessage(messages.getString("plugin-enable-error"));
-                            }
-                            player.sendMessage(messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
-                        } else {
-                            player.sendMessage(messages.getString("plugin-not-found"));
-                        }
-                    } else {
-                        player.sendMessage(messages.getString("plugin-enable-egg"));
-                    }
-                    return true;
-                }
-                return false;
             }
             if(strings.length == 1 && strings[0].equals("reload")) {
                 try{
@@ -222,19 +245,19 @@ public class IDKCommand implements CommandExecutor {
             }
             if(strings.length == 1 && strings[0].equals("help")) { //检测参数长度是否为1并且第一个参数是否为help
                 List<String> help_msg = messages.getStringList("Help");
-                String help_msg_string = help_msg.toString().replace("[", "");
-                String help_msg_fix = help_msg_string.replace("]", "");
-                String help_msg_fix2 = help_msg_fix.replace(",", "");
-                player.sendMessage(help_msg_fix2); //对玩家发送消息
+                Object[] help_msg_fix = help_msg.toArray();
+                for(int i = 0; i < help_msg_fix.length; i++) {
+                    player.sendMessage(help_msg_fix[i].toString());
+                }
                 return true;
             }
             if(strings.length == 2 && strings[0].equals("help")) {
                 if(strings[1].equals("plugin")) {
                     List<String> help_msg = messages.getStringList("Plugin_command_help");
-                    String help_msg_string = help_msg.toString().replace("[", "");
-                    String help_msg_fix = help_msg_string.replace("]", "");
-                    String help_msg_fix2 = help_msg_fix.replace(",", "");
-                    player.sendMessage(help_msg_fix2); //对玩家发送消息
+                    Object[] help_msg_fix = help_msg.toArray();
+                    for(int i = 0; i < help_msg_fix.length; i++) {
+                        player.sendMessage(help_msg_fix[i].toString());
+                    }
                     return true;
                 }
                 return false;
@@ -245,15 +268,10 @@ public class IDKCommand implements CommandExecutor {
             }
             if(IDK.idk.test_build) {
                 if(strings.length == 1 && strings[0].equals("test")) {
-                    String[] plugin_list = Arrays.toString(Bukkit.getPluginManager().getPlugins()).replace("[","").replace("]","").split(",");
-                    for(int i = 0; i < plugin_list.length; i++) {
-                        String str = plugin_list[i];
-                        if(i > 0) {
-                            String str2 = str.substring(1);
-                            player.sendMessage(str2.substring(0, str2.indexOf(" v")));
-                        } else {
-                            player.sendMessage(str.substring(0, str.indexOf(" v")));
-                        }
+                    try {
+                        IDKnetHandler.get_10_top_projects(player, false);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
                     return true;
                 }
@@ -288,76 +306,96 @@ public class IDKCommand implements CommandExecutor {
                 return true;
             }
             if(strings.length >= 1 && strings[0].equals("plugin")) {
-                
-                if(strings.length == 2 && strings[1].equals("list")) {
-                    IDK.idk.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
-                    System.out.println(messages.getString("available-plugins") + IDK.idk.plugins);
-                    return true;
-                }
-                if(strings.length == 2 && strings[1].equals("load")) {
-                    return false;
-                }
-                if(strings.length == 3 && strings[1].equals("load")) {
-                    String folder = Bukkit.getPluginsFolder().getAbsolutePath();
-                    if(!strings[2].isEmpty()) {
-                        String file_name = strings[2];
-                        String file_path = folder + "\\" + file_name;
-                        try {
-                            Plugin plugin = Bukkit.getPluginManager().loadPlugin(new File(file_path));
-                            if (plugin != null) {
-                                Bukkit.getPluginManager().enablePlugin(plugin);
-                                System.out.println("Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
-                            }
-                            return true;
-                        } catch (InvalidPluginException | InvalidDescriptionException e) {
-                            return true;
-                        }
-                    } else {
-                        System.out.println("Error!");
+                if(plugin_manage) {
+                    if(strings.length == 2 && strings[1].equals("list")) {
+                        IDK.idk.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
+                        System.out.println(messages.getString("available-plugins") + IDK.idk.plugins);
                         return true;
                     }
-                }
-                if(strings.length == 2 && strings[1].equals("disable")) {
-                    return false;
-                }
-                if(strings.length == 3 && strings[1].equals("disable")) {
-                    String plugin_name = strings[2];
-                    Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
-                    if (plugin != null && plugin.isEnabled()) {
-                        if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
-                            try {
-                                Bukkit.getPluginManager().disablePlugin(plugin);
-                            } catch (Exception e) {
-                                System.out.println(messages.getString("plugin-disable-error"));
-                            }
-                            System.out.println(messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
-                        } else {
-                            System.out.println(messages.getString("plugin-disable-egg"));
-                        }
-                        return true;
-                    }
-                }
-                if(strings.length == 2 && strings[1].equals("enable")) {
+                    if(strings.length == 2 && strings[1].equals("load")) {
                         return false;
                     }
-                if(strings.length == 3 && strings[1].equals("enable")) {
-                    String plugin_name = strings[2];
-                    Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
-                    if (plugin != null && !plugin.isEnabled()) {
-                        if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
+                    if(strings.length == 3 && strings[1].equals("load")) {
+                        String folder = Bukkit.getPluginsFolder().getAbsolutePath();
+                        if(!strings[2].isEmpty()) {
+                            String file_name = strings[2];
+                            String file_path = folder + "\\" + file_name;
                             try {
-                                Bukkit.getPluginManager().enablePlugin(plugin);
-                            } catch (Exception e) {
-                                System.out.println(messages.getString("plugin-enable-error"));
+                                Plugin plugin = Bukkit.getPluginManager().loadPlugin(new File(file_path));
+                                if (plugin != null) {
+                                    Bukkit.getPluginManager().enablePlugin(plugin);
+                                    System.out.println("Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
+                                }
+                                return true;
+                            } catch (InvalidPluginException | InvalidDescriptionException e) {
+                                return true;
                             }
-                            System.out.println(messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
                         } else {
-                            System.out.println(messages.getString("plugin-enable-egg"));
+                            System.out.println("Error!");
+                            return true;
+                        }
+                    }
+                    if(strings.length == 2 && strings[1].equals("disable")) {
+                        return false;
+                    }
+                    if(strings.length == 3 && strings[1].equals("disable")) {
+                        String plugin_name = strings[2];
+                        Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
+                        if (plugin != null && plugin.isEnabled()) {
+                            if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
+                                try {
+                                    Bukkit.getPluginManager().disablePlugin(plugin);
+                                } catch (Exception e) {
+                                    System.out.println(messages.getString("plugin-disable-error"));
+                                }
+                                System.out.println(messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
+                            } else {
+                                System.out.println(messages.getString("plugin-disable-egg"));
+                            }
+                            return true;
+                        }
+                    }
+                    if(strings.length == 2 && strings[1].equals("enable")) {
+                            return false;
+                        }
+                    if(strings.length == 3 && strings[1].equals("enable")) {
+                        String plugin_name = strings[2];
+                        Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
+                        if (plugin != null && !plugin.isEnabled()) {
+                            if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
+                                try {
+                                    Bukkit.getPluginManager().enablePlugin(plugin);
+                                } catch (Exception e) {
+                                    System.out.println(messages.getString("plugin-enable-error"));
+                                }
+                                System.out.println(messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
+                            } else {
+                                System.out.println(messages.getString("plugin-enable-egg"));
+                            }
+                            return true;
+                        }
+                    }
+                    if(strings.length == 2 && strings[1].equals("search")) {
+                        try {
+                            IDKnetHandler.get_10_top_projects(null, true);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
                         return true;
                     }
+                    if(strings.length == 3 && strings[1].equals("search")) {
+                        try {
+                            IDKnetHandler.get_projects_by_title(null, true, strings[2]);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        return true;
+                    }
+                    return false;
+                } else {
+                    System.out.println("Plugin management function is not enabled in config.");
+                    return true;
                 }
-                return false;
             }
             if(strings.length == 2 && strings[0].equals("gm")) {
                 System.out.println(messages.getString("no-console"));
@@ -373,19 +411,19 @@ public class IDKCommand implements CommandExecutor {
             }
             if(strings.length == 1 && strings[0].equals("help")) {
                 List<String> help_msg = messages.getStringList("Help");
-                String help_msg_string = help_msg.toString().replace("[", "");
-                String help_msg_fix = help_msg_string.replace("]", "");
-                String help_msg_fix2 = help_msg_fix.replace(",", "");
-                System.out.println(help_msg_fix2); //对玩家发送消息
+                Object[] help_msg_fix = help_msg.toArray();
+                for(int i = 0; i < help_msg_fix.length; i++) {
+                    System.out.println(help_msg_fix[i].toString());
+                }
                 return true;
             }
             if(strings.length == 2 && strings[0].equals("help")) {
                 if(strings[1].equals("plugin")) {
                     List<String> help_msg = messages.getStringList("Plugin_command_help");
-                    String help_msg_string = help_msg.toString().replace("[", "");
-                    String help_msg_fix = help_msg_string.replace("]", "");
-                    String help_msg_fix2 = help_msg_fix.replace(",", "");
-                    System.out.println(help_msg_fix2); //对玩家发送消息
+                    Object[] help_msg_fix = help_msg.toArray();
+                    for(int i = 0; i < help_msg_fix.length; i++) {
+                        System.out.println(help_msg_fix[i].toString());
+                    }
                     return true;
                 }
                 return false;
@@ -396,15 +434,10 @@ public class IDKCommand implements CommandExecutor {
             }
             if(IDK.idk.test_build) {
                 if(strings.length == 1 && strings[0].equals("test")) {
-                    String[] plugin_list = Arrays.toString(Bukkit.getPluginManager().getPlugins()).replace("[","").replace("]","").split(",");
-                    for(int i = 0; i < plugin_list.length; i++) {
-                        String str = plugin_list[i];
-                        if(i > 0) {
-                            String str2 = str.substring(1);
-                            System.out.println(str2.substring(0, str2.indexOf(" v")));
-                        } else {
-                            System.out.println(str.substring(0, str.indexOf(" v")));
-                        }
+                    try {
+                        IDKnetHandler.get_10_top_projects(null, true);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
                     }
                     return true;
                 }

@@ -1,3 +1,4 @@
+message-ver: 1
 reload: "Config reloaded!"
 failed: "Config reload failed! Check details below!"
 failed_p: "Config reload failed! Check console for more information."
@@ -42,3 +43,6 @@ Plugin_command_help:
   -  "\n/IDK plugin load <jar filename> - Load a unloaded jar plugin to server"
   -  "\n/IDK plugin disable <plugin name> - Disable a plugin"
   -  "\n/IDK plugin enable <plugin name> - Enable a plugin"
+  -  "\n/IDK plugin search - Get Top 10 Plugin"
+  -  "\n/IDK plugin search title <plugin name> - Search a plugin by it's known name"
+  -  "\n/IDK plugin search id <plugin id> - Search a plugin by it's modrinth id"
