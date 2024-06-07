@@ -12,8 +12,8 @@ import java.util.List;
 public abstract class IDKMessageConfig {
     static int ver = 3;
     protected IDK idk;
-    private static File file;
-    public static FileConfiguration config;
+    private File file;
+    public FileConfiguration config;
 
     public IDKMessageConfig(IDK idk, String fileName) {
         this.idk = idk;
@@ -149,12 +149,12 @@ public abstract class IDKMessageConfig {
         }
     }
 
-    public static void reload(String fileName) {
+    public void reload(String fileName) {
         file = new File(Bukkit.getPluginsFolder().getAbsolutePath()+"\\IDK", fileName);
         config = YamlConfiguration.loadConfiguration(file);
     }
 
-    public static void save() {
+    public void save() {
         try {
             config.save(file);
         } catch (Exception e) {

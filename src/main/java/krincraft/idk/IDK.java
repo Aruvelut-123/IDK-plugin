@@ -8,7 +8,8 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public final class IDK extends JavaPlugin {
-    static IDK idk;
+    public Logger logger = Bukkit.getLogger();
+    public static IDK idk;
     public boolean test_build = false;
     public boolean beta_build = false;
     int config_ver = 1;
@@ -39,28 +40,7 @@ public final class IDK extends JavaPlugin {
             } else {
                 List<String> emptylist = new ArrayList<>();
                 this.getConfig().set("config-version", 1);
-                this.getConfig().set("IDK_Helper_name", "IDK Help");
-                this.getConfig().set("IDK_Helper_lore", emptylist);
-                this.getConfig().set("IDK_Workbench_name", "IDK Workbench");
-                this.getConfig().set("IDK_Workbench_lore", emptylist);
-                this.getConfig().set("menu_title", "IDK Menu");
-                this.getConfig().set("workbench_title", "IDK Workbench");
-                this.getConfig().set("Information_name", "Information");
-                List<String> information_lore = new ArrayList<>();
-                information_lore.add("Author: MinecraftBaymax");
-                information_lore.add("Add by IDK plugin.");
-                this.getConfig().set("Information_lore", information_lore);
-                information_lore.clear();
-                List<String> help_msg = new ArrayList<>();
-                help_msg.add("IDK plugin help:");
-                help_msg.add("\n/IDK help - This help message");
-                help_msg.add("\n/IDK gm <number of gamemodes> - Change your gamemode");
-                help_msg.add("\n/IDK open workbench - Open a chest or a workbench");
-                help_msg.add("\n/IDK menu - open IDK menu");
-                help_msg.add("\n/IDK ping - check your ping in game");
-                help_msg.add("\n/IDK reload - reload config file");
-                this.getConfig().set("Help", help_msg);
-                help_msg.clear();
+                this.getConfig().set("plugin-management", "true");
                 checking = false;
             }
         }
@@ -69,7 +49,6 @@ public final class IDK extends JavaPlugin {
     @Override
     public void onDisable() {
         //插件关闭逻辑
-        Logger logger = Bukkit.getLogger();
         logger.info("Stopping...");
     }
 }

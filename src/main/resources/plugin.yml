@@ -1,7 +1,7 @@
 name: IDK #插件名
 version: '${project.version}' #插件版本
 main: krincraft.idk.IDK #插件主类
-api-version: '1.20' #插件API版本
+api-version: '1.13' #插件API版本
 author: Baymaxawa #插件作者
 website: idk.minecraftisbest.top #插件网站
 loadbefore: [Luckperms]
@@ -14,44 +14,43 @@ commands: #命令
 permissions:
   IDK.command.IDK:
     description: "Main plugin command permission."
-    default: true
+    default: op
     children:
-      - IDK.command.IDK.plugin
-      - IDK.command.IDK.reload
-      - IDK.command.IDK.gm
-      - IDK.command.IDK.menu
-      - IDK.command.IDK.open
-      - IDK.command.IDK.help
-      - IDK.command.IDK.ping
+      - "IDK.command.IDK.plugin"
+      - "IDK.command.IDK.reload"
+      - "IDK.command.IDK.gm"
+      - "IDK.command.IDK.menu"
+      - "IDK.command.IDK.open"
+      - "IDK.command.IDK.help"
+      - "IDK.command.IDK.ping"
   IDK.command.IDK.plugin:
     description: "Main plugin management command permission."
-    default: false
-
+    default: op
   IDK.command.IDK.reload:
     description: "Main plugin reload command permission."
-    default: false
+    default: op
   IDK.command.IDK.gm:
     description: "Main plugin gm command permission."
-    default: false
+    default: op
   IDK.command.IDK.menu:
     description: "Main plugin menu command permission."
-    default: false
+    default: op
   IDK.command.IDK.open:
     description: "Main plugin open command permission."
-    default: false
+    default: op
     children:
-      - IDK.command.IDK.open.workbench
+      - "IDK.command.IDK.open.workbench"
   IDK.command.IDK.open.workbench:
     description: "Main plugin open remote workbench function permission."
-    default: false
+    default: op
   IDK.command.IDK.help:
     description: "Main plugin help command permission."
-    default: false
+    default: op
     children:
-      - IDK.command.IDK.help.plugin
+      - "IDK.command.IDK.help.plugin"
   IDK.command.IDK.help.plugin:
     description: "Main plugin help command for plugin management command's permission."
-    default: false
+    default: op
   IDK.command.IDK.ping:
     description: "Main plugin ping command permission."
-    default: false
+    default: op

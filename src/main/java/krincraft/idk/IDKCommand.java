@@ -1,13 +1,12 @@
 package krincraft.idk;
 
 import krincraft.idk.network.IDKnetHandler;
+import krincraft.idk.plugin.IDKPluginManagement;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -25,7 +24,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class IDKCommand implements CommandExecutor {
-    static String filename = "messages.yml";
+    String filename = "messages.yml";
+    public String[] deleted = null;
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) { //检测指令执行
         IDKMessageConfig messages = new IDKMessageConfig(IDK.idk, "messages.yml") {
@@ -107,6 +107,14 @@ public class IDKCommand implements CommandExecutor {
                             }
                             return true;
                         }
+                        if(strings.length == 2 && strings[1].equals("search")) {
+                            try {
+                                IDKnetHandler.get_10_top_projects_a(commandSender);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            return true;
+                        }
                         if(strings.length >= 3 && strings[1].equals("search")) {
                             try {
                                 if(strings.length > 3) {
@@ -115,9 +123,9 @@ public class IDKCommand implements CommandExecutor {
                                         plugin_title = plugin_title+strings[i]+" ";
                                     }
                                     String real_plugin_title = plugin_title.substring(0, plugin_title.length() - 1);
-                                    IDKnetHandler.get_projects_by_title(null, true, real_plugin_title);
+                                    IDKnetHandler.get_projects_by_title_a(commandSender, real_plugin_title);
                                 } else {
-                                    IDKnetHandler.get_projects_by_title(player, false, strings[2]);
+                                    IDKnetHandler.get_projects_by_title_a(commandSender, strings[2]);
                                 }
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
@@ -126,10 +134,16 @@ public class IDKCommand implements CommandExecutor {
                         }
                         if(strings.length == 3 && strings[1].equals("install")) {
                             try {
-                                IDKnetHandler.install_project(player, false, strings[2]);
+                                IDKnetHandler.install_project(commandSender, strings[2]);
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
+                            return true;
+                        }
+                        if(strings.length == 3 && strings[1].equals("del")) {
+                            IDKPluginManagement idkpm = new IDKPluginManagement();
+                            idkpm.delete_plugin(strings[2], commandSender);
+                            return true;
                         }
                     }
                     return false;
@@ -141,11 +155,11 @@ public class IDKCommand implements CommandExecutor {
             if(strings.length == 1 && strings[0].equals("reload")) {
                 if(player.hasPermission("IDK.command.IDK.reload")) {
                     try{
-                        IDKMessageConfig.save();
+                        messages.save();
                         IDK.idk.checking = true;
                         IDK.idk.check();
                         IDK.idk.reloadConfig();
-                        IDKMessageConfig.reload(filename);
+                        messages.reload(filename);
                         // 测试是否有空值
                         messages.getString("IDK_Helper_name");
                         messages.getStringList("IDK_Helper_lore");
@@ -159,11 +173,11 @@ public class IDKCommand implements CommandExecutor {
                         messages.getString("creative");
                         messages.getString("adventure");
                         messages.getString("spectator");
-                        System.out.println(messages.getString("reload"));
+                        IDK.idk.logger.info(messages.getString("reload"));
                         player.sendMessage(messages.getString("reload"));
 
                     } catch (Exception e) {
-                        System.out.println(messages.getString("failed"));
+                        IDK.idk.logger.warning(messages.getString("failed"));
                         player.sendMessage(messages.getString("failed_p"));
                         e.printStackTrace();
                     }
@@ -292,7 +306,7 @@ public class IDKCommand implements CommandExecutor {
             if(IDK.idk.test_build) {
                 if(strings.length == 1 && strings[0].equals("test")) {
                     try {
-                        IDKnetHandler.install_project(player, false, "P1OZGk5p");
+                        IDKnetHandler.install_project(commandSender, "P1OZGk5p");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -301,16 +315,16 @@ public class IDKCommand implements CommandExecutor {
             }
         } else{
             if(strings.length == 0) {
-                System.out.println(messages.getString("main"));
+                IDK.idk.logger.info(messages.getString("main"));
                 return true;
             }
             if(strings.length == 1 && strings[0].equals("reload")) {
                 try{
-                    IDKMessageConfig.save();
+                    messages.save();
                     IDK.idk.checking = true;
                     IDK.idk.check();
                     IDK.idk.reloadConfig();
-                    IDKMessageConfig.reload(filename);
+                    messages.reload(filename);
                     // 测试是否有空值
                     messages.getString("IDK_Helper_name");
                     messages.getStringList("IDK_Helper_lore");
@@ -325,9 +339,9 @@ public class IDKCommand implements CommandExecutor {
                     messages.getString("adventure");
                     messages.getString("spectator");
                     
-                    System.out.println(messages.getString("reload"));
+                    IDK.idk.logger.info(messages.getString("reload"));
                 } catch (Exception e) {
-                    System.out.println(messages.getString("failed"));
+                    IDK.idk.logger.warning(messages.getString("failed"));
                     e.printStackTrace();
                 }
                 return true;
@@ -336,7 +350,7 @@ public class IDKCommand implements CommandExecutor {
                 if(plugin_manage) {
                     if(strings.length == 2 && strings[1].equals("list")) {
                         IDK.idk.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
-                        System.out.println(messages.getString("available-plugins") + IDK.idk.plugins);
+                        IDK.idk.logger.info(messages.getString("available-plugins") + IDK.idk.plugins);
                         return true;
                     }
                     if(strings.length == 3 && strings[1].equals("load")) {
@@ -348,14 +362,14 @@ public class IDKCommand implements CommandExecutor {
                                 Plugin plugin = Bukkit.getPluginManager().loadPlugin(new File(file_path));
                                 if (plugin != null) {
                                     Bukkit.getPluginManager().enablePlugin(plugin);
-                                    System.out.println("Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
+                                    IDK.idk.logger.info("Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
                                 }
                                 return true;
                             } catch (InvalidPluginException | InvalidDescriptionException e) {
                                 return true;
                             }
                         } else {
-                            System.out.println("Error!");
+                            IDK.idk.logger.warning("Error!");
                             return true;
                         }
                     }
@@ -367,11 +381,11 @@ public class IDKCommand implements CommandExecutor {
                                 try {
                                     Bukkit.getPluginManager().disablePlugin(plugin);
                                 } catch (Exception e) {
-                                    System.out.println(messages.getString("plugin-disable-error"));
+                                    IDK.idk.logger.warning(messages.getString("plugin-disable-error"));
                                 }
-                                System.out.println(messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
+                                IDK.idk.logger.info(messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
                             } else {
-                                System.out.println(messages.getString("plugin-disable-egg"));
+                                IDK.idk.logger.warning(messages.getString("plugin-disable-egg"));
                             }
                             return true;
                         }
@@ -384,14 +398,22 @@ public class IDKCommand implements CommandExecutor {
                                 try {
                                     Bukkit.getPluginManager().enablePlugin(plugin);
                                 } catch (Exception e) {
-                                    System.out.println(messages.getString("plugin-enable-error"));
+                                    IDK.idk.logger.warning(messages.getString("plugin-enable-error"));
                                 }
-                                System.out.println(messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
+                                IDK.idk.logger.info(messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
                             } else {
-                                System.out.println(messages.getString("plugin-enable-egg"));
+                                IDK.idk.logger.warning(messages.getString("plugin-enable-egg"));
                             }
                             return true;
                         }
+                    }
+                    if(strings.length == 2 && strings[1].equals("search")) {
+                        try {
+                            IDKnetHandler.get_10_top_projects_a(commandSender);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        return true;
                     }
                     if(strings.length >= 3 && strings[1].equals("search")) {
                         try {
@@ -401,9 +423,9 @@ public class IDKCommand implements CommandExecutor {
                                     plugin_title = plugin_title+strings[i]+" ";
                                 }
                                 String real_plugin_title = plugin_title.substring(0, plugin_title.length() - 1);
-                                IDKnetHandler.get_projects_by_title(null, true, real_plugin_title);
+                                IDKnetHandler.get_projects_by_title_a(commandSender, real_plugin_title);
                             } else {
-                                IDKnetHandler.get_projects_by_title(null, true, strings[2]);
+                                IDKnetHandler.get_projects_by_title_a(commandSender, strings[2]);
                             }
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -412,34 +434,40 @@ public class IDKCommand implements CommandExecutor {
                     }
                     if(strings.length == 3 && strings[1].equals("install")) {
                         try {
-                            IDKnetHandler.install_project(null, true, strings[2]);
+                            IDKnetHandler.install_project(commandSender, strings[2]);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
+                        return true;
+                    }
+                    if(strings.length == 3 && strings[1].equals("del")) {
+                        IDKPluginManagement idkpm = new IDKPluginManagement();
+                        idkpm.delete_plugin(strings[2], commandSender);
+                        return true;
                     }
                     return false;
                 } else {
-                    System.out.println("Plugin management function is not enabled in config.");
+                    IDK.idk.logger.warning("Plugin management function is not enabled in config.");
                     return true;
                 }
             }
             if(strings.length == 2 && strings[0].equals("gm")) {
-                System.out.println(messages.getString("no-console"));
+                IDK.idk.logger.warning(messages.getString("no-console"));
                 return true;
             }
             if(strings.length == 1 && strings[0].equals("menu")) {
-                System.out.println(messages.getString("no-console"));
+                IDK.idk.logger.warning(messages.getString("no-console"));
                 return true;
             }
             if(strings.length == 2 && strings[0].equals("open")) {
-                System.out.println(messages.getString("no-console"));
+                IDK.idk.logger.warning(messages.getString("no-console"));
                 return true;
             }
             if(strings.length == 1 && strings[0].equals("help")) {
                 List<String> help_msg = messages.getStringList("Help");
                 Object[] help_msg_fix = help_msg.toArray();
                 for(int i = 0; i < help_msg_fix.length; i++) {
-                    System.out.println(help_msg_fix[i].toString());
+                    IDK.idk.logger.info(help_msg_fix[i].toString());
                 }
                 return true;
             }
@@ -448,20 +476,20 @@ public class IDKCommand implements CommandExecutor {
                     List<String> help_msg = messages.getStringList("Plugin_command_help");
                     Object[] help_msg_fix = help_msg.toArray();
                     for(int i = 0; i < help_msg_fix.length; i++) {
-                        System.out.println(help_msg_fix[i].toString());
+                        IDK.idk.logger.info(help_msg_fix[i].toString());
                     }
                     return true;
                 }
                 return false;
             }
             if(strings.length == 1 && strings[0].equals("ping")) {
-                System.out.println(messages.getString("no-console"));
+                IDK.idk.logger.warning(messages.getString("no-console"));
                 return true;
             }
             if(IDK.idk.test_build) {
                 if(strings.length == 1 && strings[0].equals("test")) {
                     try {
-                        IDKnetHandler.install_project(null, true, "P1OZGk5p");
+                        IDKnetHandler.install_project(commandSender, "P1OZGk5p");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
