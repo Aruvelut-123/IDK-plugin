@@ -17,10 +17,10 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error
 
-**Expected behavior**
+**Expected behavior**  
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+**Screenshots**  
 If applicable, add screenshots to help explain your problem.
 
 **Server info (please complete the following information):**
@@ -29,5 +29,5 @@ If applicable, add screenshots to help explain your problem.
  - Server Version: [e.g. 1.20.1]
  - Plugin Version: [e.g. 1.0.0]
 
-**Additional context**
+**Additional context**  
 Add any other context about the problem here.
