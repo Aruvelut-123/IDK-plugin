@@ -419,7 +419,7 @@ public class IDKCommand implements CommandExecutor {
                     }
                     return false;
                 } else {
-                    System.out.println("Plugin management function is not enabled in config.");
+                    System.out.println("配置文件中未启用插件管理功能");
                     return true;
                 }
             }

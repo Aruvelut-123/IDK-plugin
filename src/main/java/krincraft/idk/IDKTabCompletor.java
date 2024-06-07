@@ -60,12 +60,12 @@ public class IDKTabCompletor implements TabCompleter {
         }
         if(strings.length == 3 && strings[0].equals("plugin") && strings[1].equals("search")) {
             List<String> sub_commands = new ArrayList<>();
-            sub_commands.add("Plugin name here");
+            sub_commands.add("在此处输入插件名称");
             return sub_commands;
         }
         if(strings.length == 3 && strings[0].equals("plugin") && strings[1].equals("install")) {
             List<String> sub_commands = new ArrayList<>();
-            sub_commands.add("Plugin id here");
+            sub_commands.add("在此处输入插件ID");
             return sub_commands;
         }
         return null;

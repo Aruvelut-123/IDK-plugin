@@ -53,12 +53,12 @@ public final class IDK extends JavaPlugin {
                 information_lore.clear();
                 List<String> help_msg = new ArrayList<>();
                 help_msg.add("IDK plugin help:");
-                help_msg.add("\n/IDK help - This help message");
-                help_msg.add("\n/IDK gm <number of gamemodes> - Change your gamemode");
-                help_msg.add("\n/IDK open workbench - Open a chest or a workbench");
-                help_msg.add("\n/IDK menu - open IDK menu");
-                help_msg.add("\n/IDK ping - check your ping in game");
-                help_msg.add("\n/IDK reload - reload config file");
+                help_msg.add("\n&b /IDK help - 帮助指令");
+                help_msg.add("\n/IDK gm <游戏模式> - 更改游戏模式");
+                help_msg.add("\n/IDK open workbench - 打开工作台");
+                help_msg.add("\n/IDK menu - 打开 IDK 菜单");
+                help_msg.add("\n/IDK ping - 显示你当前的延迟");
+                help_msg.add("\n/IDK reload - 重新载入配置文件");
                 this.getConfig().set("Help", help_msg);
                 help_msg.clear();
                 checking = false;
@@ -70,6 +70,6 @@ public final class IDK extends JavaPlugin {
     public void onDisable() {
         //插件关闭逻辑
         Logger logger = Bukkit.getLogger();
-        logger.info("Stopping...");
+        logger.info("正在关闭....");
     }
 }

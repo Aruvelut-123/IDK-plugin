@@ -29,7 +29,7 @@ public class IDKnetHandler implements Runnable {
     private static final CloseableHttpClient httpclient = HttpClients.createDefault();
     public static void get_10_top_projects(Player player, boolean is_console) throws IOException {
         if (is_console) {
-            System.out.println("Getting latest 10 plugins...");
+            System.out.println("正在获取最热门的插件...");
             int limit = 10;
             String url = "https://api.modrinth.com/v2/search?limit="+limit+"&facets=";
             String categories = "paper";
@@ -37,17 +37,17 @@ public class IDKnetHandler implements Runnable {
             String arg = "[[\"categories:"+categories+"\"],[\"versions:"+versions+"\"],[\"project_type:plugin\"]]";
             String real_uri = argument_handler(url, arg);
             String result = sendGet(real_uri);
-            System.out.println("10 Top Plugins:");
+            System.out.println("前十个热门插件:");
             for(int i = 0; i < 10; i++) {
                 String plugin_title = decoder.decode_json(result, i, "hits", "title");
                 String plugin_description = decoder.decode_json(result, i, "hits", "description");
                 String plugin_id = decoder.decode_json(result, i, "hits", "project_id");
                 int a = i+1;
-                System.out.println(a+". Name: " + plugin_title + "\nID: " + plugin_id + "\nDescription: " + plugin_description);
+                System.out.println(a+". 名称: " + plugin_title + "\nID: " + plugin_id + "\n描述: " + plugin_description);
             }
-            System.out.println("Install a plugin by using: /idk plugin install <id>");
+            System.out.println("安装插件指令: /idk plugin install <id>");
         } else {
-            player.sendMessage("Getting latest 10 plugins...");
+            player.sendMessage("正在获取最热门的插件...");
             int limit = 10;
             String url = "https://api.modrinth.com/v2/search?limit="+limit+"&facets=";
             String categories = "paper";
@@ -55,7 +55,7 @@ public class IDKnetHandler implements Runnable {
             String arg = "[[\"categories:"+categories+"\"],[\"versions:"+versions+"\"],[\"project_type:plugin\"]]";
             String real_uri = argument_handler(url, arg);
             String result = sendGet(real_uri);
-            player.sendMessage("10 Top Plugins:");
+            player.sendMessage("前十个热门插件:");
             for(int i = 0; i < limit; i++) {
                 String plugin_title = decoder.decode_json(result, i, "hits", "title");
                 String plugin_description = decoder.decode_json(result, i, "hits", "description");
@@ -63,7 +63,7 @@ public class IDKnetHandler implements Runnable {
                 int a = i+1;
                 player.sendMessage(a+". Name: " + plugin_title + "\nID: " + plugin_id + "\nDescription: " + plugin_description);
             }
-            player.sendMessage("Install a plugin by using: /idk plugin install <id>");
+            player.sendMessage("安装插件指令: /idk plugin install <id>");
         }
     }
 
@@ -74,7 +74,7 @@ public class IDKnetHandler implements Runnable {
 
     public static void install_project(Player player, boolean is_console, String project_id) throws IOException {
         if (is_console) {
-            System.out.println("Start finding plugin id: " + project_id);
+            System.out.println("正在查找插件ID: " + project_id);
             int limit = 2;
             boolean featured = true;
             String loader = "paper";
@@ -105,10 +105,10 @@ public class IDKnetHandler implements Runnable {
                 enable_plugin(file_path, plugin_title, true, null);
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println("Plugin not found Or error was made!");
+                System.out.println("找不到插件或出现错误！");
             }
         } else {
-            player.sendMessage("Start finding plugin id: " + project_id);
+            player.sendMessage("正在查找插件ID: " + project_id);
             int limit = 2;
             boolean featured = true;
             String loader = "paper";
@@ -151,7 +151,7 @@ public class IDKnetHandler implements Runnable {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                player.sendMessage("Plugin not found Or error was made!");
+                player.sendMessage("找不到插件或出现错误！");
             }
         }
     }
@@ -208,7 +208,7 @@ public class IDKnetHandler implements Runnable {
                 pbt.finish();//文件读取完成，关闭进度条
                 fos.flush();
                 fos.close();
-                System.out.println("File downloaded successfully to: "+downloadPath);
+                System.out.println("文件已成功下载到: "+downloadPath);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -216,7 +216,7 @@ public class IDKnetHandler implements Runnable {
             }
         } else {
             try {
-                player.sendMessage("Start download file: "+fileName+" from:"+urlPath);
+                player.sendMessage("开始下载文件: "+fileName+" from:"+urlPath);
                 File file = new File(downloadPath);
                 if(!file.exists()) {
                     file.createNewFile();
@@ -237,7 +237,7 @@ public class IDKnetHandler implements Runnable {
                 fos.flush();
                 fos.close();
                 fis.close();
-                player.sendMessage("File downloaded successfully to: "+downloadPath);
+                player.sendMessage("文件已成功下载到: "+downloadPath);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -248,7 +248,7 @@ public class IDKnetHandler implements Runnable {
 
     public static void get_projects_by_title(Player player, boolean is_console, String title) throws IOException {
         if (is_console) {
-            System.out.println("Trying to get "+title+" plugin's info...");
+            System.out.println("正在获取 "+title+" 插件信息");
             int limit = 10;
             String url = "https://api.modrinth.com/v2/search?limit="+limit+"&facets=";
             String categories = "paper";
@@ -278,7 +278,7 @@ public class IDKnetHandler implements Runnable {
                 System.out.println("Or maybe try to type full name of the plugin because modrinth can only search that!");
             }
         } else {
-            player.sendMessage("Trying to get "+title+" plugin's info...");
+            player.sendMessage("正在获取 "+title+" 插件信息");
             int limit = 10;
             String url = "https://api.modrinth.com/v2/search?limit="+limit+"&facets=";
             String categories = "paper";
@@ -304,8 +304,8 @@ public class IDKnetHandler implements Runnable {
                     player.sendMessage(a+". Name: " + plugin_title + "\nID: " + plugin_id + "\nDescription: " + plugin_description);
                 }
             } else {
-                player.sendMessage("Error: Plugin not found or error was made! Check console messages if there's a error!");
-                player.sendMessage("Or maybe try to type full name of the plugin because modrinth can only search that!");
+                player.sendMessage("错误：找不到插件或出现错误！如果出现错误，请检查控制台消息！");
+                player.sendMessage("或者试着键入插件的全名，因为modrinth只能搜索！");
             }
         }
     }

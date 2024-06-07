@@ -14,7 +14,7 @@ commands: #命令
 permissions:
   IDK.command.IDK:
     description: "Main plugin command permission."
-    default: true
+    default: op
     children:
       - IDK.command.IDK.plugin
       - IDK.command.IDK.reload

@@ -23,54 +23,54 @@ public abstract class IDKMessageConfig {
                 file.createNewFile();
                 FileWriter fw = new FileWriter(file);
                 fw.write("message-ver: 3\n" +
-                        "main: \"IDK Plugin Version 1.2\\nMade by Baymaxawa\"\n" +
-                        "reload: \"Config reloaded!\"\n" +
-                        "failed: \"Config reload failed! Check details below!\"\n" +
-                        "failed_p: \"Config reload failed! Check console for more information.\"\n" +
-                        "survival: \"You're now in SURVIVAL!\"\n" +
-                        "creative: \"You're now in CREATIVE!\"\n" +
-                        "adventure: \"You're now in ADVENTURE!\"\n" +
-                        "spectator: \"You're now in SPECTATOR!\"\n" +
-                        "ping: \"Your ping is: \"\n" +
-                        "no-console: \"Console not avalible right now.\"\n" +
-                        "available-plugins: \"Available plugins: \"\n" +
-                        "plugin-disable-error: \"Cannot disable this plugin or already disabled!\"\n" +
-                        "plugin-disabled: \"Plugin [plugin_name] disabled!\"\n" +
-                        "plugin-enable-error: \"Cannot enable this plugin or already enabled!\"\n" +
-                        "plugin-enabled: \"Plugin [plugin_name] enabled!\"\n" +
-                        "plugin-not-found: \"Plugin not found!\"\n" +
-                        "plugin-disable-egg: \"I cannot disable myself. Like you cannot make your heart stop.\"\n" +
-                        "plugin-enable-egg: \"I cannot enable myself. Like you cannot make dead alive.\"\n" +
-                        "IDK_Helper_name: \"IDK Help\"\n" +
+                        "main: \"IDK插件 版本1.2.1\\n制作者 Baymaxawa\"\n" +
+                        "reload: \"&配置文件重载成功！\"\n" +
+                        "failed: \"配置文件重载失败！ 检查以下详细信息！\"\n" +
+                        "failed_p: \"配置文件重载失败！ 查看控制台获取更多信息。\"\n" +
+                        "survival: \"你现在处于生存模式！\"\n" +
+                        "creative: \"你现在处于创造模式！\"\n" +
+                        "adventure: \"你现在处于冒险模式！\"\n" +
+                        "spectator: \"你现在处于旁观模式！\"\n" +
+                        "ping: \"你的ping值为： \"\n" +
+                        "no-console: \"当前无法使用控制台。\"\n" +
+                        "available-plugins: \"可用插件：\"\n" +
+                        "plugin-disable-error: \"无法禁用此插件，或已禁用！\"\n" +
+                        "plugin-disabled: \"插件 [plugin_name] 已禁用\"\n" +
+                        "plugin-enable-error: \"无法启用此插件，或已启用！\"\n" +
+                        "plugin-enabled: \"插件 [plugin_name] 已启用\"\n" +
+                        "plugin-not-found: \"未找到插件！\"\n" +
+                        "plugin-disable-egg: \"你不能让IDK插件自己关闭自己！！！\"\n" +
+                        "plugin-enable-egg: \"你不能让IDK插件自己启用自己！！！\"\n" +
+                        "IDK_Helper_name: \"IDK 帮助\"\n" +
                         "IDK_Helper_lore:\n" +
                         "  - \"\"\n" +
-                        "IDK_Workbench_name: \"IDK Workbench\"\n" +
+                        "IDK_Workbench_name: \"IDK 工作台\"\n" +
                         "IDK_Workbench_lore:\n" +
                         "  - \"\"\n" +
-                        "menu_title: \"IDK Menu\"\n" +
-                        "workbench_title: \"IDK Workbench\"\n" +
+                        "menu_title: \"IDK 菜单\"\n" +
+                        "workbench_title: \"IDK 工作台\"\n" +
                         "Information_name: \"Information\"\n" +
                         "Information_lore:\n" +
-                        "  - \"Author: MinecraftBaymax\"\n" +
-                        "  - \"Add by IDK plugin.\"\n" +
+                        "  - \"制作者: 老谭酸菜(bushi)\"\n" +
+                        "  - \"这是一句废话\"\n" +
                         "Help:\n" +
-                        "  -  \"IDK plugin help:\"\n" +
-                        "  -  \"/IDK help - This help message\"\n" +
-                        "  -  \"/IDK gm <number of gamemodes> - Change your gamemode\"\n" +
-                        "  -  \"/IDK open workbench - Open a chest or a workbench\"\n" +
-                        "  -  \"/IDK plugin - plugin commands\"\n" +
-                        "  -  \"/IDK menu - open IDK menu\"\n" +
-                        "  -  \"/IDK ping - check your ping in game\"\n" +
-                        "  -  \"/IDK reload - reload config file\"\n" +
+                        "  -  \"IDK 插件帮助:\"\n" +
+                        "  -  \"/IDK help - 显示帮助信息\"\n" +
+                        "  -  \"/IDK gm <游戏模式编号> - 更改你的游戏模式\"\n" +
+                        "  -  \"/IDK open workbench - 打开工作台\"\n" +
+                        "  -  \"/IDK plugin - 插件指令\"\n" +
+                        "  -  \"/IDK menu - 打开IDK菜单\"\n" +
+                        "  -  \"/IDK ping - 显示你的ping值\"\n" +
+                        "  -  \"/IDK reload - 重载配置文件\"\n" +
                         "Plugin_command_help:\n" +
                         "  -  \"IDK plugin help:\"\n" +
-                        "  -  \"/IDK plugin list - Check plugin list\"\n" +
-                        "  -  \"/IDK plugin load <jar filename> - Load a unloaded jar plugin to server\"\n" +
-                        "  -  \"/IDK plugin disable <plugin name> - Disable a plugin\"\n" +
-                        "  -  \"/IDK plugin enable <plugin name> - Enable a plugin\"\n" +
-                        "  -  \"/IDK plugin search - Get Top 10 Plugin\"\n" +
-                        "  -  \"/IDK plugin search <plugin name> - Search a plugin by it's known name\"\n" +
-                        "  -  \"/IDK plugin install <plugin id> -Install a plugin by it's id\"\n");
+                        "  -  \"/IDK plugin list - 显示插件列表\"\n" +
+                        "  -  \"/IDK plugin load <jar filename> - 载入插件\"\n" +
+                        "  -  \"/IDK plugin disable <plugin name> - 禁用插件\"\n" +
+                        "  -  \"/IDK plugin enable <plugin name> - 启用插件\"\n" +
+                        "  -  \"/IDK plugin search - 搜索前十个热门插件\"\n" +
+                        "  -  \"/IDK plugin search <plugin name> - 搜索插件\"\n" +
+                        "  -  \"/IDK plugin install <plugin id> -输入插件ID并安装\"\n");
                 fw.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -83,54 +83,54 @@ public abstract class IDKMessageConfig {
                     file.createNewFile();
                     FileWriter fw = new FileWriter(file);
                     fw.write("message-ver: 3\n" +
-                            "main: \"IDK Plugin Version 1.2\\nMade by Baymaxawa\"\n" +
-                            "reload: \"Config reloaded!\"\n" +
-                            "failed: \"Config reload failed! Check details below!\"\n" +
-                            "failed_p: \"Config reload failed! Check console for more information.\"\n" +
-                            "survival: \"You're now in SURVIVAL!\"\n" +
-                            "creative: \"You're now in CREATIVE!\"\n" +
-                            "adventure: \"You're now in ADVENTURE!\"\n" +
-                            "spectator: \"You're now in SPECTATOR!\"\n" +
-                            "ping: \"Your ping is: \"\n" +
-                            "no-console: \"Console not avalible right now.\"\n" +
-                            "available-plugins: \"Available plugins: \"\n" +
-                            "plugin-disable-error: \"Cannot disable this plugin or already disabled!\"\n" +
-                            "plugin-disabled: \"Plugin [plugin_name] disabled!\"\n" +
-                            "plugin-enable-error: \"Cannot enable this plugin or already enabled!\"\n" +
-                            "plugin-enabled: \"Plugin [plugin_name] enabled!\"\n" +
-                            "plugin-not-found: \"Plugin not found!\"\n" +
-                            "plugin-disable-egg: \"I cannot disable myself. Like you cannot make your heart stop.\"\n" +
-                            "plugin-enable-egg: \"I cannot enable myself. Like you cannot make dead alive.\"\n" +
-                            "IDK_Helper_name: \"IDK Help\"\n" +
+                            "main: \"IDK插件 版本1.2.1\\n制作者 Baymaxawa\"\n" +
+                            "reload: \"&配置文件重载成功！\"\n" +
+                            "failed: \"配置文件重载失败！ 检查以下详细信息！\"\n" +
+                            "failed_p: \"配置文件重载失败！ 查看控制台获取更多信息。\"\n" +
+                            "survival: \"你现在处于生存模式！\"\n" +
+                            "creative: \"你现在处于创造模式！\"\n" +
+                            "adventure: \"你现在处于冒险模式！\"\n" +
+                            "spectator: \"你现在处于旁观模式！\"\n" +
+                            "ping: \"你的ping值为： \"\n" +
+                            "no-console: \"当前无法使用控制台。\"\n" +
+                            "available-plugins: \"可用插件：\"\n" +
+                            "plugin-disable-error: \"无法禁用此插件，或已禁用！\"\n" +
+                            "plugin-disabled: \"插件 [plugin_name] 已禁用\"\n" +
+                            "plugin-enable-error: \"无法启用此插件，或已启用！\"\n" +
+                            "plugin-enabled: \"插件 [plugin_name] 已启用\"\n" +
+                            "plugin-not-found: \"未找到插件！\"\n" +
+                            "plugin-disable-egg: \"你不能让IDK插件自己关闭自己！！！\"\n" +
+                            "plugin-enable-egg: \"你不能让IDK插件自己启用自己！！！\"\n" +
+                            "IDK_Helper_name: \"IDK 帮助\"\n" +
                             "IDK_Helper_lore:\n" +
                             "  - \"\"\n" +
-                            "IDK_Workbench_name: \"IDK Workbench\"\n" +
+                            "IDK_Workbench_name: \"IDK 工作台\"\n" +
                             "IDK_Workbench_lore:\n" +
                             "  - \"\"\n" +
-                            "menu_title: \"IDK Menu\"\n" +
-                            "workbench_title: \"IDK Workbench\"\n" +
+                            "menu_title: \"IDK 菜单\"\n" +
+                            "workbench_title: \"IDK 工作台\"\n" +
                             "Information_name: \"Information\"\n" +
                             "Information_lore:\n" +
-                            "  - \"Author: MinecraftBaymax\"\n" +
-                            "  - \"Add by IDK plugin.\"\n" +
+                            "  - \"制作者: 老谭酸菜(bushi)\"\n" +
+                            "  - \"这是一句废话\"\n" +
                             "Help:\n" +
-                            "  -  \"IDK plugin help:\"\n" +
-                            "  -  \"/IDK help - This help message\"\n" +
-                            "  -  \"/IDK gm <number of gamemodes> - Change your gamemode\"\n" +
-                            "  -  \"/IDK open workbench - Open a chest or a workbench\"\n" +
-                            "  -  \"/IDK plugin - plugin commands\"\n" +
-                            "  -  \"/IDK menu - open IDK menu\"\n" +
-                            "  -  \"/IDK ping - check your ping in game\"\n" +
-                            "  -  \"/IDK reload - reload config file\"\n" +
+                            "  -  \"IDK 插件帮助:\"\n" +
+                            "  -  \"/IDK help - 显示帮助信息\"\n" +
+                            "  -  \"/IDK gm <游戏模式编号> - 更改你的游戏模式\"\n" +
+                            "  -  \"/IDK open workbench - 打开工作台\"\n" +
+                            "  -  \"/IDK plugin - 插件指令\"\n" +
+                            "  -  \"/IDK menu - 打开IDK菜单\"\n" +
+                            "  -  \"/IDK ping - 显示你的ping值\"\n" +
+                            "  -  \"/IDK reload - 重载配置文件\"\n" +
                             "Plugin_command_help:\n" +
                             "  -  \"IDK plugin help:\"\n" +
-                            "  -  \"/IDK plugin list - Check plugin list\"\n" +
-                            "  -  \"/IDK plugin load <jar filename> - Load a unloaded jar plugin to server\"\n" +
-                            "  -  \"/IDK plugin disable <plugin name> - Disable a plugin\"\n" +
-                            "  -  \"/IDK plugin enable <plugin name> - Enable a plugin\"\n" +
-                            "  -  \"/IDK plugin search - Get Top 10 Plugin\"\n" +
-                            "  -  \"/IDK plugin search <plugin name> - Search a plugin by it's known name\"\n" +
-                            "  -  \"/IDK plugin install <plugin id> -Install a plugin by it's id\"\n");
+                            "  -  \"/IDK plugin list - 显示插件列表\"\n" +
+                            "  -  \"/IDK plugin load <jar filename> - 载入插件\"\n" +
+                            "  -  \"/IDK plugin disable <plugin name> - 禁用插件\"\n" +
+                            "  -  \"/IDK plugin enable <plugin name> - 启用插件\"\n" +
+                            "  -  \"/IDK plugin search - 搜索前十个热门插件\"\n" +
+                            "  -  \"/IDK plugin search <plugin name> - 搜索插件\"\n" +
+                            "  -  \"/IDK plugin install <plugin id> -输入插件ID并安装\"\n");
                     fw.close();
                 }
             } catch (IOException e) {
