@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 
 public final class IDK extends JavaPlugin {
     static IDK idk;
-    public boolean test_build = true;
-    public boolean beta_build = true;
+    public boolean test_build = false;
+    public boolean beta_build = false;
     int config_ver = 1;
     boolean checking = false;
     Configuration messages = null;

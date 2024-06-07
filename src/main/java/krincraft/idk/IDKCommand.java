@@ -6,6 +6,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -26,105 +28,109 @@ public class IDKCommand implements CommandExecutor {
     static String filename = "messages.yml";
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) { //检测指令执行
-        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk, filename) {
-            @Override
-            public void save() {
-                super.save();
+        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk, "messages.yml") {
+            protected void finalize() throws Throwable {
+                super.finalize();
             }
         };
         Configuration config = IDK.idk.getConfig();
         Boolean plugin_manage = config.getBoolean("plugin-management");
         if(commandSender instanceof Player) {
             Player player = (Player) commandSender; //获取执行玩家
+            if(strings.length == 0) {
+                player.sendMessage(messages.getString("main"));
+                return true;
+            }
             if(strings.length >= 1 && strings[0].equals("plugin")) {
                 if(plugin_manage) {
-                    if(strings.length == 2 && strings[1].equals("list")) {
-                        IDK.idk.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
-                        player.sendMessage(messages.getString("available-plugins") + IDK.idk.plugins);
-                        return true;
-                    }
-                    if(strings.length == 2 && strings[1].equals("load")) {
-                        return false;
-                    }
-                    if(strings.length == 3 && strings[1].equals("load")) {
-                        String folder = Bukkit.getPluginsFolder().getAbsolutePath();
-                        if(!strings[2].isEmpty()) {
-                            String file_name = strings[2];
-                            String file_path = folder + "\\" + file_name;
-                            try {
-                                Plugin plugin = Bukkit.getPluginManager().loadPlugin(new File(file_path));
-                                if (plugin != null) {
-                                    Bukkit.getPluginManager().enablePlugin(plugin);
-                                    player.sendMessage("Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
-                                }
-                                return true;
-                            } catch (InvalidPluginException | InvalidDescriptionException e) {
-                                return true;
-                            }
-                        } else {
-                            player.sendMessage("Error!");
+                    if(player.hasPermission("IDK.command.IDK.plugin")) {
+                        if(strings.length == 2 && strings[1].equals("list")) {
+                            IDK.idk.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
+                            player.sendMessage(messages.getString("available-plugins") + IDK.idk.plugins);
                             return true;
                         }
-                    }
-                    if(strings.length == 2 && strings[1].equals("disable")) {
-                        return false;
-                    }
-                    if(strings.length == 3 && strings[1].equals("disable")) {
-                        String plugin_name = strings[2];
-                        if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
-                            Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
-                            if (plugin != null) {
+                        if(strings.length == 3 && strings[1].equals("load")) {
+                            String folder = Bukkit.getPluginsFolder().getAbsolutePath();
+                            if(!strings[2].isEmpty()) {
+                                String file_name = strings[2];
+                                String file_path = folder + "\\" + file_name;
                                 try {
-                                    Bukkit.getPluginManager().disablePlugin(plugin);
-                                } catch (Exception e) {
-                                    player.sendMessage(messages.getString("plugin-disable-error"));
+                                    Plugin plugin = Bukkit.getPluginManager().loadPlugin(new File(file_path));
+                                    if (plugin != null) {
+                                        Bukkit.getPluginManager().enablePlugin(plugin);
+                                        player.sendMessage("Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
+                                    }
+                                    return true;
+                                } catch (InvalidPluginException | InvalidDescriptionException e) {
+                                    return true;
                                 }
-                                player.sendMessage(messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
                             } else {
-                                player.sendMessage(messages.getString("plugin-not-found"));
+                                player.sendMessage("Error!");
+                                return true;
                             }
-                        } else {
-                            player.sendMessage(messages.getString("plugin-disable-egg"));
                         }
-                        return true;
-                    }
-                    if(strings.length == 2 && strings[1].equals("enable")) {
-                        return false;
-                    }
-                    if(strings.length == 3 && strings[1].equals("enable")) {
-                        String plugin_name = strings[2];
-                        if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
-                            Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
-                            if (plugin != null) {
-                                try {
-                                    Bukkit.getPluginManager().enablePlugin(plugin);
-                                } catch (Exception e) {
-                                    player.sendMessage(messages.getString("plugin-enable-error"));
+                        if(strings.length == 3 && strings[1].equals("disable")) {
+                            String plugin_name = strings[2];
+                            if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
+                                Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
+                                if (plugin != null) {
+                                    try {
+                                        Bukkit.getPluginManager().disablePlugin(plugin);
+                                    } catch (Exception e) {
+                                        player.sendMessage(messages.getString("plugin-disable-error"));
+                                    }
+                                    player.sendMessage(messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
+                                } else {
+                                    player.sendMessage(messages.getString("plugin-not-found"));
                                 }
-                                player.sendMessage(messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
                             } else {
-                                player.sendMessage(messages.getString("plugin-not-found"));
+                                player.sendMessage(messages.getString("plugin-disable-egg"));
                             }
-                        } else {
-                            player.sendMessage(messages.getString("plugin-enable-egg"));
+                            return true;
                         }
-                        return true;
-                    }
-                    if(strings.length == 2 && strings[1].equals("search")) {
-                        try {
-                            IDKnetHandler.get_10_top_projects(player, false);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
+                        if(strings.length == 3 && strings[1].equals("enable")) {
+                            String plugin_name = strings[2];
+                            if (!plugin_name.equals("idk") && !plugin_name.equals("IDK")) {
+                                Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
+                                if (plugin != null) {
+                                    try {
+                                        Bukkit.getPluginManager().enablePlugin(plugin);
+                                    } catch (Exception e) {
+                                        player.sendMessage(messages.getString("plugin-enable-error"));
+                                    }
+                                    player.sendMessage(messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
+                                } else {
+                                    player.sendMessage(messages.getString("plugin-not-found"));
+                                }
+                            } else {
+                                player.sendMessage(messages.getString("plugin-enable-egg"));
+                            }
+                            return true;
                         }
-                        return true;
-                    }
-                    if(strings.length == 3 && strings[1].equals("search")) {
-                        try {
-                            IDKnetHandler.get_projects_by_title(player, false, strings[2]);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
+                        if(strings.length >= 3 && strings[1].equals("search")) {
+                            try {
+                                if(strings.length > 3) {
+                                    String plugin_title = "";
+                                    for(int i = 2; i < strings.length; i++) {
+                                        plugin_title = plugin_title+strings[i]+" ";
+                                    }
+                                    String real_plugin_title = plugin_title.substring(0, plugin_title.length() - 1);
+                                    IDKnetHandler.get_projects_by_title(null, true, real_plugin_title);
+                                } else {
+                                    IDKnetHandler.get_projects_by_title(player, false, strings[2]);
+                                }
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            return true;
                         }
-                        return true;
+                        if(strings.length == 3 && strings[1].equals("install")) {
+                            try {
+                                IDKnetHandler.install_project(player, false, strings[2]);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
                     }
                     return false;
                 } else {
@@ -133,36 +139,41 @@ public class IDKCommand implements CommandExecutor {
                 }
             }
             if(strings.length == 1 && strings[0].equals("reload")) {
-                try{
-                    messages.save();
-                    IDK.idk.checking = true;
-                    IDK.idk.check();
-                    IDK.idk.reloadConfig();
-                    messages.reload(filename);
-                    // 测试是否有空值
-                    messages.getString("IDK_Helper_name");
-                    messages.getStringList("IDK_Helper_lore");
-                    messages.getString("IDK_Workbench_name");
-                    messages.getStringList("IDK_Workbench_lore");
-                    messages.getString("menu_title");
-                    messages.getString("workbench_title");
-                    messages.getString("failed");
-                    messages.getString("failed_p");
-                    messages.getString("survival");
-                    messages.getString("creative");
-                    messages.getString("adventure");
-                    messages.getString("spectator");
-                    System.out.println(messages.getString("reload"));
-                    player.sendMessage(messages.getString("reload"));
-                    
-                } catch (Exception e) {
-                    System.out.println(messages.getString("failed"));
-                    player.sendMessage(messages.getString("failed_p"));
-                    e.printStackTrace();
+                if(player.hasPermission("IDK.command.IDK.reload")) {
+                    try{
+                        IDKMessageConfig.save();
+                        IDK.idk.checking = true;
+                        IDK.idk.check();
+                        IDK.idk.reloadConfig();
+                        IDKMessageConfig.reload(filename);
+                        // 测试是否有空值
+                        messages.getString("IDK_Helper_name");
+                        messages.getStringList("IDK_Helper_lore");
+                        messages.getString("IDK_Workbench_name");
+                        messages.getStringList("IDK_Workbench_lore");
+                        messages.getString("menu_title");
+                        messages.getString("workbench_title");
+                        messages.getString("failed");
+                        messages.getString("failed_p");
+                        messages.getString("survival");
+                        messages.getString("creative");
+                        messages.getString("adventure");
+                        messages.getString("spectator");
+                        System.out.println(messages.getString("reload"));
+                        player.sendMessage(messages.getString("reload"));
+
+                    } catch (Exception e) {
+                        System.out.println(messages.getString("failed"));
+                        player.sendMessage(messages.getString("failed_p"));
+                        e.printStackTrace();
+                    }
                 }
                 return true;
             }
             if(strings.length == 2 && strings[0].equals("gm")) { //检测参数长度是否为二并且第一个参数是否为gm
+                if(player.hasPermission("IDK.command.IDK.gm")) {
+
+                }
                 switch (strings[1]) { //检测第二个参数
                     case "0": //如果是0
                         player.setGameMode(GameMode.SURVIVAL); //设置玩家游戏模式为生存
@@ -186,90 +197,102 @@ public class IDKCommand implements CommandExecutor {
                 return true;
             }
             if(strings.length == 1 && strings[0].equals("menu")) {
-                Inventory inv = Bukkit.createInventory(null, 9, messages.getString("menu_title")); //创建一个大小为9格(必须为9或9的倍数)的背包，标题设置为IDK Chest
-                int left = inv.getSize(); //获取背包大小并赋值到left上
-                int slot = 0; //设置slot的值为0
-                int i = 0;
-                List<String> slot_used = new ArrayList<>();
+                if(player.hasPermission("IDK.command.IDK.menu")) {
+                    Inventory inv = Bukkit.createInventory(null, 9, messages.getString("menu_title")); //创建一个大小为9格(必须为9或9的倍数)的背包，标题设置为IDK Chest
+                    int left = inv.getSize(); //获取背包大小并赋值到left上
+                    int slot = 0; //设置slot的值为0
+                    int i = 0;
+                    List<String> slot_used = new ArrayList<>();
 
-                ItemStack idk_helper = new ItemStack(Material.DIAMOND, 1); //创建一个物品，材质为钻石，数量为1个
-                ItemMeta idk_helper_meta = idk_helper.getItemMeta(); //获取物品meta
-                idk_helper_meta.setDisplayName(messages.getString("IDK_Helper_name"));
-                idk_helper_meta.setLore(messages.getStringList("IDK_Helper_lore"));
-                idk_helper.setItemMeta(idk_helper_meta); //设置物品meta
-                inv.setItem(1, idk_helper); //添加物品到背包中
+                    ItemStack idk_helper = new ItemStack(Material.DIAMOND, 1); //创建一个物品，材质为钻石，数量为1个
+                    ItemMeta idk_helper_meta = idk_helper.getItemMeta(); //获取物品meta
+                    idk_helper_meta.setDisplayName(messages.getString("IDK_Helper_name"));
+                    idk_helper_meta.setLore(messages.getStringList("IDK_Helper_lore"));
+                    idk_helper.setItemMeta(idk_helper_meta); //设置物品meta
+                    inv.setItem(1, idk_helper); //添加物品到背包中
 
-                left -= 1; //left等于left减1
-                slot_used.add("1");
-
-                ItemStack idk_workbench = new ItemStack(Material.LEGACY_WORKBENCH, 1);
-                ItemMeta idk_workbench_meta = idk_workbench.getItemMeta();
-                idk_workbench_meta.setDisplayName(messages.getString("IDK_Workbench_name"));
-                idk_workbench_meta.setLore(messages.getStringList("IDK_Workbench_lore"));
-                idk_workbench.setItemMeta(idk_workbench_meta);
-                inv.setItem(7, idk_workbench);
-
-                left -= 1;
-                slot_used.add("7");
-
-                ItemStack other = new ItemStack(Material.BLUE_STAINED_GLASS_PANE, 1); //创建一个物品，材质为蓝色玻璃板，数量为1个
-                ItemMeta other_meta = other.getItemMeta(); //获取物品meta
-                other_meta.setDisplayName(messages.getString("Information_name")); //设置物品显示名称为Infomation
-                other_meta.setLore(messages.getStringList("Information_lore"));
-                other.setItemMeta(other_meta); //设置物品meta
-
-                while(left > 0) { //如果left大于0则循环
-                    inv.setItem(slot, other); //设置背包中第slot位的物品为other(默认第一格的槽位ID为0)
                     left -= 1; //left等于left减1
-                    slot += 1; //slot等于slot加1
-                    if(String.valueOf(slot).equals(slot_used.get(i))) {
-                        slot += 1;
-                        try {
-                            if(!slot_used.get(i+1).isEmpty()) {
-                                i += 1;
+                    slot_used.add("1");
+
+                    ItemStack idk_workbench = new ItemStack(Material.LEGACY_WORKBENCH, 1);
+                    ItemMeta idk_workbench_meta = idk_workbench.getItemMeta();
+                    idk_workbench_meta.setDisplayName(messages.getString("IDK_Workbench_name"));
+                    idk_workbench_meta.setLore(messages.getStringList("IDK_Workbench_lore"));
+                    idk_workbench.setItemMeta(idk_workbench_meta);
+                    inv.setItem(7, idk_workbench);
+
+                    left -= 1;
+                    slot_used.add("7");
+
+                    ItemStack other = new ItemStack(Material.BLUE_STAINED_GLASS_PANE, 1); //创建一个物品，材质为蓝色玻璃板，数量为1个
+                    ItemMeta other_meta = other.getItemMeta(); //获取物品meta
+                    other_meta.setDisplayName(messages.getString("Information_name")); //设置物品显示名称为Infomation
+                    other_meta.setLore(messages.getStringList("Information_lore"));
+                    other.setItemMeta(other_meta); //设置物品meta
+
+                    while(left > 0) { //如果left大于0则循环
+                        inv.setItem(slot, other); //设置背包中第slot位的物品为other(默认第一格的槽位ID为0)
+                        left -= 1; //left等于left减1
+                        slot += 1; //slot等于slot加1
+                        if(String.valueOf(slot).equals(slot_used.get(i))) {
+                            slot += 1;
+                            try {
+                                if(!slot_used.get(i+1).isEmpty()) {
+                                    i += 1;
+                                }
+                            } catch (IndexOutOfBoundsException e) {
                             }
-                        } catch (IndexOutOfBoundsException e) {
                         }
                     }
-                }
 
-                player.openInventory(inv); //使指定玩家打开背包
+                    player.openInventory(inv); //使指定玩家打开背包
+                }
                 return true;
             }
             if(strings.length == 2 && strings[0].equals("open")) { //检测参数长度是否为二并且第一个参数是否为open
-                if(strings[1].equals("workbench")) { //检测第二个参数是否为workbench
-                    Inventory inv = Bukkit.createInventory(null, InventoryType.WORKBENCH, messages.getString("workbench_title")); //创建一个背包，标题为IDK Workbench，类型为工作台
-                    player.openInventory(inv); //使指定玩家打开背包
-                    return true;
+                if(player.hasPermission("IDK.command.IDK.open")) {
+                    if(player.hasPermission("IDK.command.IDK.open.workbench")) {
+                        if(strings[1].equals("workbench")) { //检测第二个参数是否为workbench
+                            Inventory inv = Bukkit.createInventory(null, InventoryType.WORKBENCH, messages.getString("workbench_title")); //创建一个背包，标题为IDK Workbench，类型为工作台
+                            player.openInventory(inv); //使指定玩家打开背包
+                            return true;
+                        }
+                    }
                 }
             }
             if(strings.length == 1 && strings[0].equals("help")) { //检测参数长度是否为1并且第一个参数是否为help
-                List<String> help_msg = messages.getStringList("Help");
-                Object[] help_msg_fix = help_msg.toArray();
-                for(int i = 0; i < help_msg_fix.length; i++) {
-                    player.sendMessage(help_msg_fix[i].toString());
-                }
-                return true;
-            }
-            if(strings.length == 2 && strings[0].equals("help")) {
-                if(strings[1].equals("plugin")) {
-                    List<String> help_msg = messages.getStringList("Plugin_command_help");
+                if(player.hasPermission("IDK.command.IDK.help")) {
+                    List<String> help_msg = messages.getStringList("Help");
                     Object[] help_msg_fix = help_msg.toArray();
                     for(int i = 0; i < help_msg_fix.length; i++) {
                         player.sendMessage(help_msg_fix[i].toString());
                     }
-                    return true;
+                }
+                return true;
+            }
+            if(strings.length == 2 && strings[0].equals("help")) {
+                if(player.hasPermission("IDK.command.IDK.help.plugin")) {
+                    if(strings[1].equals("plugin")) {
+                        List<String> help_msg = messages.getStringList("Plugin_command_help");
+                        Object[] help_msg_fix = help_msg.toArray();
+                        for(int i = 0; i < help_msg_fix.length; i++) {
+                            player.sendMessage(help_msg_fix[i].toString());
+                        }
+                        return true;
+                    }
                 }
                 return false;
             }
             if(strings.length == 1 && strings[0].equals("ping")) {
-                player.sendMessage(messages.getString("ping") + player.getPing() + "ms!"); //给玩家发送消息
+                if(player.hasPermission("IDK.command.IDK.ping")) {
+                    player.sendMessage(messages.getString("ping") + player.getPing() + "ms!"); //给玩家发送消息
+                }
                 return true;
             }
             if(IDK.idk.test_build) {
                 if(strings.length == 1 && strings[0].equals("test")) {
                     try {
-                        IDKnetHandler.get_10_top_projects(player, false);
+                        IDKnetHandler.install_project(player, false, "P1OZGk5p");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -277,13 +300,17 @@ public class IDKCommand implements CommandExecutor {
                 }
             }
         } else{
+            if(strings.length == 0) {
+                System.out.println(messages.getString("main"));
+                return true;
+            }
             if(strings.length == 1 && strings[0].equals("reload")) {
                 try{
-                    messages.save();
+                    IDKMessageConfig.save();
                     IDK.idk.checking = true;
                     IDK.idk.check();
                     IDK.idk.reloadConfig();
-                    messages.reload(filename);
+                    IDKMessageConfig.reload(filename);
                     // 测试是否有空值
                     messages.getString("IDK_Helper_name");
                     messages.getStringList("IDK_Helper_lore");
@@ -312,9 +339,6 @@ public class IDKCommand implements CommandExecutor {
                         System.out.println(messages.getString("available-plugins") + IDK.idk.plugins);
                         return true;
                     }
-                    if(strings.length == 2 && strings[1].equals("load")) {
-                        return false;
-                    }
                     if(strings.length == 3 && strings[1].equals("load")) {
                         String folder = Bukkit.getPluginsFolder().getAbsolutePath();
                         if(!strings[2].isEmpty()) {
@@ -335,9 +359,6 @@ public class IDKCommand implements CommandExecutor {
                             return true;
                         }
                     }
-                    if(strings.length == 2 && strings[1].equals("disable")) {
-                        return false;
-                    }
                     if(strings.length == 3 && strings[1].equals("disable")) {
                         String plugin_name = strings[2];
                         Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
@@ -355,9 +376,6 @@ public class IDKCommand implements CommandExecutor {
                             return true;
                         }
                     }
-                    if(strings.length == 2 && strings[1].equals("enable")) {
-                            return false;
-                        }
                     if(strings.length == 3 && strings[1].equals("enable")) {
                         String plugin_name = strings[2];
                         Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_name);
@@ -375,21 +393,29 @@ public class IDKCommand implements CommandExecutor {
                             return true;
                         }
                     }
-                    if(strings.length == 2 && strings[1].equals("search")) {
+                    if(strings.length >= 3 && strings[1].equals("search")) {
                         try {
-                            IDKnetHandler.get_10_top_projects(null, true);
+                            if(strings.length > 3) {
+                                String plugin_title = "";
+                                for(int i = 2; i < strings.length; i++) {
+                                    plugin_title = plugin_title+strings[i]+" ";
+                                }
+                                String real_plugin_title = plugin_title.substring(0, plugin_title.length() - 1);
+                                IDKnetHandler.get_projects_by_title(null, true, real_plugin_title);
+                            } else {
+                                IDKnetHandler.get_projects_by_title(null, true, strings[2]);
+                            }
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
                         return true;
                     }
-                    if(strings.length == 3 && strings[1].equals("search")) {
+                    if(strings.length == 3 && strings[1].equals("install")) {
                         try {
-                            IDKnetHandler.get_projects_by_title(null, true, strings[2]);
+                            IDKnetHandler.install_project(null, true, strings[2]);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-                        return true;
                     }
                     return false;
                 } else {
@@ -435,7 +461,7 @@ public class IDKCommand implements CommandExecutor {
             if(IDK.idk.test_build) {
                 if(strings.length == 1 && strings[0].equals("test")) {
                     try {
-                        IDKnetHandler.get_10_top_projects(null, true);
+                        IDKnetHandler.install_project(null, true, "P1OZGk5p");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }

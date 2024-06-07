@@ -1,5 +1,6 @@
 package krincraft.idk;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -9,19 +10,20 @@ import java.io.IOException;
 import java.util.List;
 
 public abstract class IDKMessageConfig {
-    static int ver = 2;
+    static int ver = 3;
     protected IDK idk;
-    private File file;
-    protected FileConfiguration config;
+    private static File file;
+    public static FileConfiguration config;
 
     public IDKMessageConfig(IDK idk, String fileName) {
         this.idk = idk;
-        this.file = new File(idk.getDataFolder(), fileName);
+        file = new File(idk.getDataFolder(), fileName);
         if(!file.exists()) {
             try {
                 file.createNewFile();
                 FileWriter fw = new FileWriter(file);
-                fw.write("message-ver: 2\n" +
+                fw.write("message-ver: 3\n" +
+                        "main: \"IDK Plugin Version 1.2\\nMade by Baymaxawa\"\n" +
                         "reload: \"Config reloaded!\"\n" +
                         "failed: \"Config reload failed! Check details below!\"\n" +
                         "failed_p: \"Config reload failed! Check console for more information.\"\n" +
@@ -67,19 +69,21 @@ public abstract class IDKMessageConfig {
                         "  -  \"/IDK plugin disable <plugin name> - Disable a plugin\"\n" +
                         "  -  \"/IDK plugin enable <plugin name> - Enable a plugin\"\n" +
                         "  -  \"/IDK plugin search - Get Top 10 Plugin\"\n" +
-                        "  -  \"/IDK plugin search <plugin name> - Search a plugin by it's known name\"\n");
+                        "  -  \"/IDK plugin search <plugin name> - Search a plugin by it's known name\"\n" +
+                        "  -  \"/IDK plugin install <plugin id> -Install a plugin by it's id\"\n");
                 fw.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             try {
-                this.config = YamlConfiguration.loadConfiguration(file);
-                if(this.config.getInt("message-ver") != ver) {
+                config = YamlConfiguration.loadConfiguration(file);
+                if(config.getInt("message-ver") != ver) {
                     file.delete();
                     file.createNewFile();
                     FileWriter fw = new FileWriter(file);
-                    fw.write("message-ver: 1\n" +
+                    fw.write("message-ver: 3\n" +
+                            "main: \"IDK Plugin Version 1.2\\nMade by Baymaxawa\"\n" +
                             "reload: \"Config reloaded!\"\n" +
                             "failed: \"Config reload failed! Check details below!\"\n" +
                             "failed_p: \"Config reload failed! Check console for more information.\"\n" +
@@ -125,19 +129,19 @@ public abstract class IDKMessageConfig {
                             "  -  \"/IDK plugin disable <plugin name> - Disable a plugin\"\n" +
                             "  -  \"/IDK plugin enable <plugin name> - Enable a plugin\"\n" +
                             "  -  \"/IDK plugin search - Get Top 10 Plugin\"\n" +
-                            "  -  \"/IDK plugin search title <plugin name> - Search a plugin by it's known name\"\n" +
-                            "  -  \"/IDK plugin search id <plugin id> - Search a plugin by it's modrinth id\"\n");
+                            "  -  \"/IDK plugin search <plugin name> - Search a plugin by it's known name\"\n" +
+                            "  -  \"/IDK plugin install <plugin id> -Install a plugin by it's id\"\n");
                     fw.close();
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        this.config = YamlConfiguration.loadConfiguration(file);
+        config = YamlConfiguration.loadConfiguration(file);
     }
 
     public String getString(String s) {
-        String a = this.config.getString(s);
+        String a = config.getString(s);
         if (a != null) {
             return a;
         } else {
@@ -145,12 +149,12 @@ public abstract class IDKMessageConfig {
         }
     }
 
-    public void reload(String fileName) {
-        this.file = new File(idk.getDataFolder(), fileName);
-        this.config = YamlConfiguration.loadConfiguration(file);
+    public static void reload(String fileName) {
+        file = new File(Bukkit.getPluginsFolder().getAbsolutePath()+"\\IDK", fileName);
+        config = YamlConfiguration.loadConfiguration(file);
     }
 
-    public void save() {
+    public static void save() {
         try {
             config.save(file);
         } catch (Exception e) {
@@ -159,6 +163,6 @@ public abstract class IDKMessageConfig {
     }
 
     public List<String> getStringList(String str) {
-        return this.config.getStringList(str);
+        return config.getStringList(str);
     }
 }
