@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 public abstract class IDKMessageConfig {
-    static int ver = 3;
+    static int ver = 4;
     protected IDK idk;
     private File file;
     public FileConfiguration config;
@@ -22,7 +22,7 @@ public abstract class IDKMessageConfig {
             try {
                 file.createNewFile();
                 FileWriter fw = new FileWriter(file);
-                fw.write("message-ver: 3\n" +
+                fw.write("message-ver: 4\n" +
                         "main: \"IDK Plugin Version 1.2\\nMade by Baymaxawa\"\n" +
                         "reload: \"Config reloaded!\"\n" +
                         "failed: \"Config reload failed! Check details below!\"\n" +
@@ -70,7 +70,15 @@ public abstract class IDKMessageConfig {
                         "  -  \"/IDK plugin enable <plugin name> - Enable a plugin\"\n" +
                         "  -  \"/IDK plugin search - Get Top 10 Plugin\"\n" +
                         "  -  \"/IDK plugin search <plugin name> - Search a plugin by it's known name\"\n" +
-                        "  -  \"/IDK plugin install <plugin id> -Install a plugin by it's id\"\n");
+                        "  -  \"/IDK plugin install <plugin id> -Install a plugin by it's id\"\n" +
+                        "current_progress: \"Current Progress: %progress%%\"\n" +
+                        "download_complete: \"Download Complete!\"\n" +
+                        "download_complete2: \"File downloaded successfully to: %path%\"\n" +
+                        "download_start: \"Start download file: %filename% from: %url%\"\n" +
+                        "install_plugin_notice1: \"Install this plugin by click\"\n" +
+                        "install_plugin_notice2: \"or type /idk plugin install [plugin_id]\"\n" +
+                        "install_button: \"[install]\"\n" +
+                        "install_button_hover: \"Click here to install\"\n");
                 fw.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -82,7 +90,7 @@ public abstract class IDKMessageConfig {
                     file.delete();
                     file.createNewFile();
                     FileWriter fw = new FileWriter(file);
-                    fw.write("message-ver: 3\n" +
+                    fw.write("message-ver: 4\n" +
                             "main: \"IDK Plugin Version 1.2\\nMade by Baymaxawa\"\n" +
                             "reload: \"Config reloaded!\"\n" +
                             "failed: \"Config reload failed! Check details below!\"\n" +
@@ -130,7 +138,15 @@ public abstract class IDKMessageConfig {
                             "  -  \"/IDK plugin enable <plugin name> - Enable a plugin\"\n" +
                             "  -  \"/IDK plugin search - Get Top 10 Plugin\"\n" +
                             "  -  \"/IDK plugin search <plugin name> - Search a plugin by it's known name\"\n" +
-                            "  -  \"/IDK plugin install <plugin id> -Install a plugin by it's id\"\n");
+                            "  -  \"/IDK plugin install <plugin id> -Install a plugin by it's id\"\n" +
+                            "current_progress: \"Current Progress: %progress%%\"\n" +
+                            "download_complete: \"Download Complete!\"\n" +
+                            "download_complete2: \"File downloaded successfully to: %path%\"\n" +
+                            "download_start: \"Start download file: %filename% from: %url%\"\n" +
+                            "install_plugin_notice1: \"Install this plugin by click\"\n" +
+                            "install_plugin_notice2: \"or type /idk plugin install [plugin_id]\"\n" +
+                            "install_button: \"[install]\"\n" +
+                            "install_button_hover: \"Click here to install\"\n");
                     fw.close();
                 }
             } catch (IOException e) {
