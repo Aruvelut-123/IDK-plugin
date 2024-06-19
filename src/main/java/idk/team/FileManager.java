@@ -1,4 +1,4 @@
-package krincraft.idk;
+package idk.team;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

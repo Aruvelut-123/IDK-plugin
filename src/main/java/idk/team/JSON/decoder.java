@@ -1,4 +1,4 @@
-package krincraft.idk.JSON;
+package idk.team.JSON;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +15,12 @@ public class decoder {
         Map<String, Object> converted_json_map = convertJsonToMap(json);
         JSONObject jsonObject = new JSONObject(converted_json_map);
         return jsonObject.getInteger("total_hits");
+    }
+
+    public static Integer get_total_hits_paper(String json) throws IOException {
+        Map<String, Object> converted_json_map = convertJsonToMap(json);
+        JSONObject jsonObject = new JSONObject(converted_json_map);
+        return jsonObject.getJSONObject("pagination").getInteger("count");
     }
 
     public static String decode_json(String json, String key) throws IOException {

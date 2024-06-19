@@ -1,7 +1,7 @@
-package krincraft.idk;
+package idk.team;
 
-import krincraft.idk.network.IDKnetHandler;
-import krincraft.idk.plugin.IDKPluginManagement;
+import idk.team.network.IDKnetHandler;
+import idk.team.plugin.IDKPluginManagement;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,6 +18,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +26,34 @@ import java.util.List;
 
 public class IDKCommand implements CommandExecutor {
     String filename = "messages.yml";
-    public String[] deleted = null;
+    boolean checking = false;
+
+    void check() {
+        Configuration config = IDK.idk.getConfig();
+        while(checking) {
+            int read_config_ver = config.getInt("config-version");
+            if (read_config_ver == IDK.idk.config_ver) {
+                checking = false;
+            } else {
+                config.set("config-version", 2);
+                config.set("plugin-management", true);
+                config.set("debug", false);
+                String path = Bukkit.getPluginsFolder().getAbsolutePath();
+                String config_path = path + "\\IDK\\config.yml";
+                File config_file = new File(config_path);
+                try {
+                    FileWriter fw = new FileWriter(config_file);
+                    fw.write("#it can be type with like \"papermc\" or \"modrinth\" or \"both\"");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                config.set("download-source", "papermc");
+                IDK.idk.saveConfig();
+                checking = false;
+            }
+        }
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) { //检测指令执行
         IDKMessageConfig messages = new IDKMessageConfig(IDK.idk, "messages.yml") {
@@ -156,11 +184,15 @@ public class IDKCommand implements CommandExecutor {
                 if(player.hasPermission("IDK.command.IDK.reload")) {
                     try{
                         messages.save();
-                        IDK.idk.checking = true;
-                        IDK.idk.check();
-                        IDK.idk.reloadConfig();
+                        this.checking = true;
+                        this.check();
+                        IDK.idk.reload();
                         messages.reload(filename);
+                        config = IDK.idk.getConfig();
                         // 测试是否有空值
+                        config.getBoolean("plugin-management");
+                        config.getBoolean("debug");
+                        config.getString("download-source");
                         messages.getString("IDK_Helper_name");
                         messages.getStringList("IDK_Helper_lore");
                         messages.getString("IDK_Workbench_name");
@@ -175,7 +207,6 @@ public class IDKCommand implements CommandExecutor {
                         messages.getString("spectator");
                         IDK.idk.logger.info(messages.getString("reload"));
                         player.sendMessage(messages.getString("reload"));
-
                     } catch (Exception e) {
                         IDK.idk.logger.warning(messages.getString("failed"));
                         player.sendMessage(messages.getString("failed_p"));
@@ -321,11 +352,15 @@ public class IDKCommand implements CommandExecutor {
             if(strings.length == 1 && strings[0].equals("reload")) {
                 try{
                     messages.save();
-                    IDK.idk.checking = true;
-                    IDK.idk.check();
-                    IDK.idk.reloadConfig();
+                    this.checking = true;
+                    this.check();
+                    IDK.idk.reload();
                     messages.reload(filename);
+                    config = IDK.idk.getConfig();
                     // 测试是否有空值
+                    config.getBoolean("plugin-management");
+                    config.getBoolean("debug");
+                    config.getString("download-source");
                     messages.getString("IDK_Helper_name");
                     messages.getStringList("IDK_Helper_lore");
                     messages.getString("IDK_Workbench_name");
@@ -338,8 +373,8 @@ public class IDKCommand implements CommandExecutor {
                     messages.getString("creative");
                     messages.getString("adventure");
                     messages.getString("spectator");
-                    
                     IDK.idk.logger.info(messages.getString("reload"));
+                    commandSender.sendMessage(messages.getString("reload"));
                 } catch (Exception e) {
                     IDK.idk.logger.warning(messages.getString("failed"));
                     e.printStackTrace();

@@ -1,4 +1,4 @@
-package krincraft.idk;
+package idk.team;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

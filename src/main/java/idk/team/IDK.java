@@ -1,7 +1,8 @@
-package krincraft.idk;
+package idk.team;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
@@ -12,14 +13,20 @@ public final class IDK extends JavaPlugin {
     public static IDK idk;
     public boolean test_build = false;
     public boolean beta_build = false;
-    int config_ver = 1;
-    boolean checking = false;
+    public boolean debug = false;
+    int config_ver = 2;
     Configuration messages = null;
     String plugins = null;
 
     @Override
     public void onLoad() {
         this.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
+        Configuration defaults = new MemoryConfiguration();
+        defaults.set("config-version", 2);
+        defaults.set("plugin-management", true);
+        defaults.set("debug", false);
+        defaults.set("download-source", "papermc");
+        this.getConfig().setDefaults(defaults);
     }
 
     @Override
@@ -29,20 +36,18 @@ public final class IDK extends JavaPlugin {
         Bukkit.getPluginCommand("IDK").setTabCompleter(new IDKTabCompletor());
         Bukkit.getPluginManager().registerEvents(new IDKListener(), this); //注册事件处理
         saveDefaultConfig();
+        this.debug = this.getConfig().getBoolean("debug");
+        if(this.debug) {
+            logger.warning("Debug is enabled! It may cause some performance issue.");
+        }
         idk = this;
     }
 
-    public void check() {
-        while(checking) {
-            int read_config_ver = this.getConfig().getInt("config-version");
-            if (read_config_ver == config_ver) {
-                checking = false;
-            } else {
-                List<String> emptylist = new ArrayList<>();
-                this.getConfig().set("config-version", 1);
-                this.getConfig().set("plugin-management", "true");
-                checking = false;
-            }
+    public void reload() {
+        this.reloadConfig();
+        this.debug = this.getConfig().getBoolean("debug");
+        if(this.debug) {
+            logger.warning("Debug is enabled! It may cause some performance issue.");
         }
     }
 

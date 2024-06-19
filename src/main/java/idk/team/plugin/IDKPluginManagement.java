@@ -1,7 +1,6 @@
-package krincraft.idk.plugin;
+package idk.team.plugin;
 
-import krincraft.idk.FileManager;
-import krincraft.idk.IDKCommand;
+import idk.team.FileManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;

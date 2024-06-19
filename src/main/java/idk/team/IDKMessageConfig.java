@@ -1,4 +1,4 @@
-package krincraft.idk;
+package idk.team;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 public abstract class IDKMessageConfig {
-    static int ver = 4;
+    static int ver = 5;
     protected IDK idk;
     private File file;
     public FileConfiguration config;
@@ -22,8 +22,8 @@ public abstract class IDKMessageConfig {
             try {
                 file.createNewFile();
                 FileWriter fw = new FileWriter(file);
-                fw.write("message-ver: 4\n" +
-                        "main: \"IDK Plugin Version 1.2\\nMade by Baymaxawa\"\n" +
+                fw.write("message-ver: 5\n" +
+                        "main: \"IDK Plugin Version 1.2.3\\nMade by Baymaxawa\"\n" +
                         "reload: \"Config reloaded!\"\n" +
                         "failed: \"Config reload failed! Check details below!\"\n" +
                         "failed_p: \"Config reload failed! Check console for more information.\"\n" +
@@ -70,7 +70,8 @@ public abstract class IDKMessageConfig {
                         "  -  \"/IDK plugin enable <plugin name> - Enable a plugin\"\n" +
                         "  -  \"/IDK plugin search - Get Top 10 Plugin\"\n" +
                         "  -  \"/IDK plugin search <plugin name> - Search a plugin by it's known name\"\n" +
-                        "  -  \"/IDK plugin install <plugin id> -Install a plugin by it's id\"\n" +
+                        "  -  \"/IDK plugin install <plugin id/name> -Install a plugin by it's id\"\n" +
+                        "  -  \"/IDK plugin del <plugin name> - Delete a plugin by it's name.\"\n" +
                         "current_progress: \"Current Progress: %progress%%\"\n" +
                         "download_complete: \"Download Complete!\"\n" +
                         "download_complete2: \"File downloaded successfully to: %path%\"\n" +
@@ -90,8 +91,8 @@ public abstract class IDKMessageConfig {
                     file.delete();
                     file.createNewFile();
                     FileWriter fw = new FileWriter(file);
-                    fw.write("message-ver: 4\n" +
-                            "main: \"IDK Plugin Version 1.2\\nMade by Baymaxawa\"\n" +
+                    fw.write("message-ver: 5\n" +
+                            "main: \"IDK Plugin Version 1.2.3\\nMade by Baymaxawa\"\n" +
                             "reload: \"Config reloaded!\"\n" +
                             "failed: \"Config reload failed! Check details below!\"\n" +
                             "failed_p: \"Config reload failed! Check console for more information.\"\n" +
@@ -138,7 +139,8 @@ public abstract class IDKMessageConfig {
                             "  -  \"/IDK plugin enable <plugin name> - Enable a plugin\"\n" +
                             "  -  \"/IDK plugin search - Get Top 10 Plugin\"\n" +
                             "  -  \"/IDK plugin search <plugin name> - Search a plugin by it's known name\"\n" +
-                            "  -  \"/IDK plugin install <plugin id> -Install a plugin by it's id\"\n" +
+                            "  -  \"/IDK plugin install <plugin id/name> -Install a plugin by it's id\"\n" +
+                            "  -  \"/IDK plugin del <plugin name> - Delete a plugin by it's name.\"\n" +
                             "current_progress: \"Current Progress: %progress%%\"\n" +
                             "download_complete: \"Download Complete!\"\n" +
                             "download_complete2: \"File downloaded successfully to: %path%\"\n" +

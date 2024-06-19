@@ -1,4 +1,4 @@
-package krincraft.idk;
+package idk.team;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -52,6 +52,7 @@ public class IDKTabCompletor implements TabCompleter {
             sub_commands.add("load");
             sub_commands.add("search");
             sub_commands.add("install");
+            sub_commands.add("del");
             return sub_commands;
         }
         if(strings.length == 3 && strings[0].equals("plugin") && strings[1].equals("search")) {
@@ -61,7 +62,7 @@ public class IDKTabCompletor implements TabCompleter {
         }
         if(strings.length == 3 && strings[0].equals("plugin") && strings[1].equals("install")) {
             List<String> sub_commands = new ArrayList<>();
-            sub_commands.add("Plugin id here");
+            sub_commands.add("Plugin id/name here");
             return sub_commands;
         }
         return null;

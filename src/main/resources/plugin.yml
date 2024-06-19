@@ -1,6 +1,6 @@
 name: IDK #插件名
 version: '${project.version}' #插件版本
-main: krincraft.idk.IDK #插件主类
+main: idk.team.IDK #插件主类
 api-version: '1.13' #插件API版本
 author: Baymaxawa #插件作者
 website: idk.minecraftisbest.top #插件网站

@@ -1,2 +1,5 @@
-config-version: 1
+config-version: 2
 plugin-management: true
+debug: false
+#it can be type with like "papermc" or "modrinth" or "both"
+download-source: "papermc"
