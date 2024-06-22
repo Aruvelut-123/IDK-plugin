@@ -8,31 +8,51 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class IDKListener implements Listener {
     @EventHandler //定义为事件处理
     public void playerJoin(PlayerJoinEvent event) { //定义处理玩家加入事件
+        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
+            protected void finalize() throws Throwable {
+                super.finalize();
+            }
+        };
         Player player = event.getPlayer(); //获取事件对应的玩家
-        event.setJoinMessage(player.getName() + " joined this server!\nMessage change by IDK plugin."); //修改加入消息为获取玩家名+指定字符串(\n为换行符)
+        List join_message = messages.getStringList("join_message");
+        Object[] join_message_fix = join_message.toArray();
+        StringBuilder fixed = new StringBuilder();
+        for(int i = 0; i < join_message_fix.length; i++) {
+            fixed.append(join_message_fix[i].toString());
+            if (i != join_message_fix.length - 1) {
+                fixed.append("\n");
+            }
+        }
+        event.setJoinMessage(fixed.toString().replace("[Player]", player.getName())); //修改加入消息为获取玩家名+指定字符串(\n为换行符)
+        String warning_title = messages.getString("warning_title");
+        String warning_test = messages.getString("warning_test");
+        String warning_beta = messages.getString("warning_beta");
+        String warning_2 = messages.getString("warning_2");
         if (IDK.idk.test_build) {
-            player.sendTitle("Warning!", "You are currently using a test build of IDK plugin!");
+            player.sendTitle(warning_title, warning_test);
             Timer timer = new Timer();
             TimerTask use_at_own_risks = new TimerTask() {
                 @Override
                 public void run() {
-                    player.sendTitle("Warning!", "Use it at your own risks!");
+                    player.sendTitle(warning_title, warning_2);
                 }
             };
             timer.schedule(use_at_own_risks,5000);
-        } else if (IDK.idk.beta_build) {
-            player.sendTitle("Warning!", "You are currently using a beta build of IDK plugin!");
+        }
+        else if (IDK.idk.beta_build) {
+            player.sendTitle(warning_title, warning_beta);
             Timer timer = new Timer();
             TimerTask use_at_own_risks = new TimerTask() {
                 @Override
                 public void run() {
-                    player.sendTitle("Warning!", "Use it at your own risks!");
+                    player.sendTitle(warning_title, warning_2);
                 }
             };
             timer.schedule(use_at_own_risks,5000);
@@ -41,8 +61,22 @@ public class IDKListener implements Listener {
 
     @EventHandler //定义为事件处理
     public void playerLeave(PlayerQuitEvent event) { //定义处理玩家退出事件
+        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
+            protected void finalize() throws Throwable {
+                super.finalize();
+            }
+        };
         Player player = event.getPlayer(); //获取事件对应的玩家
-        event.setQuitMessage(player.getName() + " leaved this server!\nMessage change by IDK plugin."); //修改退出消息为获取玩家名+指定字符串(\n为换行符)
+        List leave_message = messages.getStringList("leave_message");
+        Object[] leave_message_fix = leave_message.toArray();
+        StringBuilder fixed = new StringBuilder();
+        for(int i = 0; i < leave_message_fix.length; i++) {
+            fixed.append(leave_message_fix[i].toString());
+            if (i != leave_message_fix.length - 1) {
+                fixed.append("\n");
+            }
+        }
+        event.setQuitMessage(fixed.toString().replace("[Player]", player.getName())); //修改退出消息为获取玩家名+指定字符串(\n为换行符)
     }
 
     @EventHandler //定义为事件处理

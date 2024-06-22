@@ -23,10 +23,11 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class IDKnetHandler implements Runnable {
-    private static final IDKMessageConfig idkMessageConfig = new IDKMessageConfig(IDK.idk, "message.yml") {
+    static IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
         @Override
         protected void finalize() throws Throwable {
             super.finalize();
@@ -41,14 +42,15 @@ public class IDKnetHandler implements Runnable {
     public static void get_10_top_projects(CommandSender commandSender) throws IOException {
         if (IDK.idk.debug) {
             if (commandSender instanceof Player) {
-                commandSender.sendMessage("commandSender=Player");
+                commandSender.sendMessage(messages.getString("debug_p"));
             } else {
-                commandSender.sendMessage("commandSender=Console");
+                commandSender.sendMessage(messages.getString("debug_c"));
             }
         }
         refresh_download_source();
+        String get_10_top_plugin = messages.getString("get_10_top_plugin");
         if (Objects.equals(download_source, "papermc")) {
-            commandSender.sendMessage("Getting latest 10 plugins from papermc...");
+            commandSender.sendMessage(get_10_top_plugin.replace("[source]", download_source));
             int limit = 10;
             if (IDK.idk.debug) {
                 commandSender.sendMessage("limit="+limit);
@@ -62,17 +64,26 @@ public class IDKnetHandler implements Runnable {
                 commandSender.sendMessage("url="+url);
             }
             String result = sendGet(url);
-            commandSender.sendMessage("10 Top Plugins:");
+            commandSender.sendMessage(messages.getString("10_top_plugin"));
             for(int i = 0; i < 10; i++) {
                 String plugin_title = decoder.decode_json(result, i, "result", "name");
                 String plugin_description = decoder.decode_json(result, i, "result", "description");
                 int a = i+1;
-                commandSender.sendMessage(a+". Name: " + plugin_title + "\nDescription: " + plugin_description);
+                List<String> search_plugin_list = messages.getStringList("search_plugin_list");
+                Object[] search_plugin_list_fix = search_plugin_list.toArray();
+                StringBuilder fixed = new StringBuilder();
+                for(int b = 0; b < search_plugin_list_fix.length; b++) {
+                    fixed.append(search_plugin_list_fix[b].toString());
+                    if (b != search_plugin_list_fix.length - 1) {
+                        fixed.append("\n");
+                    }
+                }
+                commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[description]", plugin_description));
             }
-            commandSender.sendMessage("Install a plugin by using: /idk plugin install <name>");
+            commandSender.sendMessage(messages.getString("install_tip"));
         }
         else if (Objects.equals(download_source, "modrinth")) {
-            commandSender.sendMessage("Getting latest 10 plugins from modrinth...");
+            commandSender.sendMessage(get_10_top_plugin.replace("[source]", download_source));
             int limit = 10;
             if (IDK.idk.debug) {
                 commandSender.sendMessage("limit="+limit);
@@ -98,19 +109,28 @@ public class IDKnetHandler implements Runnable {
                 commandSender.sendMessage("real_uri="+real_uri);
             }
             String result = sendGet(real_uri);
-            commandSender.sendMessage("10 Top Plugins:");
+            commandSender.sendMessage(messages.getString("10_top_plugin"));
             for(int i = 0; i < 10; i++) {
                 String plugin_title = decoder.decode_json(result, i, "hits", "title");
                 String plugin_description = decoder.decode_json(result, i, "hits", "description");
                 String plugin_id = decoder.decode_json(result, i, "hits", "project_id");
                 int a = i+1;
-                commandSender.sendMessage(a+". Name: " + plugin_title + "\nID: " + plugin_id + "\nDescription: " + plugin_description);
+                List<String> search_plugin_list = messages.getStringList("search_plugin_list_2");
+                Object[] search_plugin_list_fix = search_plugin_list.toArray();
+                StringBuilder fixed = new StringBuilder();
+                for(int b = 0; b < search_plugin_list_fix.length; b++) {
+                    fixed.append(search_plugin_list_fix[b].toString());
+                    if (b != search_plugin_list_fix.length - 1) {
+                        fixed.append("\n");
+                    }
+                }
+                commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
             }
-            commandSender.sendMessage("Install a plugin by using: /idk plugin install <name>");
+            commandSender.sendMessage(messages.getString("install_tip"));
         }
         else if (Objects.equals(download_source, "both")) {
             try {
-                commandSender.sendMessage("Getting latest 10 plugins from papermc...");
+                commandSender.sendMessage(get_10_top_plugin.replace("[source]", "papermc"));
                 int limit = 10;
                 if (IDK.idk.debug) {
                     commandSender.sendMessage("limit="+limit);
@@ -124,20 +144,34 @@ public class IDKnetHandler implements Runnable {
                     commandSender.sendMessage("url="+url);
                 }
                 String result = sendGet(url);
-                commandSender.sendMessage("10 Top Plugins:");
+                commandSender.sendMessage(messages.getString("10_top_plugin"));
                 for(int i = 0; i < 10; i++) {
                     String plugin_title = decoder.decode_json(result, i, "result", "name");
                     String plugin_description = decoder.decode_json(result, i, "result", "description");
                     int a = i+1;
-                    commandSender.sendMessage(a+". Name: " + plugin_title + "\nDescription: " + plugin_description);
+                    List<String> search_plugin_list = messages.getStringList("search_plugin_list");
+                    Object[] search_plugin_list_fix = search_plugin_list.toArray();
+                    StringBuilder fixed = new StringBuilder();
+                    for(int b = 0; b < search_plugin_list_fix.length; b++) {
+                        fixed.append(search_plugin_list_fix[b].toString());
+                        if (b != search_plugin_list_fix.length - 1) {
+                            fixed.append("\n");
+                        }
+                    }
+                    commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[description]", plugin_description));
                 }
-                commandSender.sendMessage("Install a plugin by using: /idk plugin install <name>");
+                commandSender.sendMessage(messages.getString("install_tip"));
             }
             catch (Exception e) {
                 e.printStackTrace();
-                commandSender.sendMessage("Error in getting from papermc, see console for more details.");
-                commandSender.sendMessage("Switching to modrinth.");
-                commandSender.sendMessage("Getting latest 10 plugins from modrinth...");
+                if (commandSender instanceof Player) {
+                    commandSender.sendMessage(messages.getString("error_papermc_p"));
+                }
+                else {
+                    commandSender.sendMessage(messages.getString("error_papermc_c"));
+                }
+                commandSender.sendMessage(messages.getString("switch_to_source").replace("[source]", "modrinth"));
+                commandSender.sendMessage(get_10_top_plugin.replace("[source]", "modrinth"));
                 int limit = 10;
                 if (IDK.idk.debug) {
                     commandSender.sendMessage("limit="+limit);
@@ -163,19 +197,28 @@ public class IDKnetHandler implements Runnable {
                     commandSender.sendMessage("real_uri="+real_uri);
                 }
                 String result = sendGet(real_uri);
-                commandSender.sendMessage("10 Top Plugins:");
+                commandSender.sendMessage(messages.getString("10_top_plugin"));
                 for(int i = 0; i < 10; i++) {
                     String plugin_title = decoder.decode_json(result, i, "hits", "title");
                     String plugin_description = decoder.decode_json(result, i, "hits", "description");
                     String plugin_id = decoder.decode_json(result, i, "hits", "project_id");
                     int a = i+1;
-                    commandSender.sendMessage(a+". Name: " + plugin_title + "\nID: " + plugin_id + "\nDescription: " + plugin_description);
+                    List<String> search_plugin_list = messages.getStringList("search_plugin_list_2");
+                    Object[] search_plugin_list_fix = search_plugin_list.toArray();
+                    StringBuilder fixed = new StringBuilder();
+                    for(int b = 0; b < search_plugin_list_fix.length; b++) {
+                        fixed.append(search_plugin_list_fix[b].toString());
+                        if (b != search_plugin_list_fix.length - 1) {
+                            fixed.append("\n");
+                        }
+                    }
+                    commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
                 }
-                commandSender.sendMessage("Install a plugin by using: /idk plugin install <name>");
+                commandSender.sendMessage(messages.getString("install_tip"));
             }
         }
         else {
-            commandSender.sendMessage("Download source is invalid!");
+            commandSender.sendMessage(messages.getString("error_download_source"));
         }
     }
 
@@ -187,16 +230,16 @@ public class IDKnetHandler implements Runnable {
     public static void install_project(CommandSender commandSender, String project_id) throws IOException {
         if (IDK.idk.debug) {
             if (commandSender instanceof Player) {
-                commandSender.sendMessage("commandSender=Player");
+                commandSender.sendMessage(messages.getString("debug_p"));
             } else {
-                commandSender.sendMessage("commandSender=Console");
+                commandSender.sendMessage(messages.getString("debug_c"));
             }
             commandSender.sendMessage("project_id="+project_id);
         }
         refresh_download_source();
+        String find_plugin = messages.getString("find_plugin");
         if (Objects.equals(download_source, "papermc")) {
-            commandSender.sendMessage("Start finding plugin id: " + project_id + " from papermc.");
-            //https://hangar.papermc.io/api/v1/projects/viaversion/versions
+            commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
             int limit = 10;
             if (IDK.idk.debug) {
                 commandSender.sendMessage("limit="+limit);
@@ -213,7 +256,7 @@ public class IDKnetHandler implements Runnable {
             String result = sendGet(real_uri);
             String plugin_title = decoder.decode_json(result, "name");
             if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                commandSender.sendMessage("Plugin has already installed! No duplicate!");
+                commandSender.sendMessage(messages.getString("no_duplicate"));
             }
             else {
                 try {
@@ -233,12 +276,17 @@ public class IDKnetHandler implements Runnable {
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    commandSender.sendMessage("Plugin not found Or error was made!");
+                    if (commandSender instanceof Player) {
+                        messages.getString("error_install_p");
+                    }
+                    else {
+                        messages.getString("error_install_c");
+                    }
                 }
             }
         }
         else if (Objects.equals(download_source, "modrinth")) {
-            commandSender.sendMessage("Start finding plugin id: " + project_id + " from modrinth.");
+            commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
             boolean featured = true;
             String loader = "paper";
             String game_version = Bukkit.getMinecraftVersion();
@@ -249,7 +297,7 @@ public class IDKnetHandler implements Runnable {
             String result = sendGet(real_url);
             String plugin_title = decoder.decode_json(result, "title");
             if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                commandSender.sendMessage("Plugin has already installed! No duplicate!");
+                commandSender.sendMessage(messages.getString("no_duplicate"));
             }
             else {
                 try {
@@ -269,14 +317,18 @@ public class IDKnetHandler implements Runnable {
                 }
                 catch (Exception e) {
                     e.printStackTrace();
-                    commandSender.sendMessage("Plugin not found Or error was made!");
+                    if (commandSender instanceof Player) {
+                        messages.getString("error_install_p");
+                    }
+                    else {
+                        messages.getString("error_install_c");
+                    }
                 }
             }
         }
         else if (Objects.equals(download_source, "both")) {
             try {
-                commandSender.sendMessage("Start finding plugin id: " + project_id + " from papermc.");
-                //https://hangar.papermc.io/api/v1/projects/viaversion/versions
+                commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", "papermc"));
                 int limit = 10;
                 if (IDK.idk.debug) {
                     commandSender.sendMessage("limit="+limit);
@@ -293,7 +345,7 @@ public class IDKnetHandler implements Runnable {
                 String result = sendGet(real_uri);
                 String plugin_title = decoder.decode_json(result, "name");
                 if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                    commandSender.sendMessage("Plugin has already installed! No duplicate!");
+                    commandSender.sendMessage(messages.getString("no_duplicate"));
                 }
                 else {
                     try {
@@ -313,15 +365,25 @@ public class IDKnetHandler implements Runnable {
                     }
                     catch (Exception e) {
                         e.printStackTrace();
-                        commandSender.sendMessage("Plugin not found Or error was made!");
+                        if (commandSender instanceof Player) {
+                            messages.getString("error_install_p");
+                        }
+                        else {
+                            messages.getString("error_install_c");
+                        }
                     }
                 }
             }
             catch (Exception e) {
                 e.printStackTrace();
-                commandSender.sendMessage("Error in getting from papermc, see console for more details.");
-                commandSender.sendMessage("Switching to modrinth.");
-                commandSender.sendMessage("Start finding plugin id: " + project_id + " from modrinth.");
+                if (commandSender instanceof Player) {
+                    commandSender.sendMessage(messages.getString("error_papermc_p"));
+                }
+                else {
+                    commandSender.sendMessage(messages.getString("error_papermc_c"));
+                }
+                commandSender.sendMessage(messages.getString("switch_to_source").replace("[source]", "modrinth"));
+                commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", "modrinth"));
                 boolean featured = true;
                 String loader = "paper";
                 String game_version = Bukkit.getMinecraftVersion();
@@ -332,7 +394,7 @@ public class IDKnetHandler implements Runnable {
                 String result = sendGet(real_url);
                 String plugin_title = decoder.decode_json(result, "title");
                 if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                    commandSender.sendMessage("Plugin has already installed! No duplicate!");
+                    commandSender.sendMessage(messages.getString("no_duplicate"));
                 }
                 else {
                     try {
@@ -350,9 +412,14 @@ public class IDKnetHandler implements Runnable {
                         downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
                         enable_plugin(file_path, plugin_title, commandSender);
                     }
-                    catch (Exception e1) {
-                        e1.printStackTrace();
-                        commandSender.sendMessage("Plugin not found Or error was made!");
+                    catch (Exception ea) {
+                        ea.printStackTrace();
+                        if (commandSender instanceof Player) {
+                            messages.getString("error_install_p");
+                        }
+                        else {
+                            messages.getString("error_install_c");
+                        }
                     }
                 }
             }
@@ -363,161 +430,200 @@ public class IDKnetHandler implements Runnable {
     }
 
     public static void enable_plugin(String file_path, String plugin_title, CommandSender commandSender) throws InvalidPluginException, InvalidDescriptionException {
-        commandSender.sendMessage("Start loading plugin " + plugin_title);
+        commandSender.sendMessage(messages.getString("load_plugin").replace("[name]", plugin_title));
         Bukkit.getPluginManager().loadPlugin(new File(file_path));
-        commandSender.sendMessage("Plugin " + plugin_title + " loaded!");
-        commandSender.sendMessage("Start enable plugin " + plugin_title);
+        commandSender.sendMessage(messages.getString("plugin_loaded").replace("[name]", plugin_title));
+        commandSender.sendMessage(messages.getString("enable_plugin").replace("[name]", plugin_title));
         Bukkit.getPluginManager().enablePlugin(Bukkit.getPluginManager().getPlugin(plugin_title));
-        commandSender.sendMessage("Plugin " + plugin_title + "'s installation was complete!");
+        commandSender.sendMessage(messages.getString("install_complete").replace("[name]", plugin_title));
     }
 
     public static void get_projects_by_title(CommandSender commandSender, String title) throws IOException {
         if (IDK.idk.debug) {
             if (commandSender instanceof Player) {
-                commandSender.sendMessage("commandSender=Player");
+                commandSender.sendMessage(messages.getString("debug_p"));
             } else {
-                commandSender.sendMessage("commandSender=Console");
+                commandSender.sendMessage(messages.getString("debug_c"));
             }
             commandSender.sendMessage("title="+title);
         }
         refresh_download_source();
+        String get_plugin_info = messages.getString("get_plugin_info");
         if (Objects.equals(download_source, "papermc")) {
-            commandSender.sendMessage("Trying to get " + title + " plugin's info from papermc...");
+            try {
+                commandSender.sendMessage(get_plugin_info.replace("[name]", title).replace("[source]", download_source));
+                int limit = 10;
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("limit=" + limit);
+                }
+                String url = "https://hangar.papermc.io/api/v1/projects/{id/slug}?limit=" + limit;
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("url=" + url);
+                }
+                String real_uri = url.replace("{id/slug}", title);
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("real_uri=" + real_uri);
+                }
+                String result = sendGet(real_uri);
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("result="+result);
+                }
+                String plugin_title = decoder.decode_json(result, "title");
+                String plugin_description = decoder.decode_json(result, "description");
+                List<String> search_plugin_list = messages.getStringList("search_plugin_list");
+                Object[] search_plugin_list_fix = search_plugin_list.toArray();
+                StringBuilder fixed = new StringBuilder();
+                for(int b = 0; b < search_plugin_list_fix.length; b++) {
+                    fixed.append(search_plugin_list_fix[b].toString());
+                    if (b != search_plugin_list_fix.length - 1) {
+                        fixed.append("\n");
+                    }
+                }
+                commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(1)).replace("[name]", plugin_title).replace("[description]", plugin_description));
+                tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                if (commandSender instanceof Player) {
+                    messages.getString("error_install_p");
+                }
+                else {
+                    messages.getString("error_install_c");
+                }
+            }
+        }
+        else if (Objects.equals(download_source, "modrinth")) {
+            commandSender.sendMessage(get_plugin_info.replace("[name]", title).replace("[source]", download_source));
             int limit = 10;
             if (IDK.idk.debug) {
-                commandSender.sendMessage("limit=" + limit);
-            }
-            String url = "https://hangar.papermc.io/api/v1/projects/{id/slug}?limit=" + limit;
-            if (IDK.idk.debug) {
-                commandSender.sendMessage("url=" + url);
-            }
-            String real_uri = url.replace("{id/slug}", title);
-            if (IDK.idk.debug) {
-                commandSender.sendMessage("real_uri=" + real_uri);
-            }
-            String result = sendGet(real_uri);
-            int total_hits = decoder.get_total_hits_paper(result);
-            if (IDK.idk.debug) {
-                commandSender.sendMessage("total_hits=" + total_hits);
-            }
-            if (total_hits > limit) {
-                for (int i = 0; i < limit; i++) {
-                    String plugin_title = decoder.decode_json(result, i, "result", "title");
-                    String plugin_description = decoder.decode_json(result, i, "result", "description");
-                    int a = i + 1;
-                    commandSender.sendMessage(a + ". Name: " + plugin_title + "\nDescription: " + plugin_description);
-                    tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
-                }
-            } else if (total_hits > 0) {
-                for (int i = 0; i < total_hits; i++) {
-                    String plugin_title = decoder.decode_json(result, i, "result", "title");
-                    String plugin_description = decoder.decode_json(result, i, "result", "description");
-                    int a = i + 1;
-                    commandSender.sendMessage(a + ". Name: " + plugin_title + "\nDescription: " + plugin_description);
-                    tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
-                }
-            } else {
-                commandSender.sendMessage("Error: Plugin not found or error was made! Check console messages if there's a error!");
-            }
-         }
-         else if (Objects.equals(download_source, "modrinth")) {
-             commandSender.sendMessage("Trying to get " + title + " plugin's info from modrinth...");
-             int limit = 10;
-             if (IDK.idk.debug) {
                  commandSender.sendMessage("limit=" + limit);
              }
-             String url = "https://api.modrinth.com/v2/search?query=" + title + "&limit=" + limit + "&facets=";
-             if (IDK.idk.debug) {
+            String url = "https://api.modrinth.com/v2/search?query=" + title + "&limit=" + limit + "&facets=";
+            if (IDK.idk.debug) {
                  commandSender.sendMessage("url=" + url);
              }
-             String categories = "paper";
-             if (IDK.idk.debug) {
+            String categories = "paper";
+            if (IDK.idk.debug) {
                  commandSender.sendMessage("categories=" + categories);
              }
-             String versions = Bukkit.getServer().getMinecraftVersion();
-             if (IDK.idk.debug) {
+            String versions = Bukkit.getServer().getMinecraftVersion();
+            if (IDK.idk.debug) {
                  commandSender.sendMessage("versions=" + versions);
              }
-             String arg = "[[\"categories:" + categories + "\"],[\"versions:" + versions + "\"],[\"project_type:plugin\"]]";
-             if (IDK.idk.debug) {
+            String arg = "[[\"categories:" + categories + "\"],[\"versions:" + versions + "\"],[\"project_type:plugin\"]]";
+            if (IDK.idk.debug) {
                  commandSender.sendMessage("arg=" + arg);
              }
-             String real_uri = argument_handler(url, arg);
-             if (IDK.idk.debug) {
+            String real_uri = argument_handler(url, arg);
+            if (IDK.idk.debug) {
                  commandSender.sendMessage("real_uri=" + real_uri);
              }
-             String result = sendGet(real_uri);
-             int total_hits = decoder.get_total_hits(result);
-             if (IDK.idk.debug) {
+            String result = sendGet(real_uri);
+            int total_hits = decoder.get_total_hits(result);
+            if (IDK.idk.debug) {
                  commandSender.sendMessage("total_hits=" + total_hits);
              }
-             if (total_hits > limit) {
+            if (total_hits > limit) {
                  for (int i = 0; i < limit; i++) {
                      String plugin_title = decoder.decode_json(result, i, "hits", "title");
                      String plugin_description = decoder.decode_json(result, i, "hits", "description");
                      String plugin_id = decoder.decode_json(result, i, "hits", "project_id");
                      int a = i + 1;
-                     commandSender.sendMessage(a + ". Name: " + plugin_title + "\nID: " + plugin_id + "\nDescription: " + plugin_description);
+                     List<String> search_plugin_list = messages.getStringList("search_plugin_list_2");
+                     Object[] search_plugin_list_fix = search_plugin_list.toArray();
+                     StringBuilder fixed = new StringBuilder();
+                     for(int b = 0; b < search_plugin_list_fix.length; b++) {
+                         fixed.append(search_plugin_list_fix[b].toString());
+                         if (b != search_plugin_list_fix.length - 1) {
+                             fixed.append("\n");
+                         }
+                     }
+                     commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
                      tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
                  }
-             } else if (total_hits > 0) {
+             }
+            else if (total_hits > 0) {
                  for (int i = 0; i < total_hits; i++) {
                      String plugin_title = decoder.decode_json(result, i, "hits", "title");
                      String plugin_description = decoder.decode_json(result, i, "hits", "description");
                      String plugin_id = decoder.decode_json(result, i, "hits", "project_id");
                      int a = i + 1;
-                     commandSender.sendMessage(a + ". Name: " + plugin_title + "\nID: " + plugin_id + "\nDescription: " + plugin_description);
+                     List<String> search_plugin_list = messages.getStringList("search_plugin_list_2");
+                     Object[] search_plugin_list_fix = search_plugin_list.toArray();
+                     StringBuilder fixed = new StringBuilder();
+                     for(int b = 0; b < search_plugin_list_fix.length; b++) {
+                         fixed.append(search_plugin_list_fix[b].toString());
+                         if (b != search_plugin_list_fix.length - 1) {
+                             fixed.append("\n");
+                         }
+                     }
+                     commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
                      tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
                  }
-             } else {
-                 commandSender.sendMessage("Error: Plugin not found or error was made! Check console messages if there's a error!");
              }
-         }
-         else if (Objects.equals(download_source, "both")) {
+            else {
+                 if (commandSender instanceof Player) {
+                     messages.getString("error_install_p");
+                 }
+                 else {
+                     messages.getString("error_install_c");
+                 }
+             }
+        }
+        else if (Objects.equals(download_source, "both")) {
              try {
-                 commandSender.sendMessage("Trying to get " + title + " plugin's info from papermc...");
-                 int limit = 10;
-                 if (IDK.idk.debug) {
-                     commandSender.sendMessage("limit=" + limit);
-                 }
-                 String url = "https://hangar.papermc.io/api/v1/projects/{id/slug}?limit=" + limit;
-                 if (IDK.idk.debug) {
-                     commandSender.sendMessage("url=" + url);
-                 }
-                 String real_uri = url.replace("{id/slug}", title);
-                 if (IDK.idk.debug) {
-                     commandSender.sendMessage("real_uri=" + real_uri);
-                 }
-                 String result = sendGet(real_uri);
-                 int total_hits = decoder.get_total_hits_paper(result);
-                 if (IDK.idk.debug) {
-                     commandSender.sendMessage("total_hits=" + total_hits);
-                 }
-                 if (total_hits > limit) {
-                     for (int i = 0; i < limit; i++) {
-                         String plugin_title = decoder.decode_json(result, i, "result", "title");
-                         String plugin_description = decoder.decode_json(result, i, "result", "description");
-                         int a = i + 1;
-                         commandSender.sendMessage(a + ". Name: " + plugin_title + "\nDescription: " + plugin_description);
-                         tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
+                 try {
+                     commandSender.sendMessage(get_plugin_info.replace("[name]", title).replace("[source]", "papermc"));
+                     int limit = 10;
+                     if (IDK.idk.debug) {
+                         commandSender.sendMessage("limit=" + limit);
                      }
-                 } else if (total_hits > 0) {
-                     for (int i = 0; i < total_hits; i++) {
-                         String plugin_title = decoder.decode_json(result, i, "result", "title");
-                         String plugin_description = decoder.decode_json(result, i, "result", "description");
-                         int a = i + 1;
-                         commandSender.sendMessage(a + ". Name: " + plugin_title + "\nDescription: " + plugin_description);
-                         tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
+                     String url = "https://hangar.papermc.io/api/v1/projects/{id/slug}?limit=" + limit;
+                     if (IDK.idk.debug) {
+                         commandSender.sendMessage("url=" + url);
                      }
-                 } else {
-                     commandSender.sendMessage("Error: Plugin not found or error was made! Check console messages if there's a error!");
+                     String real_uri = url.replace("{id/slug}", title);
+                     if (IDK.idk.debug) {
+                         commandSender.sendMessage("real_uri=" + real_uri);
+                     }
+                     String result = sendGet(real_uri);
+                     if (IDK.idk.debug) {
+                         commandSender.sendMessage("result="+result);
+                     }
+                     String plugin_title = decoder.decode_json(result, "title");
+                     String plugin_description = decoder.decode_json(result, "description");
+                     List<String> search_plugin_list = messages.getStringList("search_plugin_list");
+                     Object[] search_plugin_list_fix = search_plugin_list.toArray();
+                     StringBuilder fixed = new StringBuilder();
+                     for(int b = 0; b < search_plugin_list_fix.length; b++) {
+                         fixed.append(search_plugin_list_fix[b].toString());
+                         if (b != search_plugin_list_fix.length - 1) {
+                             fixed.append("\n");
+                         }
+                     }
+                     commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(1)).replace("[name]", plugin_title).replace("[description]", plugin_description));
+                     tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
+                 }
+                 catch (Exception e) {
+                     e.printStackTrace();
+                     if (commandSender instanceof Player) {
+                         messages.getString("error_install_p");
+                     }
+                     else {
+                         messages.getString("error_install_c");
+                     }
                  }
              }
              catch (Exception e) {
                  e.printStackTrace();
-                 commandSender.sendMessage("An error was made while getting from papermc.");
-                 commandSender.sendMessage("Switching to modrinth...");
-                 commandSender.sendMessage("Trying to get " + title + " plugin's info from modrinth...");
+                 if (commandSender instanceof Player) {
+                     commandSender.sendMessage(messages.getString("error_papermc_p"));
+                 }
+                 else {
+                     commandSender.sendMessage(messages.getString("error_papermc_c"));
+                 }
+                 commandSender.sendMessage(messages.getString("switch_to_source").replace("[source]", "modrinth"));
+                 commandSender.sendMessage(get_plugin_info.replace("[name]", title).replace("[source]", "modrinth"));
                  int limit = 10;
                  if (IDK.idk.debug) {
                      commandSender.sendMessage("limit=" + limit);
@@ -553,33 +659,56 @@ public class IDKnetHandler implements Runnable {
                          String plugin_description = decoder.decode_json(result, i, "hits", "description");
                          String plugin_id = decoder.decode_json(result, i, "hits", "project_id");
                          int a = i + 1;
-                         commandSender.sendMessage(a + ". Name: " + plugin_title + "\nID: " + plugin_id + "\nDescription: " + plugin_description);
+                         List<String> search_plugin_list = messages.getStringList("search_plugin_list_2");
+                         Object[] search_plugin_list_fix = search_plugin_list.toArray();
+                         StringBuilder fixed = new StringBuilder();
+                         for(int b = 0; b < search_plugin_list_fix.length; b++) {
+                             fixed.append(search_plugin_list_fix[b].toString());
+                             if (b != search_plugin_list_fix.length - 1) {
+                                 fixed.append("\n");
+                             }
+                         }
+                         commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
                          tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
                      }
-                 } else if (total_hits > 0) {
+                 }
+                 else if (total_hits > 0) {
                      for (int i = 0; i < total_hits; i++) {
                          String plugin_title = decoder.decode_json(result, i, "hits", "title");
                          String plugin_description = decoder.decode_json(result, i, "hits", "description");
                          String plugin_id = decoder.decode_json(result, i, "hits", "project_id");
                          int a = i + 1;
-                         commandSender.sendMessage(a + ". Name: " + plugin_title + "\nID: " + plugin_id + "\nDescription: " + plugin_description);
+                         List<String> search_plugin_list = messages.getStringList("search_plugin_list_2");
+                         Object[] search_plugin_list_fix = search_plugin_list.toArray();
+                         StringBuilder fixed = new StringBuilder();
+                         for(int b = 0; b < search_plugin_list_fix.length; b++) {
+                             fixed.append(search_plugin_list_fix[b].toString());
+                             if (b != search_plugin_list_fix.length - 1) {
+                                 fixed.append("\n");
+                             }
+                         }
+                         commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
                          tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
                      }
-                 } else {
-                     commandSender.sendMessage("Error: Plugin not found or error was made! Check console messages if there's a error!");
+                 }
+                 else {
+                     if (commandSender instanceof Player) {
+                         messages.getString("error_install_p");
+                     }
+                     else {
+                         messages.getString("error_install_c");
+                     }
                  }
              }
-         }
-         else {
-             commandSender.sendMessage("Download source is invalid!");
-         }
+        }
+        else {
+            commandSender.sendMessage(messages.getString("error_download_source"));
+        }
     }
 
     public static void tell_raw(String string, CommandSender commandSender) {
         if(commandSender instanceof Player) {
             ((Player) commandSender).performCommand("tellraw @s "+string);
-        } else {
-
         }
     }
 
@@ -590,10 +719,10 @@ public class IDKnetHandler implements Runnable {
         // "hoverEvent":{"action":"show_text","contents":"Click here to install"},
         // "text":"[install]","color":"blue"},
         // {"text":" or type /kill"}]}
-        String notice1 = idkMessageConfig.getString("install_plugin_notice1");
-        String notice2 = idkMessageConfig.getString("install_plugin_notice2").replace("[plugin_id]", plugin_id);
-        String install_button = idkMessageConfig.getString("install_button");
-        String install_button_hover = idkMessageConfig.getString("install_button_hover");
+        String notice1 = messages.getString("install_plugin_notice1");
+        String notice2 = messages.getString("install_plugin_notice2").replace("[plugin_id]", plugin_id);
+        String install_button = messages.getString("install_button");
+        String install_button_hover = messages.getString("install_button_hover");
         return "{\"text\":\""+notice1+" "+"\",\"extra\":[" +
                 "{\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/idk plugin install "+plugin_id+"\"}," +
                 "\"hoverEvent\":{\"action\":\"show_text\",\"contents\":\""+install_button_hover+"\"}," +
@@ -613,7 +742,8 @@ public class IDKnetHandler implements Runnable {
         CloseableHttpResponse response = null;
         try {
             response = httpclient.execute(httpGet);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
         String result = null;
@@ -622,12 +752,15 @@ public class IDKnetHandler implements Runnable {
             if (entity != null) {
                 result = EntityUtils.toString(entity);
             }
-        } catch (ParseException | IOException e) {
+        }
+        catch (ParseException | IOException e) {
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             try {
                 response.close();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -638,7 +771,8 @@ public class IDKnetHandler implements Runnable {
         new Thread(() -> {
             try {
                 get_10_top_projects(commandSender);
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }).run();
@@ -646,18 +780,20 @@ public class IDKnetHandler implements Runnable {
 
     public static void downloadFileByUrl(String plugin_title, String urlPath, String downloadPath, String fileName, CommandSender commandSender) throws IOException {
         try {
-            commandSender.sendMessage(idkMessageConfig.getString("download_start").replace("%filename%", fileName).replace("%url%", urlPath));
+            commandSender.sendMessage(messages.getString("download_start").replace("%filename%", fileName).replace("%url%", urlPath));
             File file = new File(downloadPath);
             if(file.exists()) {
                 if(Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
                     if(Bukkit.getPluginManager().getPlugin(plugin_title).isEnabled()) {
                         return;
-                    } else{
+                    }
+                    else{
                         Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_title);
                         Bukkit.getPluginManager().enablePlugin(plugin);
                         return;
                     }
-                } else {
+                }
+                else {
                     file.delete();
                 }
             }
@@ -678,10 +814,9 @@ public class IDKnetHandler implements Runnable {
             pbt.finish();//文件读取完成，关闭进度条
             fos.flush();
             fos.close();
-            commandSender.sendMessage(idkMessageConfig.getString("download_complete2").replace("%path%", downloadPath));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            commandSender.sendMessage(messages.getString("download_complete2").replace("%path%", downloadPath));
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -690,7 +825,8 @@ public class IDKnetHandler implements Runnable {
         new Thread(() -> {
             try {
                 get_projects_by_title(commandSender, title);
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }).run();
@@ -752,20 +888,22 @@ public class IDKnetHandler implements Runnable {
                             //进度100%时将用户的执行状态改为false
                             executeStatusMap.put(token, false);
                         }
-                        if (is_a_console){
-                            System.err.println(idkMessageConfig.getString("current_progress").replace("%progress%", String.valueOf(showProgress)));
-                            //System.err.println("Current Progress："+showProgress+"%");
-                        } else {
-                            player.sendMessage(idkMessageConfig.getString("current_progress").replace("%progress%", String.valueOf(showProgress)));
-                            //player.sendMessage("Current Progress："+showProgress+"%");
+                        if (showProgress == 25 || showProgress == 50 || showProgress == 75) {
+                            if (is_a_console){
+                                System.err.println(messages.getString("current_progress").replace("%progress%", String.valueOf(showProgress)));
+                                //System.err.println("Current Progress："+showProgress+"%");
+                            } else {
+                                player.sendMessage(messages.getString("current_progress").replace("%progress%", String.valueOf(showProgress)));
+                                //player.sendMessage("Current Progress："+showProgress+"%");
+                            }
                         }
                     }
                 }
                 if (is_a_console){
-                    System.out.println(idkMessageConfig.getString("download_complete"));
+                    System.out.println(messages.getString("download_complete"));
                     //System.err.println("Download Complete!");
                 } else {
-                    player.sendMessage(idkMessageConfig.getString("download_complete"));
+                    player.sendMessage(messages.getString("download_complete"));
                     //player.sendMessage("Download Complete!");
                 }
             } catch (Exception e) {

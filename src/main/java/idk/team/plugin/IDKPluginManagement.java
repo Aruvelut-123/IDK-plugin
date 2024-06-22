@@ -1,6 +1,9 @@
 package idk.team.plugin;
 
 import idk.team.FileManager;
+import idk.team.IDK;
+import idk.team.IDKCommand;
+import idk.team.IDKMessageConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -13,19 +16,33 @@ import java.net.URLDecoder;
 
 public class IDKPluginManagement {
     FileManager fm = new FileManager();
+
+    private String replace_plugin(String str, String plugin_name) {
+        return str.replace("[plugin]", plugin_name);
+    }
+
     public void delete_plugin(String plugin_name, CommandSender commandSender) {
+        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
+            protected void finalize() throws Throwable {
+                super.finalize();
+            }
+        };
         Plugin target = Bukkit.getPluginManager().getPlugin(plugin_name);
+        String startdp = messages.getString("startdp");
+        String succeeddp = messages.getString("succeeddp");
+        String succeeddep = messages.getString("succeeddep");
+        String pnf = messages.getString("pnf");
         if (target != null) {
-            commandSender.sendMessage("Start disable plugin: " + plugin_name);
+            commandSender.sendMessage(replace_plugin(startdp, plugin_name));
             Bukkit.getPluginManager().disablePlugin(target);
-            commandSender.sendMessage( "Succeed!");
+            commandSender.sendMessage( replace_plugin(succeeddp, plugin_name));
             getPluginFile(target).delete();
             if(target.getDataFolder().exists()) {
                 fm.deleteDir(target.getDataFolder());
             }
-            commandSender.sendMessage("Succeed to delete plugin "+plugin_name);
+            commandSender.sendMessage(replace_plugin(succeeddep, plugin_name));
         } else {
-            commandSender.sendMessage("Plugin not found!");
+            commandSender.sendMessage(replace_plugin(pnf, plugin_name));
         }
     }
 

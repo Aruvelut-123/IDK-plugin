@@ -12,6 +12,11 @@ import java.util.List;
 public class IDKTabCompletor implements TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
+            protected void finalize() throws Throwable {
+                super.finalize();
+            }
+        };
         if(strings.length == 1) {
             List<String> sub_commands = new ArrayList<>();
             sub_commands.add("gm");
@@ -57,12 +62,14 @@ public class IDKTabCompletor implements TabCompleter {
         }
         if(strings.length == 3 && strings[0].equals("plugin") && strings[1].equals("search")) {
             List<String> sub_commands = new ArrayList<>();
-            sub_commands.add("Plugin name here");
+            String pnh = messages.getString("pnh");
+            sub_commands.add(pnh);
             return sub_commands;
         }
         if(strings.length == 3 && strings[0].equals("plugin") && strings[1].equals("install")) {
             List<String> sub_commands = new ArrayList<>();
-            sub_commands.add("Plugin id/name here");
+            String pinh = messages.getString("pinh");
+            sub_commands.add(pinh);
             return sub_commands;
         }
         return null;

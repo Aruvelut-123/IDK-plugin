@@ -9,13 +9,18 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public final class IDK extends JavaPlugin {
+    public String data_folder = this.getDataFolder().getAbsolutePath();
+    public IDKMessageConfig messages = new IDKMessageConfig(data_folder, "messages.yml") {
+        protected void finalize() throws Throwable {
+            super.finalize();
+        }
+    };
     public Logger logger = Bukkit.getLogger();
     public static IDK idk;
     public boolean test_build = false;
     public boolean beta_build = false;
     public boolean debug = false;
     int config_ver = 2;
-    Configuration messages = null;
     String plugins = null;
 
     @Override
@@ -36,9 +41,14 @@ public final class IDK extends JavaPlugin {
         Bukkit.getPluginCommand("IDK").setTabCompleter(new IDKTabCompletor());
         Bukkit.getPluginManager().registerEvents(new IDKListener(), this); //注册事件处理
         saveDefaultConfig();
+        String debug_warn = messages.getString("debug_warn");
+        String papermc_warn = messages.getString("papermc_warn");
         this.debug = this.getConfig().getBoolean("debug");
         if(this.debug) {
-            logger.warning("Debug is enabled! It may cause some performance issue.");
+            logger.warning(debug_warn);
+        }
+        if(Objects.equals(this.getConfig().getString("download-source"), "papermc")) {
+            logger.warning(papermc_warn);
         }
         idk = this;
     }
@@ -46,14 +56,19 @@ public final class IDK extends JavaPlugin {
     public void reload() {
         this.reloadConfig();
         this.debug = this.getConfig().getBoolean("debug");
+        String debug_warn = messages.getString("debug_warn");
+        String papermc_warn = messages.getString("papermc_warn");
         if(this.debug) {
-            logger.warning("Debug is enabled! It may cause some performance issue.");
+            logger.warning(debug_warn);
+        }
+        if(Objects.equals(this.getConfig().getString("download-source"), "papermc")) {
+            logger.warning(papermc_warn);
         }
     }
 
     @Override
     public void onDisable() {
         //插件关闭逻辑
-        logger.info("Stopping...");
+        logger.info(messages.getString("stop"));
     }
 }

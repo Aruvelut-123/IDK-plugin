@@ -27,7 +27,6 @@ import java.util.List;
 public class IDKCommand implements CommandExecutor {
     String filename = "messages.yml";
     boolean checking = false;
-
     void check() {
         Configuration config = IDK.idk.getConfig();
         while(checking) {
@@ -56,7 +55,7 @@ public class IDKCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) { //检测指令执行
-        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk, "messages.yml") {
+        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
             protected void finalize() throws Throwable {
                 super.finalize();
             }
@@ -66,7 +65,11 @@ public class IDKCommand implements CommandExecutor {
         if(commandSender instanceof Player) {
             Player player = (Player) commandSender; //获取执行玩家
             if(strings.length == 0) {
-                player.sendMessage(messages.getString("main"));
+                List<String> main_msg = messages.getStringList("main");
+                Object[] main_msg_fix = main_msg.toArray();
+                for(int i = 0; i < main_msg_fix.length; i++) {
+                    player.sendMessage(main_msg_fix[i].toString());
+                }
                 return true;
             }
             if(strings.length >= 1 && strings[0].equals("plugin")) {
@@ -175,7 +178,8 @@ public class IDKCommand implements CommandExecutor {
                         }
                     }
                     return false;
-                } else {
+                }
+                else {
                     player.sendMessage("Plugin management function is not enabled in config.");
                     return true;
                 }
@@ -205,8 +209,7 @@ public class IDKCommand implements CommandExecutor {
                         messages.getString("creative");
                         messages.getString("adventure");
                         messages.getString("spectator");
-                        IDK.idk.logger.info(messages.getString("reload"));
-                        player.sendMessage(messages.getString("reload"));
+                        commandSender.sendMessage(messages.getString("reload"));
                     } catch (Exception e) {
                         IDK.idk.logger.warning(messages.getString("failed"));
                         player.sendMessage(messages.getString("failed_p"));
@@ -346,7 +349,11 @@ public class IDKCommand implements CommandExecutor {
             }
         } else{
             if(strings.length == 0) {
-                IDK.idk.logger.info(messages.getString("main"));
+                List<String> main_msg = messages.getStringList("main");
+                Object[] main_msg_fix = main_msg.toArray();
+                for(int i = 0; i < main_msg_fix.length; i++) {
+                    IDK.idk.logger.info(main_msg_fix[i].toString());
+                }
                 return true;
             }
             if(strings.length == 1 && strings[0].equals("reload")) {
@@ -373,10 +380,9 @@ public class IDKCommand implements CommandExecutor {
                     messages.getString("creative");
                     messages.getString("adventure");
                     messages.getString("spectator");
-                    IDK.idk.logger.info(messages.getString("reload"));
                     commandSender.sendMessage(messages.getString("reload"));
                 } catch (Exception e) {
-                    IDK.idk.logger.warning(messages.getString("failed"));
+                    commandSender.sendMessage(messages.getString("failed"));
                     e.printStackTrace();
                 }
                 return true;
@@ -481,7 +487,8 @@ public class IDKCommand implements CommandExecutor {
                         return true;
                     }
                     return false;
-                } else {
+                }
+                else {
                     IDK.idk.logger.warning("Plugin management function is not enabled in config.");
                     return true;
                 }
