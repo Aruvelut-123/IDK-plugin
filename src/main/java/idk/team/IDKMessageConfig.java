@@ -49,14 +49,14 @@ public abstract class IDKMessageConfig {
                     "workbench_title: 'IDK Workbench'\n" +
                     "Information_name: 'Information'\n" +
                     "Information_lore:\n" +
-                    "  - 'Author: MinecraftBaymax'\n" +
+                    "  - 'Author: Baymaxawa'\n" +
                     "  - 'Add by IDK plugin.'\n" +
                     "Help:\n" +
                     "  -  'IDK plugin help:'\n" +
                     "  -  '/IDK help - This help message'\n" +
                     "  -  '/IDK gm <number of gamemodes> - Change your gamemode'\n" +
-                    "  -  '/IDK open workbench - Open a chest or a workbench'\n" +
-                    "  -  '/IDK plugin - plugin commands'\n" +
+                    "  -  '/IDK open workbench - Open a workbench'\n" +
+                    "  -  '/IDK plugin - plugin management commands'\n" +
                     "  -  '/IDK menu - open IDK menu'\n" +
                     "  -  '/IDK ping - check your ping in game'\n" +
                     "  -  '/IDK reload - reload config file'\n" +
@@ -68,8 +68,8 @@ public abstract class IDKMessageConfig {
                     "  -  '/IDK plugin enable <plugin name> - Enable a plugin'\n" +
                     "  -  '/IDK plugin search - Get Top 10 Plugin'\n" +
                     "  -  '/IDK plugin search <plugin name> - Search a plugin by it\"s known name'\n" +
-                    "  -  '/IDK plugin install <plugin id/name> -Install a plugin by it\"s id'\n" +
-                    "  -  '/IDK plugin del <plugin name> - Delete a plugin by it\"s name.'\n" +
+                    "  -  '/IDK plugin install <plugin name> - Install a plugin by it\"s known name'\n" +
+                    "  -  '/IDK plugin del <plugin name> - Delete a plugin by it\"s name'\n" +
                     "current_progress: 'Current Progress: %progress%%'\n" +
                     "download_complete: 'Download Complete!'\n" +
                     "download_complete2: 'File downloaded successfully to: %path%'\n" +
