@@ -1,0 +1,41 @@
+name: Build Pull Request
+
+on:
+  push:
+    branches:
+    - master # master branch
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  build:
+    name: Build and upload
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Git repo
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: 17
+
+    - name: Build with mvn
+      uses: mvn package
+
+    - name: Publish JUnit report
+      uses: mikepenz/action-junit-report@v4
+      if: success() || failure() # Run even if the previous step fails
+      with:
+        report_paths: '**/build/test-results/test*/TEST-*.xml'
+
+    - name: Archive plugin jars on GitHub
+      uses: actions/upload-artifact@v4
+      with:
+        name: IDK plugin jars
+        path: target/*.jar
