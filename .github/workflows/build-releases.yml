@@ -6,6 +6,7 @@ on:
 
 jobs:
   publish:
+    name: Build and upload
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -20,6 +21,11 @@ jobs:
           architecture: x64
       - name: Build with the Maven
         run: mvn package
+      - name: Publish JUnit report
+        uses: mikepenz/action-junit-report@v4
+        if: success() || failure() # Run even if the previous step fails
+        with:
+          report_paths: '**/build/test-results/test*/TEST-*.xml'
       - name: Upload Jar Asset
         uses: JasonEtco/upload-to-release@master
         env:
