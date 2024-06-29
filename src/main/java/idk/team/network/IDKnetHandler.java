@@ -3,6 +3,8 @@ package idk.team.network;
 import idk.team.IDK;
 import idk.team.IDKMessageConfig;
 import idk.team.JSON.decoder;
+import idk.team.plugin.IDKPluginManagement;
+import io.papermc.paper.plugin.configuration.PluginMeta;
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -21,10 +23,7 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class IDKnetHandler implements Runnable {
     static IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
@@ -227,7 +226,7 @@ public class IDKnetHandler implements Runnable {
         return fix_list_string.substring(0, fix_list_string.length() - 1);
     }
 
-    public static void install_project(CommandSender commandSender, String project_id) throws IOException {
+    public static void install_project(CommandSender commandSender, String project_id, boolean skipable) throws IOException {
         if (IDK.idk.debug) {
             if (commandSender instanceof Player) {
                 commandSender.sendMessage(messages.getString("debug_p"));
@@ -255,8 +254,36 @@ public class IDKnetHandler implements Runnable {
             String real_uri = url.replace("{id|slug}", project_id);
             String result = sendGet(real_uri);
             String plugin_title = decoder.decode_json(result, "name");
-            if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                commandSender.sendMessage(messages.getString("no_duplicate"));
+            if (!skipable) {
+                if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
+                    commandSender.sendMessage(messages.getString("no_duplicate"));
+                }
+                else {
+                    try {
+                        String new_url = "https://hangar.papermc.io/api/v1/projects/{id|slug}/versions?limit="+limit;
+                        String new_real_uri = new_url.replace("{id|slug}",project_id);
+                        String new_result = sendGet(new_real_uri);
+                        String new_fixed_result = convert_list_string_to_json_string(decoder.decode_json(new_result, "result"));
+                        String files = decoder.decode_json(new_fixed_result, "downloads");
+                        String platform = "PAPER";
+                        String fixed_file = decoder.decode_json(files, platform);
+                        String file_url = decoder.decode_json(fixed_file, "downloadUrl");
+                        String file_info = decoder.decode_json(fixed_file, "fileInfo");
+                        String file_name = decoder.decode_json(file_info, "name");
+                        String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
+                        downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
+                        enable_plugin(file_path, plugin_title, commandSender);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                        if (commandSender instanceof Player) {
+                            messages.getString("error_install_p");
+                        }
+                        else {
+                            messages.getString("error_install_c");
+                        }
+                    }
+                }
             }
             else {
                 try {
@@ -272,7 +299,6 @@ public class IDKnetHandler implements Runnable {
                     String file_name = decoder.decode_json(file_info, "name");
                     String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
                     downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
-                    enable_plugin(file_path, plugin_title, commandSender);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
@@ -296,8 +322,36 @@ public class IDKnetHandler implements Runnable {
             String real_url = argument_handler(real_uri, args);
             String result = sendGet(real_url);
             String plugin_title = decoder.decode_json(result, "title");
-            if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                commandSender.sendMessage(messages.getString("no_duplicate"));
+            if (!skipable) {
+                if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
+                    commandSender.sendMessage(messages.getString("no_duplicate"));
+                }
+                else {
+                    try {
+                        String new_url = "https://api.modrinth.com/v2/project/{id|slug}/version?";
+                        String new_real_uri = new_url.replace("{id|slug}",project_id);
+                        String new_args = "\"featured\"=\""+featured+"\"&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
+                        String new_real_url = argument_handler(new_real_uri, new_args);
+                        String new_result = sendGet(new_real_url);
+                        String fixed_new_result = convert_list_string_to_json_string(new_result);
+                        String files = decoder.decode_json(fixed_new_result, "files");
+                        String fixed_files = convert_list_string_to_json_string(files);
+                        String file_url = decoder.decode_json(fixed_files, "url");
+                        String file_name = decoder.decode_json(fixed_files, "filename");
+                        String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
+                        downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
+                        enable_plugin(file_path, plugin_title, commandSender);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                        if (commandSender instanceof Player) {
+                            messages.getString("error_install_p");
+                        }
+                        else {
+                            messages.getString("error_install_c");
+                        }
+                    }
+                }
             }
             else {
                 try {
@@ -313,7 +367,6 @@ public class IDKnetHandler implements Runnable {
                     String file_name = decoder.decode_json(fixed_files, "filename");
                     String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
                     downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
-                    enable_plugin(file_path, plugin_title, commandSender);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
@@ -344,8 +397,36 @@ public class IDKnetHandler implements Runnable {
                 String real_uri = url.replace("{id|slug}", project_id);
                 String result = sendGet(real_uri);
                 String plugin_title = decoder.decode_json(result, "name");
-                if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                    commandSender.sendMessage(messages.getString("no_duplicate"));
+                if (!skipable) {
+                    if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
+                        commandSender.sendMessage(messages.getString("no_duplicate"));
+                    }
+                    else {
+                        try {
+                            String new_url = "https://hangar.papermc.io/api/v1/projects/{id|slug}/versions?limit="+limit;
+                            String new_real_uri = new_url.replace("{id|slug}",project_id);
+                            String new_result = sendGet(new_real_uri);
+                            String new_fixed_result = convert_list_string_to_json_string(decoder.decode_json(new_result, "result"));
+                            String files = decoder.decode_json(new_fixed_result, "downloads");
+                            String platform = "PAPER";
+                            String fixed_file = decoder.decode_json(files, platform);
+                            String file_url = decoder.decode_json(fixed_file, "downloadUrl");
+                            String file_info = decoder.decode_json(fixed_file, "fileInfo");
+                            String file_name = decoder.decode_json(file_info, "name");
+                            String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
+                            downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
+                            enable_plugin(file_path, plugin_title, commandSender);
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                            if (commandSender instanceof Player) {
+                                messages.getString("error_install_p");
+                            }
+                            else {
+                                messages.getString("error_install_c");
+                            }
+                        }
+                    }
                 }
                 else {
                     try {
@@ -361,7 +442,6 @@ public class IDKnetHandler implements Runnable {
                         String file_name = decoder.decode_json(file_info, "name");
                         String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
                         downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
-                        enable_plugin(file_path, plugin_title, commandSender);
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -393,8 +473,36 @@ public class IDKnetHandler implements Runnable {
                 String real_url = argument_handler(real_uri, args);
                 String result = sendGet(real_url);
                 String plugin_title = decoder.decode_json(result, "title");
-                if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                    commandSender.sendMessage(messages.getString("no_duplicate"));
+                if (!skipable) {
+                    if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
+                        commandSender.sendMessage(messages.getString("no_duplicate"));
+                    }
+                    else {
+                        try {
+                            String new_url = "https://api.modrinth.com/v2/project/{id|slug}/version?";
+                            String new_real_uri = new_url.replace("{id|slug}",project_id);
+                            String new_args = "\"featured\"=\""+featured+"\"&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
+                            String new_real_url = argument_handler(new_real_uri, new_args);
+                            String new_result = sendGet(new_real_url);
+                            String fixed_new_result = convert_list_string_to_json_string(new_result);
+                            String files = decoder.decode_json(fixed_new_result, "files");
+                            String fixed_files = convert_list_string_to_json_string(files);
+                            String file_url = decoder.decode_json(fixed_files, "url");
+                            String file_name = decoder.decode_json(fixed_files, "filename");
+                            String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
+                            downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
+                            enable_plugin(file_path, plugin_title, commandSender);
+                        }
+                        catch (Exception ea) {
+                            ea.printStackTrace();
+                            if (commandSender instanceof Player) {
+                                messages.getString("error_install_p");
+                            }
+                            else {
+                                messages.getString("error_install_c");
+                            }
+                        }
+                    }
                 }
                 else {
                     try {
@@ -410,7 +518,6 @@ public class IDKnetHandler implements Runnable {
                         String file_name = decoder.decode_json(fixed_files, "filename");
                         String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
                         downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
-                        enable_plugin(file_path, plugin_title, commandSender);
                     }
                     catch (Exception ea) {
                         ea.printStackTrace();
@@ -704,6 +811,251 @@ public class IDKnetHandler implements Runnable {
         else {
             commandSender.sendMessage(messages.getString("error_download_source"));
         }
+    }
+
+    public static String get_project_info(CommandSender commandSender) throws IOException {
+        if (IDK.idk.debug) {
+            if (commandSender instanceof Player) {
+                commandSender.sendMessage(messages.getString("debug_p"));
+            } else {
+                commandSender.sendMessage(messages.getString("debug_c"));
+            }
+        }
+        refresh_download_source();
+        String find_plugin = messages.getString("find_plugin");
+
+        if (Objects.equals(download_source, "papermc")) {
+            Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
+            for (int i = 0; i < plugins.length; i++) {
+                String project_id = plugins[i].getPluginMeta().getName();
+                if (Objects.equals(project_id, "IDK")) {
+                    continue;
+                }
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("project_id="+project_id);
+                }
+                commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
+                int limit = 10;
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("limit="+limit);
+                }
+                String version = Bukkit.getServer().getMinecraftVersion();
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("version="+version);
+                }
+                String url = "https://hangar.papermc.io/api/v1/projects/{id|slug}?limit="+limit+"&version="+version;
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("url="+url);
+                }
+                String real_uri = url.replace("{id|slug}", project_id);
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("real_uri="+real_uri);
+                }
+                String result = sendGet(real_uri);
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("result="+result);
+                }
+                String plugin_title = decoder.decode_json(result, "name");
+                if (Bukkit.getPluginManager().getPlugin(project_id) == null) {
+                    if (commandSender instanceof Player) {
+                        commandSender.sendMessage(messages.getString("error_install_p"));
+                    }
+                    else {
+                        commandSender.sendMessage(messages.getString("error_install_c"));
+                    }
+                    return null;
+                }
+                else if (decoder.decode_json(result, "message") != null && Objects.equals(decoder.decode_json(result, "message"), "Not Found")) {}
+                else {
+                    try {
+                        String new_url = "https://hangar.papermc.io/api/v1/projects/{id|slug}/versions?limit="+limit;
+                        String new_real_uri = new_url.replace("{id|slug}",project_id);
+                        String new_result = sendGet(new_real_uri);
+                        String new_fixed_result = convert_list_string_to_json_string(decoder.decode_json(new_result, "result"));
+                        String ver = decoder.decode_json(new_fixed_result, "name");
+                        PluginMeta plugin_meta = Bukkit.getPluginManager().getPlugin(plugin_title).getPluginMeta();
+                        String plugin_ver = plugin_meta.getVersion();
+                        String fix_plugin_ver = plugin_ver.replaceAll("[^0-9.]+", "");
+                        String fix_ver = ver.replaceAll("[^0-9.]+", "");
+                        String fixed_ver = "";
+                        if(IDK.idk.debug) {
+                            commandSender.sendMessage("plugin_ver="+plugin_ver);
+                            commandSender.sendMessage("fix_plugin_ver="+fix_plugin_ver);
+                            commandSender.sendMessage("ver="+ver);
+                            commandSender.sendMessage("fix_ver="+fix_ver);
+                            commandSender.sendMessage("plugin_title == \"viaversion\"=" + (plugin_title.equals("viaversion")));
+                            commandSender.sendMessage("fix_plugin_ver == fixed_ver=" + (fix_plugin_ver.equals(fixed_ver)));
+                        }
+                        if (plugin_title == "viaversion") {
+                            fixed_ver = fix_ver.substring(0, fix_ver.length()-3);
+                        }
+                        if (fix_plugin_ver == fixed_ver) {
+                            commandSender.sendMessage("No need to update");
+                        }
+                        else {
+                            commandSender.sendMessage("Start updating plugin" + plugin_title + ".");
+                            IDKPluginManagement idkpm = new IDKPluginManagement();
+                            idkpm.delete_plugin(plugin_title, commandSender, true);
+                            install_project(commandSender, plugin_title, true);
+                        }
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                        if (commandSender instanceof Player) {
+                            messages.getString("error_install_p");
+                        }
+                        else {
+                            messages.getString("error_install_c");
+                        }
+                        return null;
+                    }
+                }
+            }
+            return "Update complete! You need to restart to take effort.";
+        }
+        /*else if (Objects.equals(download_source, "modrinth")) {
+            commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
+            boolean featured = true;
+            String loader = "paper";
+            String game_version = Bukkit.getMinecraftVersion();
+            String url = "https://api.modrinth.com/v2/project/{id|slug}?featured="+featured;
+            String real_uri = url.replace("{id|slug}",project_id);
+            String args = "&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
+            String real_url = argument_handler(real_uri, args);
+            String result = sendGet(real_url);
+            String plugin_title = decoder.decode_json(result, "title");
+            if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
+                commandSender.sendMessage(messages.getString("no_duplicate"));
+            }
+            else {
+                try {
+                    String new_url = "https://api.modrinth.com/v2/project/{id|slug}/version?";
+                    String new_real_uri = new_url.replace("{id|slug}",project_id);
+                    String new_args = "\"featured\"=\""+featured+"\"&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
+                    String new_real_url = argument_handler(new_real_uri, new_args);
+                    String new_result = sendGet(new_real_url);
+                    String fixed_new_result = convert_list_string_to_json_string(new_result);
+                    String files = decoder.decode_json(fixed_new_result, "files");
+                    String fixed_files = convert_list_string_to_json_string(files);
+                    String file_url = decoder.decode_json(fixed_files, "url");
+                    String file_name = decoder.decode_json(fixed_files, "filename");
+                    String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
+                    downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
+                    enable_plugin(file_path, plugin_title, commandSender);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                    if (commandSender instanceof Player) {
+                        messages.getString("error_install_p");
+                    }
+                    else {
+                        messages.getString("error_install_c");
+                    }
+                }
+            }
+        }
+        else if (Objects.equals(download_source, "both")) {
+            try {
+                commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", "papermc"));
+                int limit = 10;
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("limit="+limit);
+                }
+                String version = Bukkit.getServer().getMinecraftVersion();
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("version="+version);
+                }
+                String url = "https://hangar.papermc.io/api/v1/projects/{id|slug}?limit="+limit+"&version="+version;
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("url="+url);
+                }
+                String real_uri = url.replace("{id|slug}", project_id);
+                String result = sendGet(real_uri);
+                String plugin_title = decoder.decode_json(result, "name");
+                if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
+                    commandSender.sendMessage(messages.getString("no_duplicate"));
+                }
+                else {
+                    try {
+                        String new_url = "https://hangar.papermc.io/api/v1/projects/{id|slug}/versions?limit="+limit;
+                        String new_real_uri = new_url.replace("{id|slug}",project_id);
+                        String new_result = sendGet(new_real_uri);
+                        String new_fixed_result = convert_list_string_to_json_string(decoder.decode_json(new_result, "result"));
+                        String files = decoder.decode_json(new_fixed_result, "downloads");
+                        String platform = "PAPER";
+                        String fixed_file = decoder.decode_json(files, platform);
+                        String file_url = decoder.decode_json(fixed_file, "downloadUrl");
+                        String file_info = decoder.decode_json(fixed_file, "fileInfo");
+                        String file_name = decoder.decode_json(file_info, "name");
+                        String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
+                        downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
+                        enable_plugin(file_path, plugin_title, commandSender);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                        if (commandSender instanceof Player) {
+                            messages.getString("error_install_p");
+                        }
+                        else {
+                            messages.getString("error_install_c");
+                        }
+                    }
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                if (commandSender instanceof Player) {
+                    commandSender.sendMessage(messages.getString("error_papermc_p"));
+                }
+                else {
+                    commandSender.sendMessage(messages.getString("error_papermc_c"));
+                }
+                commandSender.sendMessage(messages.getString("switch_to_source").replace("[source]", "modrinth"));
+                commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", "modrinth"));
+                boolean featured = true;
+                String loader = "paper";
+                String game_version = Bukkit.getMinecraftVersion();
+                String url = "https://api.modrinth.com/v2/project/{id|slug}?featured="+featured;
+                String real_uri = url.replace("{id|slug}",project_id);
+                String args = "&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
+                String real_url = argument_handler(real_uri, args);
+                String result = sendGet(real_url);
+                String plugin_title = decoder.decode_json(result, "title");
+                if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
+                    commandSender.sendMessage(messages.getString("no_duplicate"));
+                }
+                else {
+                    try {
+                        String new_url = "https://api.modrinth.com/v2/project/{id|slug}/version?";
+                        String new_real_uri = new_url.replace("{id|slug}",project_id);
+                        String new_args = "\"featured\"=\""+featured+"\"&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
+                        String new_real_url = argument_handler(new_real_uri, new_args);
+                        String new_result = sendGet(new_real_url);
+                        String fixed_new_result = convert_list_string_to_json_string(new_result);
+                        String files = decoder.decode_json(fixed_new_result, "files");
+                        String fixed_files = convert_list_string_to_json_string(files);
+                        String file_url = decoder.decode_json(fixed_files, "url");
+                        String file_name = decoder.decode_json(fixed_files, "filename");
+                        String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
+                        downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
+                        enable_plugin(file_path, plugin_title, commandSender);
+                    }
+                    catch (Exception ea) {
+                        ea.printStackTrace();
+                        if (commandSender instanceof Player) {
+                            messages.getString("error_install_p");
+                        }
+                        else {
+                            messages.getString("error_install_c");
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            commandSender.sendMessage("Download source is invalid!");
+        }*/
+        return null;
     }
 
     public static void tell_raw(String string, CommandSender commandSender) {

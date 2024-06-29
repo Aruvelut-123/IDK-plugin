@@ -165,7 +165,7 @@ public class IDKCommand implements CommandExecutor {
                         }
                         if(strings.length == 3 && strings[1].equals("install")) {
                             try {
-                                IDKnetHandler.install_project(commandSender, strings[2]);
+                                IDKnetHandler.install_project(commandSender, strings[2], false);
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
@@ -340,7 +340,7 @@ public class IDKCommand implements CommandExecutor {
             if(IDK.idk.test_build) {
                 if(strings.length == 1 && strings[0].equals("test")) {
                     try {
-                        IDKnetHandler.install_project(commandSender, "P1OZGk5p");
+                        player.sendMessage(IDKnetHandler.get_project_info(commandSender));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -475,7 +475,7 @@ public class IDKCommand implements CommandExecutor {
                     }
                     if(strings.length == 3 && strings[1].equals("install")) {
                         try {
-                            IDKnetHandler.install_project(commandSender, strings[2]);
+                            IDKnetHandler.install_project(commandSender, strings[2], false);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -531,13 +531,12 @@ public class IDKCommand implements CommandExecutor {
             if(IDK.idk.test_build) {
                 if(strings.length == 1 && strings[0].equals("test")) {
                     try {
-                        IDKnetHandler.install_project(commandSender, "P1OZGk5p");
+                        IDK.idk.logger.info(IDKnetHandler.get_project_info(commandSender));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                     return true;
                 }
-                
             }
         }
         return false;

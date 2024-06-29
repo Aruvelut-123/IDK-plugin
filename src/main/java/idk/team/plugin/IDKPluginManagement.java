@@ -2,7 +2,6 @@ package idk.team.plugin;
 
 import idk.team.FileManager;
 import idk.team.IDK;
-import idk.team.IDKCommand;
 import idk.team.IDKMessageConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -19,6 +18,29 @@ public class IDKPluginManagement {
 
     private String replace_plugin(String str, String plugin_name) {
         return str.replace("[plugin]", plugin_name);
+    }
+
+    public void delete_plugin(String plugin_name, CommandSender commandSender, boolean skipable) {
+        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
+            protected void finalize() throws Throwable {
+                super.finalize();
+            }
+        };
+        Plugin target = Bukkit.getPluginManager().getPlugin(plugin_name);
+        String startdp = messages.getString("startdp");
+        String succeeddp = messages.getString("succeeddp");
+        String succeeddep = messages.getString("succeeddep");
+        String pnf = messages.getString("pnf");
+        if (target != null) {
+            commandSender.sendMessage(replace_plugin(startdp, plugin_name));
+            Bukkit.getPluginManager().disablePlugin(target);
+            commandSender.sendMessage(replace_plugin(succeeddp, plugin_name));
+            getPluginFile(target).delete();
+            Bukkit.getPluginManager().enablePlugin(target);
+            commandSender.sendMessage(replace_plugin(succeeddep, plugin_name));
+        } else {
+            commandSender.sendMessage(replace_plugin(pnf, plugin_name));
+        }
     }
 
     public void delete_plugin(String plugin_name, CommandSender commandSender) {
