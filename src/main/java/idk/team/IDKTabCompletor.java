@@ -58,6 +58,7 @@ public class IDKTabCompletor implements TabCompleter {
             sub_commands.add("search");
             sub_commands.add("install");
             sub_commands.add("del");
+            sub_commands.add("update");
             return sub_commands;
         }
         if(strings.length == 3 && strings[0].equals("plugin") && strings[1].equals("search")) {

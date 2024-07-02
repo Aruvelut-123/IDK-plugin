@@ -176,6 +176,14 @@ public class IDKCommand implements CommandExecutor {
                             idkpm.delete_plugin(strings[2], commandSender);
                             return true;
                         }
+                        if(strings.length == 3 && strings[1].equals("update")) {
+                            try {
+                                IDKnetHandler.update_plugins(commandSender);
+                            }
+                            catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
                     }
                     return false;
                 }
@@ -340,8 +348,9 @@ public class IDKCommand implements CommandExecutor {
             if(IDK.idk.test_build) {
                 if(strings.length == 1 && strings[0].equals("test")) {
                     try {
-                        player.sendMessage(IDKnetHandler.get_project_info(commandSender));
-                    } catch (IOException e) {
+                        IDKnetHandler.update_plugins(commandSender);
+                    }
+                    catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                     return true;
@@ -476,7 +485,8 @@ public class IDKCommand implements CommandExecutor {
                     if(strings.length == 3 && strings[1].equals("install")) {
                         try {
                             IDKnetHandler.install_project(commandSender, strings[2], false);
-                        } catch (IOException e) {
+                        }
+                        catch (IOException e) {
                             throw new RuntimeException(e);
                         }
                         return true;
@@ -485,6 +495,14 @@ public class IDKCommand implements CommandExecutor {
                         IDKPluginManagement idkpm = new IDKPluginManagement();
                         idkpm.delete_plugin(strings[2], commandSender);
                         return true;
+                    }
+                    if(strings.length == 3 && strings[1].equals("update")) {
+                        try {
+                            IDKnetHandler.update_plugins(commandSender);
+                        }
+                        catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                     return false;
                 }
@@ -531,8 +549,9 @@ public class IDKCommand implements CommandExecutor {
             if(IDK.idk.test_build) {
                 if(strings.length == 1 && strings[0].equals("test")) {
                     try {
-                        IDK.idk.logger.info(IDKnetHandler.get_project_info(commandSender));
-                    } catch (IOException e) {
+                        IDK.idk.logger.info(IDKnetHandler.update_plugins(commandSender));
+                    }
+                    catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                     return true;

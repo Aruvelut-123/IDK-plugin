@@ -1,4 +1,4 @@
-message-ver: 6
+message-ver: 7
 main:
   -  'IDK Plugin Version 1.2.4'
   -  'Made by Baymaxawa'
@@ -104,3 +104,8 @@ enable_plugin: 'Start enable plugin [name]'
 install_complete: 'Plugin [name]"s installation was complete!'
 get_plugin_info: 'Trying to get [name] plugin"s info from [source]'
 papermc_warn: 'Warning! Papermc source cannot use fuzzy search, that means you must use full name to search a plugin.'
+update_plugin: 'Start getting update from [source].'
+error_get_update: 'Error while updating plugins from [source]!'
+no_need_to_update: 'No need to update for plugin [plugin]!'
+all_plugins_are_new: 'Great! You plugins are new! No need to update!'
+update_complete: 'Update complete! You need to restart to take effort.'

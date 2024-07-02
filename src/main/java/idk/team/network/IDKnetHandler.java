@@ -813,7 +813,7 @@ public class IDKnetHandler implements Runnable {
         }
     }
 
-    public static String get_project_info(CommandSender commandSender) throws IOException {
+    public static String update_plugins(CommandSender commandSender) throws IOException {
         if (IDK.idk.debug) {
             if (commandSender instanceof Player) {
                 commandSender.sendMessage(messages.getString("debug_p"));
@@ -823,9 +823,15 @@ public class IDKnetHandler implements Runnable {
         }
         refresh_download_source();
         String find_plugin = messages.getString("find_plugin");
-
+        String update_plugin = messages.getString("update_plugin");
+        String no_need_to_update = messages.getString("no_need_to_update");
+        String all_plugins_are_new = messages.getString("all_plugins_are_new");
+        String update_complete = messages.getString("update_complete");
+        int counter = 0;
+        Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
+        int max = plugins.length;
         if (Objects.equals(download_source, "papermc")) {
-            Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
+            commandSender.sendMessage(update_plugin.replace("[source]", download_source));
             for (int i = 0; i < plugins.length; i++) {
                 String project_id = plugins[i].getPluginMeta().getName();
                 if (Objects.equals(project_id, "IDK")) {
@@ -868,29 +874,29 @@ public class IDKnetHandler implements Runnable {
                 else if (decoder.decode_json(result, "message") != null && Objects.equals(decoder.decode_json(result, "message"), "Not Found")) {}
                 else {
                     try {
+                        PluginMeta plugin_meta = Bukkit.getPluginManager().getPlugin(plugin_title).getPluginMeta();
+                        String plugin_ver = plugin_meta.getVersion();
                         String new_url = "https://hangar.papermc.io/api/v1/projects/{id|slug}/versions?limit="+limit;
                         String new_real_uri = new_url.replace("{id|slug}",project_id);
                         String new_result = sendGet(new_real_uri);
                         String new_fixed_result = convert_list_string_to_json_string(decoder.decode_json(new_result, "result"));
                         String ver = decoder.decode_json(new_fixed_result, "name");
-                        PluginMeta plugin_meta = Bukkit.getPluginManager().getPlugin(plugin_title).getPluginMeta();
-                        String plugin_ver = plugin_meta.getVersion();
                         String fix_plugin_ver = plugin_ver.replaceAll("[^0-9.]+", "");
                         String fix_ver = ver.replaceAll("[^0-9.]+", "");
-                        String fixed_ver = "";
                         if(IDK.idk.debug) {
                             commandSender.sendMessage("plugin_ver="+plugin_ver);
                             commandSender.sendMessage("fix_plugin_ver="+fix_plugin_ver);
                             commandSender.sendMessage("ver="+ver);
                             commandSender.sendMessage("fix_ver="+fix_ver);
-                            commandSender.sendMessage("plugin_title == \"viaversion\"=" + (plugin_title.equals("viaversion")));
-                            commandSender.sendMessage("fix_plugin_ver == fixed_ver=" + (fix_plugin_ver.equals(fixed_ver)));
+                            commandSender.sendMessage("plugin_title==\"viaversion\" =" + (plugin_title.equals("viaversion")));
+                            commandSender.sendMessage("fix_plugin_ver==fix_ver =" + (fix_plugin_ver.equals(fix_ver)));
                         }
-                        if (plugin_title == "viaversion") {
-                            fixed_ver = fix_ver.substring(0, fix_ver.length()-3);
+                        if (plugin_title.equals("viaversion")) {
+                            fix_ver = fix_ver.substring(0, fix_ver.length() - 3);
                         }
-                        if (fix_plugin_ver == fixed_ver) {
-                            commandSender.sendMessage("No need to update");
+                        if (fix_plugin_ver.equals(fix_ver)) {
+                            commandSender.sendMessage(no_need_to_update.replace("[plugin]", plugin_title));
+                            counter++;
                         }
                         else {
                             commandSender.sendMessage("Start updating plugin" + plugin_title + ".");
@@ -911,85 +917,88 @@ public class IDKnetHandler implements Runnable {
                     }
                 }
             }
-            return "Update complete! You need to restart to take effort.";
-        }
-        /*else if (Objects.equals(download_source, "modrinth")) {
-            commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
-            boolean featured = true;
-            String loader = "paper";
-            String game_version = Bukkit.getMinecraftVersion();
-            String url = "https://api.modrinth.com/v2/project/{id|slug}?featured="+featured;
-            String real_uri = url.replace("{id|slug}",project_id);
-            String args = "&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
-            String real_url = argument_handler(real_uri, args);
-            String result = sendGet(real_url);
-            String plugin_title = decoder.decode_json(result, "title");
-            if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                commandSender.sendMessage(messages.getString("no_duplicate"));
+            if (counter == max) {
+                return all_plugins_are_new;
             }
             else {
-                try {
-                    String new_url = "https://api.modrinth.com/v2/project/{id|slug}/version?";
-                    String new_real_uri = new_url.replace("{id|slug}",project_id);
-                    String new_args = "\"featured\"=\""+featured+"\"&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
-                    String new_real_url = argument_handler(new_real_uri, new_args);
-                    String new_result = sendGet(new_real_url);
-                    String fixed_new_result = convert_list_string_to_json_string(new_result);
-                    String files = decoder.decode_json(fixed_new_result, "files");
-                    String fixed_files = convert_list_string_to_json_string(files);
-                    String file_url = decoder.decode_json(fixed_files, "url");
-                    String file_name = decoder.decode_json(fixed_files, "filename");
-                    String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
-                    downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
-                    enable_plugin(file_path, plugin_title, commandSender);
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    if (commandSender instanceof Player) {
-                        messages.getString("error_install_p");
-                    }
-                    else {
-                        messages.getString("error_install_c");
-                    }
-                }
+                return update_complete;
             }
         }
-        else if (Objects.equals(download_source, "both")) {
-            try {
-                commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", "papermc"));
-                int limit = 10;
-                if (IDK.idk.debug) {
-                    commandSender.sendMessage("limit="+limit);
+        else if (Objects.equals(download_source, "modrinth")) {
+            commandSender.sendMessage(update_plugin.replace("[source]", download_source));
+            for (int i = 0; i < plugins.length; i++) {
+                String project_id = plugins[i].getPluginMeta().getName();
+                if (Objects.equals(project_id, "IDK")) {
+                    continue;
                 }
-                String version = Bukkit.getServer().getMinecraftVersion();
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("version="+version);
+                    commandSender.sendMessage("project_id="+project_id);
                 }
-                String url = "https://hangar.papermc.io/api/v1/projects/{id|slug}?limit="+limit+"&version="+version;
+                commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
+                boolean featured = true;
+                String loader = "paper";
+                String game_version = Bukkit.getMinecraftVersion();
+                String url = "https://api.modrinth.com/v2/project/{id|slug}?featured="+featured;
+                String real_uri = url.replace("{id|slug}",project_id);
+                String args = "&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
+                String real_url = argument_handler(real_uri, args);
                 if (IDK.idk.debug) {
+                    commandSender.sendMessage("featured="+featured);
+                    commandSender.sendMessage("loader="+loader);
+                    commandSender.sendMessage("game_version="+game_version);
                     commandSender.sendMessage("url="+url);
+                    commandSender.sendMessage("real_uri="+real_uri);
+                    commandSender.sendMessage("args="+args);
+                    commandSender.sendMessage("real_url="+real_url);
                 }
-                String real_uri = url.replace("{id|slug}", project_id);
-                String result = sendGet(real_uri);
-                String plugin_title = decoder.decode_json(result, "name");
-                if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                    commandSender.sendMessage(messages.getString("no_duplicate"));
+                String result = sendGet(real_url);
+                String plugin_title = decoder.decode_json(result, "title");
+                if (IDK.idk.debug) {
+                    commandSender.sendMessage("plugin_title="+plugin_title);
                 }
+                if (Bukkit.getPluginManager().getPlugin(project_id) == null) {
+                    if (commandSender instanceof Player) {
+                        commandSender.sendMessage(messages.getString("error_install_p"));
+                    }
+                    else {
+                        commandSender.sendMessage(messages.getString("error_install_c"));
+                    }
+                    return null;
+                }
+                else if (decoder.decode_json(result, "message") != null && Objects.equals(decoder.decode_json(result, "message"), "Not Found")) {}
                 else {
                     try {
-                        String new_url = "https://hangar.papermc.io/api/v1/projects/{id|slug}/versions?limit="+limit;
+                        PluginMeta plugin_meta = Bukkit.getPluginManager().getPlugin(plugin_title).getPluginMeta();
+                        String plugin_ver = plugin_meta.getVersion();
+                        String new_url = "https://api.modrinth.com/v2/project/{id|slug}/version?";
                         String new_real_uri = new_url.replace("{id|slug}",project_id);
-                        String new_result = sendGet(new_real_uri);
-                        String new_fixed_result = convert_list_string_to_json_string(decoder.decode_json(new_result, "result"));
-                        String files = decoder.decode_json(new_fixed_result, "downloads");
-                        String platform = "PAPER";
-                        String fixed_file = decoder.decode_json(files, platform);
-                        String file_url = decoder.decode_json(fixed_file, "downloadUrl");
-                        String file_info = decoder.decode_json(fixed_file, "fileInfo");
-                        String file_name = decoder.decode_json(file_info, "name");
-                        String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
-                        downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
-                        enable_plugin(file_path, plugin_title, commandSender);
+                        String new_args = "\"featured\"=\""+featured+"\"&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
+                        String new_real_url = argument_handler(new_real_uri, new_args);
+                        if (IDK.idk.debug) {
+                            commandSender.sendMessage("plugin_ver="+plugin_ver);
+                            commandSender.sendMessage("new_url="+new_url);
+                            commandSender.sendMessage("new_real_uri="+new_real_uri);
+                            commandSender.sendMessage("new_args="+new_args);
+                            commandSender.sendMessage("new_real_url="+new_real_url);
+                        }
+                        String new_result = sendGet(new_real_url);
+                        String fixed_new_result = convert_list_string_to_json_string(new_result);
+                        String ver = decoder.decode_json(fixed_new_result, "version_number");
+                        String fix_plugin_ver = plugin_ver.replaceAll("[^0-9.]+", "");
+                        String fix_ver = ver.replaceAll("[^0-9.]+", "");
+                        if (plugin_title.equals("viaversion")) {
+                            fix_ver = fix_ver.substring(0, fix_ver.length() - 3);
+                        }
+                        if (fix_plugin_ver.equals(fix_ver)) {
+                            commandSender.sendMessage(no_need_to_update.replace("[plugin]", plugin_title));
+                            counter++;
+                        }
+                        else {
+                            commandSender.sendMessage("Start updating plugin" + plugin_title + ".");
+                            IDKPluginManagement idkpm = new IDKPluginManagement();
+                            idkpm.delete_plugin(plugin_title, commandSender, true);
+                            install_project(commandSender, plugin_title, true);
+                        }
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -1002,59 +1011,209 @@ public class IDKnetHandler implements Runnable {
                     }
                 }
             }
-            catch (Exception e) {
-                e.printStackTrace();
-                if (commandSender instanceof Player) {
-                    commandSender.sendMessage(messages.getString("error_papermc_p"));
-                }
-                else {
-                    commandSender.sendMessage(messages.getString("error_papermc_c"));
-                }
-                commandSender.sendMessage(messages.getString("switch_to_source").replace("[source]", "modrinth"));
-                commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", "modrinth"));
-                boolean featured = true;
-                String loader = "paper";
-                String game_version = Bukkit.getMinecraftVersion();
-                String url = "https://api.modrinth.com/v2/project/{id|slug}?featured="+featured;
-                String real_uri = url.replace("{id|slug}",project_id);
-                String args = "&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
-                String real_url = argument_handler(real_uri, args);
-                String result = sendGet(real_url);
-                String plugin_title = decoder.decode_json(result, "title");
-                if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                    commandSender.sendMessage(messages.getString("no_duplicate"));
-                }
-                else {
-                    try {
-                        String new_url = "https://api.modrinth.com/v2/project/{id|slug}/version?";
-                        String new_real_uri = new_url.replace("{id|slug}",project_id);
-                        String new_args = "\"featured\"=\""+featured+"\"&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
-                        String new_real_url = argument_handler(new_real_uri, new_args);
-                        String new_result = sendGet(new_real_url);
-                        String fixed_new_result = convert_list_string_to_json_string(new_result);
-                        String files = decoder.decode_json(fixed_new_result, "files");
-                        String fixed_files = convert_list_string_to_json_string(files);
-                        String file_url = decoder.decode_json(fixed_files, "url");
-                        String file_name = decoder.decode_json(fixed_files, "filename");
-                        String file_path = Bukkit.getPluginsFolder().getAbsolutePath()+"\\"+file_name;
-                        downloadFileByUrl(plugin_title, file_url, file_path, file_name, commandSender);
-                        enable_plugin(file_path, plugin_title, commandSender);
+            if (counter == max) {
+                return all_plugins_are_new;
+            }
+            else {
+                return update_complete;
+            }
+        }
+        else if (Objects.equals(download_source, "both")) {
+            try {
+                commandSender.sendMessage(update_plugin.replace("[source]", "papermc"));
+                for (int i = 0; i < plugins.length; i++) {
+                    String project_id = plugins[i].getPluginMeta().getName();
+                    if (Objects.equals(project_id, "IDK")) {
+                        continue;
                     }
-                    catch (Exception ea) {
-                        ea.printStackTrace();
+                    if (IDK.idk.debug) {
+                        commandSender.sendMessage("project_id="+project_id);
+                    }
+                    commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
+                    int limit = 10;
+                    if (IDK.idk.debug) {
+                        commandSender.sendMessage("limit="+limit);
+                    }
+                    String version = Bukkit.getServer().getMinecraftVersion();
+                    if (IDK.idk.debug) {
+                        commandSender.sendMessage("version="+version);
+                    }
+                    String url = "https://hangar.papermc.io/api/v1/projects/{id|slug}?limit="+limit+"&version="+version;
+                    if (IDK.idk.debug) {
+                        commandSender.sendMessage("url="+url);
+                    }
+                    String real_uri = url.replace("{id|slug}", project_id);
+                    if (IDK.idk.debug) {
+                        commandSender.sendMessage("real_uri="+real_uri);
+                    }
+                    String result = sendGet(real_uri);
+                    if (IDK.idk.debug) {
+                        commandSender.sendMessage("result="+result);
+                    }
+                    String plugin_title = decoder.decode_json(result, "name");
+                    if (Bukkit.getPluginManager().getPlugin(project_id) == null) {
                         if (commandSender instanceof Player) {
-                            messages.getString("error_install_p");
+                            commandSender.sendMessage(messages.getString("error_install_p"));
                         }
                         else {
-                            messages.getString("error_install_c");
+                            commandSender.sendMessage(messages.getString("error_install_c"));
+                        }
+                        return null;
+                    }
+                    else if (decoder.decode_json(result, "message") != null && Objects.equals(decoder.decode_json(result, "message"), "Not Found")) {}
+                    else {
+                        try {
+                            PluginMeta plugin_meta = Bukkit.getPluginManager().getPlugin(plugin_title).getPluginMeta();
+                            String plugin_ver = plugin_meta.getVersion();
+                            String new_url = "https://hangar.papermc.io/api/v1/projects/{id|slug}/versions?limit="+limit;
+                            String new_real_uri = new_url.replace("{id|slug}",project_id);
+                            String new_result = sendGet(new_real_uri);
+                            String new_fixed_result = convert_list_string_to_json_string(decoder.decode_json(new_result, "result"));
+                            String ver = decoder.decode_json(new_fixed_result, "name");
+                            String fix_plugin_ver = plugin_ver.replaceAll("[^0-9.]+", "");
+                            String fix_ver = ver.replaceAll("[^0-9.]+", "");
+                            if(IDK.idk.debug) {
+                                commandSender.sendMessage("plugin_ver="+plugin_ver);
+                                commandSender.sendMessage("fix_plugin_ver="+fix_plugin_ver);
+                                commandSender.sendMessage("ver="+ver);
+                                commandSender.sendMessage("fix_ver="+fix_ver);
+                                commandSender.sendMessage("plugin_title==\"viaversion\" =" + (plugin_title.equals("viaversion")));
+                                commandSender.sendMessage("fix_plugin_ver==fix_ver =" + (fix_plugin_ver.equals(fix_ver)));
+                            }
+                            if (plugin_title.equals("viaversion")) {
+                                fix_ver = fix_ver.substring(0, fix_ver.length() - 3);
+                            }
+                            if (fix_plugin_ver.equals(fix_ver)) {
+                                commandSender.sendMessage(no_need_to_update.replace("[plugin]", plugin_title));
+                                counter++;
+                            }
+                            else {
+                                commandSender.sendMessage("Start updating plugin" + plugin_title + ".");
+                                IDKPluginManagement idkpm = new IDKPluginManagement();
+                                idkpm.delete_plugin(plugin_title, commandSender, true);
+                                install_project(commandSender, plugin_title, true);
+                            }
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                            if (commandSender instanceof Player) {
+                                messages.getString("error_install_p");
+                            }
+                            else {
+                                messages.getString("error_install_c");
+                            }
+                            return null;
                         }
                     }
+                }
+                if (counter == max) {
+                    return all_plugins_are_new;
+                }
+                else {
+                    return update_complete;
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                commandSender.sendMessage(messages.getString("error_get_update").replace("[source]", "papermc"));
+                commandSender.sendMessage(messages.getString("switch_to_source").replace("[source]", "modrinth"));
+                commandSender.sendMessage(update_plugin.replace("[source]", "modrinth"));
+                for (int i = 0; i < plugins.length; i++) {
+                    String project_id = plugins[i].getPluginMeta().getName();
+                    if (Objects.equals(project_id, "IDK")) {
+                        continue;
+                    }
+                    if (IDK.idk.debug) {
+                        commandSender.sendMessage("project_id="+project_id);
+                    }
+                    commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
+                    boolean featured = true;
+                    String loader = "paper";
+                    String game_version = Bukkit.getMinecraftVersion();
+                    String url = "https://api.modrinth.com/v2/project/{id|slug}?featured="+featured;
+                    String real_uri = url.replace("{id|slug}",project_id);
+                    String args = "&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
+                    String real_url = argument_handler(real_uri, args);
+                    if (IDK.idk.debug) {
+                        commandSender.sendMessage("featured="+featured);
+                        commandSender.sendMessage("loader="+loader);
+                        commandSender.sendMessage("game_version="+game_version);
+                        commandSender.sendMessage("url="+url);
+                        commandSender.sendMessage("real_uri="+real_uri);
+                        commandSender.sendMessage("args="+args);
+                        commandSender.sendMessage("real_url="+real_url);
+                    }
+                    String result = sendGet(real_url);
+                    String plugin_title = decoder.decode_json(result, "title");
+                    if (IDK.idk.debug) {
+                        commandSender.sendMessage("plugin_title="+plugin_title);
+                    }
+                    if (Bukkit.getPluginManager().getPlugin(project_id) == null) {
+                        if (commandSender instanceof Player) {
+                            commandSender.sendMessage(messages.getString("error_install_p"));
+                        }
+                        else {
+                            commandSender.sendMessage(messages.getString("error_install_c"));
+                        }
+                        return null;
+                    }
+                    else if (decoder.decode_json(result, "message") != null && Objects.equals(decoder.decode_json(result, "message"), "Not Found")) {}
+                    else {
+                        try {
+                            PluginMeta plugin_meta = Bukkit.getPluginManager().getPlugin(plugin_title).getPluginMeta();
+                            String plugin_ver = plugin_meta.getVersion();
+                            String new_url = "https://api.modrinth.com/v2/project/{id|slug}/version?";
+                            String new_real_uri = new_url.replace("{id|slug}",project_id);
+                            String new_args = "\"featured\"=\""+featured+"\"&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
+                            String new_real_url = argument_handler(new_real_uri, new_args);
+                            if (IDK.idk.debug) {
+                                commandSender.sendMessage("plugin_ver="+plugin_ver);
+                                commandSender.sendMessage("new_url="+new_url);
+                                commandSender.sendMessage("new_real_uri="+new_real_uri);
+                                commandSender.sendMessage("new_args="+new_args);
+                                commandSender.sendMessage("new_real_url="+new_real_url);
+                            }
+                            String new_result = sendGet(new_real_url);
+                            String fixed_new_result = convert_list_string_to_json_string(new_result);
+                            String ver = decoder.decode_json(fixed_new_result, "version_number");
+                            String fix_plugin_ver = plugin_ver.replaceAll("[^0-9.]+", "");
+                            String fix_ver = ver.replaceAll("[^0-9.]+", "");
+                            if (plugin_title.equals("viaversion")) {
+                                fix_ver = fix_ver.substring(0, fix_ver.length() - 3);
+                            }
+                            if (fix_plugin_ver.equals(fix_ver)) {
+                                commandSender.sendMessage(no_need_to_update.replace("[plugin]", plugin_title));
+                                counter++;
+                            }
+                            else {
+                                commandSender.sendMessage("Start updating plugin" + plugin_title + ".");
+                                IDKPluginManagement idkpm = new IDKPluginManagement();
+                                idkpm.delete_plugin(plugin_title, commandSender, true);
+                                install_project(commandSender, plugin_title, true);
+                            }
+                        }
+                        catch (Exception ea) {
+                            ea.printStackTrace();
+                            if (commandSender instanceof Player) {
+                                messages.getString("error_install_p");
+                            }
+                            else {
+                                messages.getString("error_install_c");
+                            }
+                        }
+                    }
+                }
+                if (counter == max) {
+                    return all_plugins_are_new;
+                }
+                else {
+                    return update_complete;
                 }
             }
         }
         else {
             commandSender.sendMessage("Download source is invalid!");
-        }*/
+        }
         return null;
     }
 

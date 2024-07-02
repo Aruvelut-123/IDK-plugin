@@ -123,7 +123,12 @@ public abstract class IDKMessageConfig {
                     "enable_plugin: 'Start enable plugin [name]'\n" +
                     "install_complete: 'Plugin [name]\"s installation was complete!'\n" +
                     "get_plugin_info: 'Trying to get [name] plugin\"s info from [source]'\n" +
-                    "papermc_warn: 'Warning! Papermc source cannot use fuzzy search, that means you must use full name to search a plugin.'\n";
+                    "papermc_warn: 'Warning! Papermc source cannot use fuzzy search, that means you must use full name to search a plugin.'\n" +
+                    "update_plugin: 'Start getting update from [source].'\n" +
+                    "error_get_update: 'Error while updating plugins from [source]!'\n" +
+                    "no_need_to_update: 'No need to update for plugin [plugin]!'\n" +
+                    "all_plugins_are_new: 'Great! You plugins are new! No need to update!'\n" +
+                    "update_complete: 'Update complete! You need to restart to take effort.'\n";
             if(!file.exists()) {
                 try {
                     file.createNewFile();

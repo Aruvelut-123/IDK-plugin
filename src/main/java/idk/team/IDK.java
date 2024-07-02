@@ -18,7 +18,7 @@ public final class IDK extends JavaPlugin {
     public Logger logger = Bukkit.getLogger();
     public static IDK idk;
     public boolean test_build = true;
-    public boolean beta_build = false;
+    public boolean beta_build = true;
     public boolean debug = false;
     int config_ver = 2;
     String plugins = null;
