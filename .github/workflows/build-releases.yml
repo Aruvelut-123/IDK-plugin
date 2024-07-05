@@ -27,7 +27,8 @@ jobs:
         with:
           report_paths: '**/build/test-results/test*/TEST-*.xml'
       - name: Upload Jar Asset
-        uses: svenstaro/upload-release-action@v2
+        uses: JasonEtco/upload-to-release@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         with:
-          repo_token: ${{ secrets.ACCESS_TOKEN }}
-          file: target/IDK.1.2.5-pre-test.jar
+          args: target/IDK-1.2.5-pre-test.jar
