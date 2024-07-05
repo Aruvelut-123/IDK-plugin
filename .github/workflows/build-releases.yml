@@ -27,8 +27,7 @@ jobs:
         with:
           report_paths: '**/build/test-results/test*/TEST-*.xml'
       - name: Upload Jar Asset
-        uses: JasonEtco/upload-to-release@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        uses: svenstaro/upload-release-action@v2
         with:
-          args: target/*.jar application/zip
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          file: target/*.jar
