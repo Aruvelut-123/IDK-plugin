@@ -5,6 +5,7 @@ import idk.team.IDK;
 import idk.team.IDKMessageConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -15,17 +16,18 @@ import java.net.URLDecoder;
 
 public class IDKPluginManagement {
     FileManager fm = new FileManager();
+    FileConfiguration config = IDK.idk.getConfig();
+    IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, config.getString("lang")) {
+        protected void finalize() throws Throwable {
+            super.finalize();
+        }
+    };
 
     private String replace_plugin(String str, String plugin_name) {
         return str.replace("[plugin]", plugin_name);
     }
 
     public void delete_plugin(String plugin_name, CommandSender commandSender, boolean skipable) {
-        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
-            protected void finalize() throws Throwable {
-                super.finalize();
-            }
-        };
         Plugin target = Bukkit.getPluginManager().getPlugin(plugin_name);
         String startdp = messages.getString("startdp");
         String succeeddp = messages.getString("succeeddp");
@@ -44,11 +46,6 @@ public class IDKPluginManagement {
     }
 
     public void delete_plugin(String plugin_name, CommandSender commandSender) {
-        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
-            protected void finalize() throws Throwable {
-                super.finalize();
-            }
-        };
         Plugin target = Bukkit.getPluginManager().getPlugin(plugin_name);
         String startdp = messages.getString("startdp");
         String succeeddp = messages.getString("succeeddp");

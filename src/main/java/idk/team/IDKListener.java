@@ -1,5 +1,6 @@
 package idk.team;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,7 +16,8 @@ import java.util.TimerTask;
 public class IDKListener implements Listener {
     @EventHandler //定义为事件处理
     public void playerJoin(PlayerJoinEvent event) { //定义处理玩家加入事件
-        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
+        FileConfiguration config = IDK.idk.getConfig();
+        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, config.getString("lang")) {
             protected void finalize() throws Throwable {
                 super.finalize();
             }
@@ -61,7 +63,8 @@ public class IDKListener implements Listener {
 
     @EventHandler //定义为事件处理
     public void playerLeave(PlayerQuitEvent event) { //定义处理玩家退出事件
-        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
+        FileConfiguration config = IDK.idk.getConfig();
+        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, config.getString("lang")) {
             protected void finalize() throws Throwable {
                 super.finalize();
             }

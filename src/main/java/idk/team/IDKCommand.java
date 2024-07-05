@@ -55,12 +55,12 @@ public class IDKCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) { //检测指令执行
-        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
+        Configuration config = IDK.idk.getConfig();
+        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, config.getString("lang")) {
             protected void finalize() throws Throwable {
                 super.finalize();
             }
         };
-        Configuration config = IDK.idk.getConfig();
         Boolean plugin_manage = config.getBoolean("plugin-management");
         if(commandSender instanceof Player) {
             Player player = (Player) commandSender; //获取执行玩家
@@ -199,7 +199,6 @@ public class IDKCommand implements CommandExecutor {
                         this.checking = true;
                         this.check();
                         IDK.idk.reload();
-                        messages.reload(filename);
                         config = IDK.idk.getConfig();
                         // 测试是否有空值
                         config.getBoolean("plugin-management");
@@ -356,7 +355,8 @@ public class IDKCommand implements CommandExecutor {
                     return true;
                 }
             }
-        } else{
+        }
+        else{
             if(strings.length == 0) {
                 List<String> main_msg = messages.getStringList("main");
                 Object[] main_msg_fix = main_msg.toArray();
@@ -371,7 +371,6 @@ public class IDKCommand implements CommandExecutor {
                     this.checking = true;
                     this.check();
                     IDK.idk.reload();
-                    messages.reload(filename);
                     config = IDK.idk.getConfig();
                     // 测试是否有空值
                     config.getBoolean("plugin-management");

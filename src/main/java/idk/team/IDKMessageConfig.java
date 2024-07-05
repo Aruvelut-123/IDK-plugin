@@ -8,19 +8,27 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class IDKMessageConfig {
-    static int ver = 6;
+    static int ver = 7;
     protected IDK idk;
     private File file;
     public FileConfiguration config;
 
-    public IDKMessageConfig(String file_path, String fileName) {
+    public IDKMessageConfig(String file_path, String lang) {
+        String fileName = "";
+        if (Objects.equals(lang, "zh")) {
+            fileName = "messages_zh.yml";
+        }
+        else {
+            fileName = "messages.yml";
+        }
         if (file_path != null && !file_path.isEmpty() && fileName != null && !fileName.isEmpty()) {
             file = new File(file_path, fileName);
-            String str = "message-ver: 6\n" +
+            String str = "message-ver: 7\n" +
                     "main:\n" +
-                    "  -  'IDK Plugin Version 1.2.4'\n" +
+                    "  -  'IDK Plugin Version 1.2.5-pre-test'\n" +
                     "  -  'Made by Baymaxawa'\n" +
                     "reload: 'Config reloaded!'\n" +
                     "failed: 'Config reload failed! Check details below!'\n" +
@@ -129,30 +137,54 @@ public abstract class IDKMessageConfig {
                     "no_need_to_update: 'No need to update for plugin [plugin]!'\n" +
                     "all_plugins_are_new: 'Great! You plugins are new! No need to update!'\n" +
                     "update_complete: 'Update complete! You need to restart to take effort.'\n";
-            if(!file.exists()) {
-                try {
-                    file.createNewFile();
-                    FileWriter fw = new FileWriter(file);
-                    fw.write(str);
-                    fw.close();
+            if(Objects.equals(lang, "zh")) {
+                if(!file.exists()) {
+                    File new_file = new File(file_path, "messages.yml");
+                    if(!new_file.exists()) {
+                        try {
+                            file.createNewFile();
+                            FileWriter fw = new FileWriter(file);
+                            fw.write(str);
+                            fw.close();
+                        }
+                        catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else {
+                        config = YamlConfiguration.loadConfiguration(new_file);
+                    }
                 }
-                catch (IOException e) {
-                    e.printStackTrace();
+                else {
+                    config = YamlConfiguration.loadConfiguration(file);
                 }
             }
             else {
-                try {
-                    config = YamlConfiguration.loadConfiguration(file);
-                    if (config.getInt("message-ver") != ver) {
-                        file.delete();
+                if(!file.exists()) {
+                    try {
                         file.createNewFile();
                         FileWriter fw = new FileWriter(file);
                         fw.write(str);
                         fw.close();
                     }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-                catch (IOException e) {
-                    throw new RuntimeException(e);
+                else {
+                    try {
+                        config = YamlConfiguration.loadConfiguration(file);
+                        if (config.getInt("message-ver") != ver) {
+                            file.delete();
+                            file.createNewFile();
+                            FileWriter fw = new FileWriter(file);
+                            fw.write(str);
+                            fw.close();
+                        }
+                    }
+                    catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
             config = YamlConfiguration.loadConfiguration(file);
@@ -166,8 +198,13 @@ public abstract class IDKMessageConfig {
         return config.getString(s);
     }
 
-    public void reload(String fileName) {
-        file = new File(Bukkit.getPluginsFolder().getAbsolutePath()+"\\IDK", fileName);
+    public void reload(String lang) {
+        if (Objects.equals(lang, "zh")) {
+            file = new File(Bukkit.getPluginsFolder().getAbsolutePath()+"\\IDK", "messages_zh.yml");
+        }
+        else {
+            file = new File(Bukkit.getPluginsFolder().getAbsolutePath()+"\\IDK", "messages.yml");
+        }
         config = YamlConfiguration.loadConfiguration(file);
     }
 

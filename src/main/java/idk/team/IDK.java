@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public final class IDK extends JavaPlugin {
     public String data_folder = this.getDataFolder().getAbsolutePath();
-    public IDKMessageConfig messages = new IDKMessageConfig(data_folder, "messages.yml") {
+    public IDKMessageConfig messages = new IDKMessageConfig(data_folder, this.getConfig().getString("lang")) {
         protected void finalize() throws Throwable {
             super.finalize();
         }
@@ -20,17 +20,18 @@ public final class IDK extends JavaPlugin {
     public boolean test_build = true;
     public boolean beta_build = true;
     public boolean debug = false;
-    int config_ver = 2;
+    int config_ver = 3;
     String plugins = null;
 
     @Override
     public void onLoad() {
         this.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
         Configuration defaults = new MemoryConfiguration();
-        defaults.set("config-version", 2);
+        defaults.set("config-version", 3);
         defaults.set("plugin-management", true);
-        defaults.set("debug", false);
+        defaults.set("debug", true);
         defaults.set("download-source", "papermc");
+        defaults.set("lang", "en");
         this.getConfig().setDefaults(defaults);
     }
 
@@ -55,6 +56,7 @@ public final class IDK extends JavaPlugin {
 
     public void reload() {
         this.reloadConfig();
+        messages.reload(this.getConfig().getString("lang"));
         this.debug = this.getConfig().getBoolean("debug");
         String debug_warn = messages.getString("debug_warn");
         String papermc_warn = messages.getString("papermc_warn");

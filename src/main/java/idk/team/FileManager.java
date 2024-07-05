@@ -2,12 +2,14 @@ package idk.team;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;
 
 public class FileManager {
     public boolean deleteDir(CommandSender sender, File dir) {
-        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, "messages.yml") {
+        FileConfiguration config = IDK.idk.getConfig();
+        IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, config.getString("lang")) {
             protected void finalize() throws Throwable {
                 super.finalize();
             }

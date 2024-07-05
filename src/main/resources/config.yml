@@ -1,5 +1,20 @@
-config-version: 2
+#config version, do not change it!!!
+#default: 3
+config-version: 3
+#enable plugin management function
+#default: true
 plugin-management: true
-debug: false
-#it can be type with like "papermc" or "modrinth" or "both"
+#enable debug
+#default: true
+debug: true
+#it can be with like "papermc" or "modrinth" or "both"
+#papermc means download from papermc
+#modrinth means download from modrinth
+#both means if papermc download failed then download from modrinth
+#default: "papermc"
 download-source: "papermc"
+#it can be as "zh" for chinese or anything else for english
+#if it's set to zh, you need to download messages_zh.yml and put it into plugin's config folder in order to load chinese language.
+#you can download it here: https://github.com/Aruvelut-123/IDK-plugin/raw/master/src/main/resources/messages_zh.yml
+#default: "en"
+lang: "en"
