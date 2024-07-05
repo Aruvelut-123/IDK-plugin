@@ -16,5 +16,6 @@ download-source: "papermc"
 #it can be as "zh" for chinese or anything else for english
 #if it's set to zh, you need to download messages_zh.yml and put it into plugin's config folder in order to load chinese language.
 #you can download it here: https://github.com/Aruvelut-123/IDK-plugin/raw/master/src/main/resources/messages_zh.yml
+#or extract it from the jar of plugin.
 #default: "en"
 lang: "en"
