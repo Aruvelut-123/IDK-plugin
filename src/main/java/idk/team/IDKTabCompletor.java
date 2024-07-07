@@ -63,6 +63,11 @@ public class IDKTabCompletor implements TabCompleter {
             sub_commands.add("update");
             return sub_commands;
         }
+        if(strings.length == 3 && strings[0].equals("plugin") && strings[1].equals("update")) {
+            List<String> sub_commands = new ArrayList<>();
+            sub_commands.add("all");
+            return sub_commands;
+        }
         if(strings.length == 3 && strings[0].equals("plugin") && strings[1].equals("search")) {
             List<String> sub_commands = new ArrayList<>();
             String pnh = messages.getString("pnh");

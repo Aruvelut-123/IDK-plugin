@@ -1291,19 +1291,19 @@ public class IDKnetHandler implements Runnable {
         }).run();
     }
 
-    public static void downloadFileByUrl(String plugin_title, String urlPath, String downloadPath, String fileName, CommandSender commandSender) throws IOException {
+    public static boolean downloadFileByUrl(String plugin_title, String urlPath, String downloadPath, String fileName, CommandSender commandSender) throws IOException {
         try {
             commandSender.sendMessage(messages.getString("download_start").replace("%filename%", fileName).replace("%url%", urlPath));
             File file = new File(downloadPath);
             if(file.exists()) {
                 if(Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
                     if(Bukkit.getPluginManager().getPlugin(plugin_title).isEnabled()) {
-                        return;
+                        return true;
                     }
                     else{
                         Plugin plugin = Bukkit.getPluginManager().getPlugin(plugin_title);
                         Bukkit.getPluginManager().enablePlugin(plugin);
-                        return;
+                        return true;
                     }
                 }
                 else {
@@ -1328,9 +1328,11 @@ public class IDKnetHandler implements Runnable {
             fos.flush();
             fos.close();
             commandSender.sendMessage(messages.getString("download_complete2").replace("%path%", downloadPath));
+            return true;
         }
         catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -1343,6 +1345,59 @@ public class IDKnetHandler implements Runnable {
                 throw new RuntimeException(e);
             }
         }).run();
+    }
+
+    public static void update_self(CommandSender commandSender) throws IOException {
+        commandSender.sendMessage(messages.getString("start_update_idk"));
+        String json_url = "https://idk.minecraftisbest.top/idk.json";
+        if (IDK.idk.debug) {
+            commandSender.sendMessage("json_url="+json_url);
+        }
+        String result = sendGet(json_url).replace("\n", "").replace(" ", "");
+        if (IDK.idk.debug) {
+            commandSender.sendMessage("result="+result);
+        }
+        String ver = decoder.decode_json(result, "ver");
+        PluginMeta idkMeta = Bukkit.getPluginManager().getPlugin("IDK").getPluginMeta();
+        String plugins_folder = Bukkit.getPluginsFolder().getAbsolutePath();
+        String now_ver = idkMeta.getVersion();
+        if (IDK.idk.debug) {
+            commandSender.sendMessage("ver="+ver);
+            commandSender.sendMessage("now_ver="+now_ver);
+            commandSender.sendMessage("plugins_folder="+plugins_folder);
+            commandSender.sendMessage("ver==now_ver = "+Objects.equals(ver, now_ver));
+        }
+        if (Objects.equals(ver, now_ver)) {
+            commandSender.sendMessage("You are running the latest version! No need to update!");
+        }
+        else {
+            String url = decoder.decode_json(result, "url");
+            String filename = decoder.decode_json(result, "filename");
+            String new_plugin_path = plugins_folder+"\\"+filename;
+            String plugin_title = idkMeta.getName();
+            if (IDK.idk.debug) {
+                commandSender.sendMessage("url="+url);
+                commandSender.sendMessage("filename="+filename);
+                commandSender.sendMessage("new_plugin_path="+new_plugin_path);
+                commandSender.sendMessage("plugin_titile="+plugin_title);
+            }
+            Boolean download = downloadFileByUrl(plugin_title, url, new_plugin_path, filename, commandSender);
+            if (download) {
+                Plugin IDK = Bukkit.getPluginManager().getPlugin("IDK");
+                IDKPluginManagement IDKPM = new IDKPluginManagement();
+                File old_plugin = new File(IDKPM.getPluginFile(IDK).getAbsolutePath());
+                if (old_plugin.exists()) {old_plugin.delete();}
+                commandSender.sendMessage(messages.getString("update_idk_complete"));
+            }
+            else {
+                if (commandSender instanceof Player) {
+                    commandSender.sendMessage(messages.getString("update_idk_failed_p"));
+                }
+                else {
+                    commandSender.sendMessage(messages.getString("update_idk_failed_c"));
+                }
+            }
+        }
     }
 
     private ArrayList<Integer> proList = new ArrayList<Integer>();
