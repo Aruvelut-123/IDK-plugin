@@ -17,8 +17,8 @@ public final class IDK extends JavaPlugin {
     };
     public Logger logger = Bukkit.getLogger();
     public static IDK idk;
-    public boolean test_build = true;
-    public boolean beta_build = true;
+    public boolean test_build = false;
+    public boolean beta_build = false;
     public boolean debug = false;
     int config_ver = 3;
     String plugins = null;
@@ -29,7 +29,7 @@ public final class IDK extends JavaPlugin {
         Configuration defaults = new MemoryConfiguration();
         defaults.set("config-version", 3);
         defaults.set("plugin-management", true);
-        defaults.set("debug", true);
+        defaults.set("debug", false);
         defaults.set("download-source", "papermc");
         defaults.set("lang", "en");
         this.getConfig().setDefaults(defaults);
