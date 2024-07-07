@@ -78,6 +78,8 @@ public abstract class IDKMessageConfig {
                     "  -  '/IDK plugin search <plugin name> - Search a plugin by it\"s known name'\n" +
                     "  -  '/IDK plugin install <plugin name> - Install a plugin by it\"s known name'\n" +
                     "  -  '/IDK plugin del <plugin name> - Delete a plugin by it\"s name'\n" +
+                    "  -  '/IDK plugin update - Update IDK plugin itself'\n" +
+                    "  -  '/IDK plugin update all - Update All plugins'\n" +
                     "current_progress: 'Current Progress: %progress%%'\n" +
                     "download_complete: 'Download Complete!'\n" +
                     "download_complete2: 'File downloaded successfully to: %path%'\n" +
@@ -136,7 +138,11 @@ public abstract class IDKMessageConfig {
                     "error_get_update: 'Error while updating plugins from [source]!'\n" +
                     "no_need_to_update: 'No need to update for plugin [plugin]!'\n" +
                     "all_plugins_are_new: 'Great! You plugins are new! No need to update!'\n" +
-                    "update_complete: 'Update complete! You need to restart to take effort.'\n";
+                    "update_complete: 'Update complete! You need to restart to take effort.'\n" +
+                    "start_update_idk: 'Checking for updates...'\n" +
+                    "update_idk_complete: 'Update Complete! Needs restart to take effort!'\n" +
+                    "update_idk_failed_p: 'Update Failed! Check the console for details!'\n" +
+                    "update_idk_failed_c: 'Update Failed!'\n";
             if(Objects.equals(lang, "zh")) {
                 if(!file.exists()) {
                     File new_file = new File(file_path, "messages.yml");

@@ -1,6 +1,6 @@
-message-ver: 7
+message-ver: 8
 main:
-  -  'IDK插件，版本1.2.5-pre-test'
+  -  'IDK插件，版本1.2.6'
   -  '由Baymaxawa制作'
 reload: '配置文件已重载！'
 failed: '配置文件重载失败！请查看下面的详情信息！'
@@ -50,6 +50,8 @@ Plugin_command_help:
   -  '/IDK plugin search <插件名> - 搜索指定名称的插件'
   -  '/IDK plugin install <插件名> - 安装指定名称的插件'
   -  '/IDK plugin del <插件名> - 删除指定名称的插件'
+  - '/IDK plugin update - 更新IDK插件'
+  - '/IDK plugin update all - 更新所有插件'
 current_progress: '目前进度：%progress%%'
 download_complete: '下载完成！'
 download_complete2: '文件已成功下载到：%path%'
@@ -107,3 +109,7 @@ error_get_update: '从 [source] 获取插件更新时出现错误！'
 no_need_to_update: '插件 [plugin] 已是最新版！'
 all_plugins_are_new: '太棒了！你的插件都是最新版的！无需更新！'
 update_complete: '更新完毕！你需要重启来应用效果。'
+start_update_idk: '正在检查更新...'
+update_idk_complete: '更新完成!重启后生效!'
+update_idk_failed_p: '更新失败!查看控制台了解详情!'
+update_idk_failed_c: '更新失败!'

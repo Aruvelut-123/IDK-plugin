@@ -176,12 +176,27 @@ public class IDKCommand implements CommandExecutor {
                             idkpm.delete_plugin(strings[2], commandSender);
                             return true;
                         }
-                        if(strings.length == 3 && strings[1].equals("update")) {
+                        if(strings.length == 2 && strings[1].equals("update")) {
                             try {
-                                IDKnetHandler.update_plugins(commandSender);
+                                IDKnetHandler.update_self(commandSender);
                             }
                             catch (IOException e) {
                                 throw new RuntimeException(e);
+                            }
+                            return true;
+                        }
+                        if(strings.length == 3 && strings[1].equals("update")) {
+                            if (strings[2].equals("all")) {
+                                try {
+                                    IDKnetHandler.update_plugins(commandSender);
+                                }
+                                catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                return true;
+                            }
+                            else {
+                                return false;
                             }
                         }
                     }
@@ -495,12 +510,27 @@ public class IDKCommand implements CommandExecutor {
                         idkpm.delete_plugin(strings[2], commandSender);
                         return true;
                     }
-                    if(strings.length == 3 && strings[1].equals("update")) {
+                    if(strings.length == 2 && strings[1].equals("update")) {
                         try {
-                            IDKnetHandler.update_plugins(commandSender);
+                            IDKnetHandler.update_self(commandSender);
                         }
                         catch (IOException e) {
                             throw new RuntimeException(e);
+                        }
+                        return true;
+                    }
+                    if(strings.length == 3 && strings[1].equals("update")) {
+                        if (strings[2].equals("all")) {
+                            try {
+                                IDKnetHandler.update_plugins(commandSender);
+                            }
+                            catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            return true;
+                        }
+                        else {
+                            return false;
                         }
                     }
                     return false;

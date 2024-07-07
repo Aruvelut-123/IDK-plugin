@@ -1,6 +1,6 @@
-message-ver: 7
+message-ver: 8
 main:
-  -  'IDK Plugin Version 1.2.5-pre-test'
+  -  'IDK Plugin Version 1.2.6'
   -  'Made by Baymaxawa'
 reload: 'Config reloaded!'
 failed: 'Config reload failed! Check details below!'
@@ -50,6 +50,8 @@ Plugin_command_help:
   -  '/IDK plugin search <plugin name> - Search a plugin by it"s known name'
   -  '/IDK plugin install <plugin name> - Install a plugin by it"s known name'
   -  '/IDK plugin del <plugin name> - Delete a plugin by it"s name'
+  -  '/IDK plugin update - Update IDK plugin itself'
+  -  '/IDK plugin update all - Update All plugins'
 current_progress: 'Current Progress: %progress%%'
 download_complete: 'Download Complete!'
 download_complete2: 'File downloaded successfully to: %path%'
@@ -109,3 +111,7 @@ error_get_update: 'Error while updating plugins from [source]!'
 no_need_to_update: 'No need to update for plugin [plugin]!'
 all_plugins_are_new: 'Great! You plugins are new! No need to update!'
 update_complete: 'Update complete! You need to restart to take effort.'
+start_update_idk: 'Checking for updates...'
+update_idk_complete: 'Update Complete! Needs restart to take effort!'
+update_idk_failed_p: 'Update Failed! Check the console for details!'
+update_idk_failed_c: 'Update Failed!'
