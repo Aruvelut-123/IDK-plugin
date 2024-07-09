@@ -29,25 +29,13 @@
       </plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>2.5.5</version>
-            <configuration>
-                <archive>
-                    <manifest>
-                        <mainClass>com.xxg.Main</mainClass>
-                    </manifest>
-                </archive>
-                <descriptorRefs>
-                    <descriptorRef>jar-with-dependencies</descriptorRef>
-                </descriptorRefs>
-                <finalName>${project.name}</finalName>
-            </configuration>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.2.4</version>
             <executions>
                 <execution>
-                    <id>make-assembly</id>
                     <phase>package</phase>
                     <goals>
-                        <goal>single</goal>
+                        <goal>shade</goal>
                     </goals>
                 </execution>
             </executions>
