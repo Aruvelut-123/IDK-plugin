@@ -33,4 +33,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         with:
-          args: target/IDK-1.2.6.jar application/zip
+          args: target/IDK-*.*.*.jar application/zip
