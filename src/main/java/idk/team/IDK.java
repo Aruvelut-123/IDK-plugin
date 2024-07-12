@@ -1,11 +1,13 @@
 package idk.team;
 
+import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
+import java.util.logging.Filter;
 import java.util.logging.Logger;
 
 public final class IDK extends JavaPlugin {
@@ -38,6 +40,7 @@ public final class IDK extends JavaPlugin {
     @Override
     public void onEnable() {
         //插件启用逻辑
+        ((org.apache.logging.log4j.core.Logger) LogManager.getRootLogger()).addFilter(new ComponentFilter());
         Bukkit.getPluginCommand("IDK").setExecutor(new IDKCommand()); //注册指令
         Bukkit.getPluginCommand("IDK").setTabCompleter(new IDKTabCompletor());
         Bukkit.getPluginManager().registerEvents(new IDKListener(), this); //注册事件处理

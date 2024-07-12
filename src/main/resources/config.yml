@@ -5,8 +5,8 @@ config-version: 3
 #default: true
 plugin-management: true
 #enable debug
-#default: true
-debug: true
+#default: false
+debug: false
 #it can be with like "papermc" or "modrinth" or "both"
 #papermc means download from papermc
 #modrinth means download from modrinth
