@@ -14,9 +14,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class IDKListener implements Listener {
-    String prefix = IDK.idk.prefix;
+    String prefix = "";
+    private void reload() {
+        this.prefix = IDK.idk.prefix;
+    }
+
     @EventHandler //定义为事件处理
     public void playerJoin(PlayerJoinEvent event) { //定义处理玩家加入事件
+        reload();
         FileConfiguration config = IDK.idk.getConfig();
         IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, config.getString("lang")) {
             protected void finalize() throws Throwable {
@@ -64,6 +69,7 @@ public class IDKListener implements Listener {
 
     @EventHandler //定义为事件处理
     public void playerLeave(PlayerQuitEvent event) { //定义处理玩家退出事件
+        reload();
         FileConfiguration config = IDK.idk.getConfig();
         IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, config.getString("lang")) {
             protected void finalize() throws Throwable {

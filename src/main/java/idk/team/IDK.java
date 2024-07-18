@@ -19,7 +19,7 @@ public final class IDK extends JavaPlugin {
     public Logger logger = Bukkit.getLogger();
     public static IDK idk;
     public boolean test_build = false;
-    public boolean beta_build = true;
+    public boolean beta_build = false;
     public boolean debug = true;
     public String prefix = messages.getString("prefix");
     int config_ver = 3;

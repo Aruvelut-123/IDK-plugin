@@ -27,7 +27,7 @@ import java.net.URLEncoder;
 import java.util.*;
 
 public class IDKnetHandler implements Runnable {
-    static String prefix = IDK.idk.prefix;
+    static String prefix = "";
     static FileConfiguration config = IDK.idk.getConfig();
     static IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, config.getString("lang")) {
         @Override
