@@ -14,6 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class IDKListener implements Listener {
+    String prefix = IDK.idk.prefix;
     @EventHandler //定义为事件处理
     public void playerJoin(PlayerJoinEvent event) { //定义处理玩家加入事件
         FileConfiguration config = IDK.idk.getConfig();
@@ -32,29 +33,29 @@ public class IDKListener implements Listener {
                 fixed.append("\n");
             }
         }
-        event.setJoinMessage(fixed.toString().replace("[Player]", player.getName())); //修改加入消息为获取玩家名+指定字符串(\n为换行符)
+        event.setJoinMessage(prefix+fixed.toString().replace("[Player]", player.getName())); //修改加入消息为获取玩家名+指定字符串(\n为换行符)
         String warning_title = messages.getString("warning_title");
         String warning_test = messages.getString("warning_test");
         String warning_beta = messages.getString("warning_beta");
         String warning_2 = messages.getString("warning_2");
         if (IDK.idk.test_build) {
-            player.sendTitle(warning_title, warning_test);
+            player.sendTitle(prefix+warning_title, prefix+warning_test);
             Timer timer = new Timer();
             TimerTask use_at_own_risks = new TimerTask() {
                 @Override
                 public void run() {
-                    player.sendTitle(warning_title, warning_2);
+                    player.sendTitle(prefix+warning_title, prefix+warning_2);
                 }
             };
             timer.schedule(use_at_own_risks,5000);
         }
         else if (IDK.idk.beta_build) {
-            player.sendTitle(warning_title, warning_beta);
+            player.sendTitle(prefix+warning_title, warning_beta);
             Timer timer = new Timer();
             TimerTask use_at_own_risks = new TimerTask() {
                 @Override
                 public void run() {
-                    player.sendTitle(warning_title, warning_2);
+                    player.sendTitle(prefix+warning_title, warning_2);
                 }
             };
             timer.schedule(use_at_own_risks,5000);
@@ -79,7 +80,7 @@ public class IDKListener implements Listener {
                 fixed.append("\n");
             }
         }
-        event.setQuitMessage(fixed.toString().replace("[Player]", player.getName())); //修改退出消息为获取玩家名+指定字符串(\n为换行符)
+        event.setQuitMessage(prefix+fixed.toString().replace("[Player]", player.getName())); //修改退出消息为获取玩家名+指定字符串(\n为换行符)
     }
 
     @EventHandler //定义为事件处理

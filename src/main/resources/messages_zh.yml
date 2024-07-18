@@ -1,6 +1,7 @@
 message-ver: 8
+prefix: '&'
 main:
-  -  'IDK插件，版本1.2.6'
+  -  'IDK插件，版本1.2.7-alpha-2'
   -  '由Baymaxawa制作'
 reload: '配置文件已重载！'
 failed: '配置文件重载失败！请查看下面的详情信息！'

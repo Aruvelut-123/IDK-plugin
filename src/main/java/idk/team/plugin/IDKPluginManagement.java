@@ -17,6 +17,7 @@ import java.net.URLDecoder;
 public class IDKPluginManagement {
     FileManager fm = new FileManager();
     FileConfiguration config = IDK.idk.getConfig();
+    String prefix = IDK.idk.prefix;
     IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, config.getString("lang")) {
         protected void finalize() throws Throwable {
             super.finalize();
@@ -28,44 +29,47 @@ public class IDKPluginManagement {
     }
 
     public void delete_plugin(String plugin_name, CommandSender commandSender, boolean skipable) {
+        this.prefix = IDK.idk.prefix;
         Plugin target = Bukkit.getPluginManager().getPlugin(plugin_name);
         String startdp = messages.getString("startdp");
         String succeeddp = messages.getString("succeeddp");
         String succeeddep = messages.getString("succeeddep");
         String pnf = messages.getString("pnf");
         if (target != null) {
-            commandSender.sendMessage(replace_plugin(startdp, plugin_name));
+            commandSender.sendMessage(prefix+replace_plugin(startdp, plugin_name));
             Bukkit.getPluginManager().disablePlugin(target);
-            commandSender.sendMessage(replace_plugin(succeeddp, plugin_name));
+            commandSender.sendMessage(prefix+replace_plugin(succeeddp, plugin_name));
             getPluginFile(target).delete();
             Bukkit.getPluginManager().enablePlugin(target);
-            commandSender.sendMessage(replace_plugin(succeeddep, plugin_name));
+            commandSender.sendMessage(prefix+replace_plugin(succeeddep, plugin_name));
         } else {
-            commandSender.sendMessage(replace_plugin(pnf, plugin_name));
+            commandSender.sendMessage(prefix+replace_plugin(pnf, plugin_name));
         }
     }
 
     public void delete_plugin(String plugin_name, CommandSender commandSender) {
+        this.prefix = IDK.idk.prefix;
         Plugin target = Bukkit.getPluginManager().getPlugin(plugin_name);
         String startdp = messages.getString("startdp");
         String succeeddp = messages.getString("succeeddp");
         String succeeddep = messages.getString("succeeddep");
         String pnf = messages.getString("pnf");
         if (target != null) {
-            commandSender.sendMessage(replace_plugin(startdp, plugin_name));
+            commandSender.sendMessage(prefix+replace_plugin(startdp, plugin_name));
             Bukkit.getPluginManager().disablePlugin(target);
-            commandSender.sendMessage( replace_plugin(succeeddp, plugin_name));
+            commandSender.sendMessage(prefix+replace_plugin(succeeddp, plugin_name));
             getPluginFile(target).delete();
             if(target.getDataFolder().exists()) {
                 fm.deleteDir(target.getDataFolder());
             }
-            commandSender.sendMessage(replace_plugin(succeeddep, plugin_name));
+            commandSender.sendMessage(prefix+replace_plugin(succeeddep, plugin_name));
         } else {
-            commandSender.sendMessage(replace_plugin(pnf, plugin_name));
+            commandSender.sendMessage(prefix+replace_plugin(pnf, plugin_name));
         }
     }
 
     public File getPluginFile(Plugin plugin) {
+        this.prefix = IDK.idk.prefix;
         File file = null;
         ClassLoader cl = plugin.getClass().getClassLoader();
         if (cl instanceof URLClassLoader) {

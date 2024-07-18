@@ -18,7 +18,6 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,15 +36,6 @@ public class IDKCommand implements CommandExecutor {
                 config.set("config-version", 2);
                 config.set("plugin-management", true);
                 config.set("debug", false);
-                String path = Bukkit.getPluginsFolder().getAbsolutePath();
-                String config_path = path + "\\IDK\\config.yml";
-                File config_file = new File(config_path);
-                try {
-                    FileWriter fw = new FileWriter(config_file);
-                    fw.write("#it can be type with like \"papermc\" or \"modrinth\" or \"both\"");
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
                 config.set("download-source", "papermc");
                 IDK.idk.saveConfig();
                 checking = false;
@@ -62,13 +52,14 @@ public class IDKCommand implements CommandExecutor {
             }
         };
         Boolean plugin_manage = config.getBoolean("plugin-management");
+        String prefix = IDK.idk.prefix;
         if(commandSender instanceof Player) {
             Player player = (Player) commandSender; //获取执行玩家
             if(strings.length == 0) {
                 List<String> main_msg = messages.getStringList("main");
                 Object[] main_msg_fix = main_msg.toArray();
                 for(int i = 0; i < main_msg_fix.length; i++) {
-                    player.sendMessage(main_msg_fix[i].toString());
+                    player.sendMessage(prefix+main_msg_fix[i].toString());
                 }
                 return true;
             }
@@ -77,7 +68,7 @@ public class IDKCommand implements CommandExecutor {
                     if(player.hasPermission("IDK.command.IDK.plugin")) {
                         if(strings.length == 2 && strings[1].equals("list")) {
                             IDK.idk.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
-                            player.sendMessage(messages.getString("available-plugins") + IDK.idk.plugins);
+                            player.sendMessage(prefix+messages.getString("available-plugins") + IDK.idk.plugins);
                             return true;
                         }
                         if(strings.length == 3 && strings[1].equals("load")) {
@@ -89,14 +80,14 @@ public class IDKCommand implements CommandExecutor {
                                     Plugin plugin = Bukkit.getPluginManager().loadPlugin(new File(file_path));
                                     if (plugin != null) {
                                         Bukkit.getPluginManager().enablePlugin(plugin);
-                                        player.sendMessage("Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
+                                        player.sendMessage(prefix+"Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
                                     }
                                     return true;
                                 } catch (InvalidPluginException | InvalidDescriptionException e) {
                                     return true;
                                 }
                             } else {
-                                player.sendMessage("Error!");
+                                player.sendMessage(prefix+"Error!");
                                 return true;
                             }
                         }
@@ -108,14 +99,14 @@ public class IDKCommand implements CommandExecutor {
                                     try {
                                         Bukkit.getPluginManager().disablePlugin(plugin);
                                     } catch (Exception e) {
-                                        player.sendMessage(messages.getString("plugin-disable-error"));
+                                        player.sendMessage(prefix+messages.getString("plugin-disable-error"));
                                     }
-                                    player.sendMessage(messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
+                                    player.sendMessage(prefix+messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
                                 } else {
-                                    player.sendMessage(messages.getString("plugin-not-found"));
+                                    player.sendMessage(prefix+messages.getString("plugin-not-found"));
                                 }
                             } else {
-                                player.sendMessage(messages.getString("plugin-disable-egg"));
+                                player.sendMessage(prefix+messages.getString("plugin-disable-egg"));
                             }
                             return true;
                         }
@@ -127,14 +118,14 @@ public class IDKCommand implements CommandExecutor {
                                     try {
                                         Bukkit.getPluginManager().enablePlugin(plugin);
                                     } catch (Exception e) {
-                                        player.sendMessage(messages.getString("plugin-enable-error"));
+                                        player.sendMessage(prefix+messages.getString("plugin-enable-error"));
                                     }
-                                    player.sendMessage(messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
+                                    player.sendMessage(prefix+messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
                                 } else {
-                                    player.sendMessage(messages.getString("plugin-not-found"));
+                                    player.sendMessage(prefix+messages.getString("plugin-not-found"));
                                 }
                             } else {
-                                player.sendMessage(messages.getString("plugin-enable-egg"));
+                                player.sendMessage(prefix+messages.getString("plugin-enable-egg"));
                             }
                             return true;
                         }
@@ -203,12 +194,13 @@ public class IDKCommand implements CommandExecutor {
                     return false;
                 }
                 else {
-                    player.sendMessage("Plugin management function is not enabled in config.");
+                    player.sendMessage(prefix+"Plugin management function is not enabled in config.");
                     return true;
                 }
             }
             if(strings.length == 1 && strings[0].equals("reload")) {
                 if(player.hasPermission("IDK.command.IDK.reload")) {
+                    prefix = IDK.idk.prefix;
                     try{
                         messages.save();
                         this.checking = true;
@@ -231,10 +223,10 @@ public class IDKCommand implements CommandExecutor {
                         messages.getString("creative");
                         messages.getString("adventure");
                         messages.getString("spectator");
-                        commandSender.sendMessage(messages.getString("reload"));
+                        commandSender.sendMessage(prefix+messages.getString("reload"));
                     } catch (Exception e) {
-                        IDK.idk.logger.warning(messages.getString("failed"));
-                        player.sendMessage(messages.getString("failed_p"));
+                        IDK.idk.logger.warning(prefix+messages.getString("failed"));
+                        player.sendMessage(prefix+messages.getString("failed_p"));
                         e.printStackTrace();
                     }
                 }
@@ -247,19 +239,19 @@ public class IDKCommand implements CommandExecutor {
                 switch (strings[1]) { //检测第二个参数
                     case "0": //如果是0
                         player.setGameMode(GameMode.SURVIVAL); //设置玩家游戏模式为生存
-                        player.sendMessage(messages.getString("survival")); //对玩家发送消息
+                        player.sendMessage(prefix+messages.getString("survival")); //对玩家发送消息
                         break; //跳出循环
                     case "1": //如果是1
                         player.setGameMode(GameMode.CREATIVE); //设置玩家游戏模式为创造
-                        player.sendMessage(messages.getString("creative")); //对玩家发送消息
+                        player.sendMessage(prefix+messages.getString("creative")); //对玩家发送消息
                         break; //跳出循环
                     case "2": //如果是2
                         player.setGameMode(GameMode.ADVENTURE); //设置玩家游戏模式为冒险
-                        player.sendMessage(messages.getString("adventure")); //对玩家发送消息
+                        player.sendMessage(prefix+messages.getString("adventure")); //对玩家发送消息
                         break; //跳出循环
                     case "3": //如果是3
                         player.setGameMode(GameMode.SPECTATOR); //设置玩家游戏模式为旁观
-                        player.sendMessage(messages.getString("spectator")); //对玩家发送消息
+                        player.sendMessage(prefix+messages.getString("spectator")); //对玩家发送消息
                         break; //跳出循环
                     default: //默认
                         break; //跳出循环
@@ -335,7 +327,7 @@ public class IDKCommand implements CommandExecutor {
                     List<String> help_msg = messages.getStringList("Help");
                     Object[] help_msg_fix = help_msg.toArray();
                     for(int i = 0; i < help_msg_fix.length; i++) {
-                        player.sendMessage(help_msg_fix[i].toString());
+                        player.sendMessage(prefix+help_msg_fix[i].toString());
                     }
                 }
                 return true;
@@ -346,7 +338,7 @@ public class IDKCommand implements CommandExecutor {
                         List<String> help_msg = messages.getStringList("Plugin_command_help");
                         Object[] help_msg_fix = help_msg.toArray();
                         for(int i = 0; i < help_msg_fix.length; i++) {
-                            player.sendMessage(help_msg_fix[i].toString());
+                            player.sendMessage(prefix+help_msg_fix[i].toString());
                         }
                         return true;
                     }
@@ -355,7 +347,7 @@ public class IDKCommand implements CommandExecutor {
             }
             if(strings.length == 1 && strings[0].equals("ping")) {
                 if(player.hasPermission("IDK.command.IDK.ping")) {
-                    player.sendMessage(messages.getString("ping") + player.getPing() + "ms!"); //给玩家发送消息
+                    player.sendMessage(prefix+messages.getString("ping") + player.getPing() + "ms!"); //给玩家发送消息
                 }
                 return true;
             }
@@ -376,11 +368,12 @@ public class IDKCommand implements CommandExecutor {
                 List<String> main_msg = messages.getStringList("main");
                 Object[] main_msg_fix = main_msg.toArray();
                 for(int i = 0; i < main_msg_fix.length; i++) {
-                    IDK.idk.logger.info(main_msg_fix[i].toString());
+                    IDK.idk.logger.info(prefix+main_msg_fix[i].toString());
                 }
                 return true;
             }
             if(strings.length == 1 && strings[0].equals("reload")) {
+                prefix = IDK.idk.prefix;
                 try{
                     messages.save();
                     this.checking = true;
@@ -403,9 +396,9 @@ public class IDKCommand implements CommandExecutor {
                     messages.getString("creative");
                     messages.getString("adventure");
                     messages.getString("spectator");
-                    commandSender.sendMessage(messages.getString("reload"));
+                    commandSender.sendMessage(prefix+messages.getString("reload"));
                 } catch (Exception e) {
-                    commandSender.sendMessage(messages.getString("failed"));
+                    commandSender.sendMessage(prefix+messages.getString("failed"));
                     e.printStackTrace();
                 }
                 return true;
@@ -414,7 +407,7 @@ public class IDKCommand implements CommandExecutor {
                 if(plugin_manage) {
                     if(strings.length == 2 && strings[1].equals("list")) {
                         IDK.idk.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
-                        IDK.idk.logger.info(messages.getString("available-plugins") + IDK.idk.plugins);
+                        IDK.idk.logger.info(prefix+messages.getString("available-plugins") + IDK.idk.plugins);
                         return true;
                     }
                     if(strings.length == 3 && strings[1].equals("load")) {
@@ -426,14 +419,14 @@ public class IDKCommand implements CommandExecutor {
                                 Plugin plugin = Bukkit.getPluginManager().loadPlugin(new File(file_path));
                                 if (plugin != null) {
                                     Bukkit.getPluginManager().enablePlugin(plugin);
-                                    IDK.idk.logger.info("Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
+                                    IDK.idk.logger.info(prefix+"Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
                                 }
                                 return true;
                             } catch (InvalidPluginException | InvalidDescriptionException e) {
                                 return true;
                             }
                         } else {
-                            IDK.idk.logger.warning("Error!");
+                            IDK.idk.logger.warning(prefix+"Error!");
                             return true;
                         }
                     }
@@ -445,11 +438,11 @@ public class IDKCommand implements CommandExecutor {
                                 try {
                                     Bukkit.getPluginManager().disablePlugin(plugin);
                                 } catch (Exception e) {
-                                    IDK.idk.logger.warning(messages.getString("plugin-disable-error"));
+                                    IDK.idk.logger.warning(prefix+messages.getString("plugin-disable-error"));
                                 }
-                                IDK.idk.logger.info(messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
+                                IDK.idk.logger.info(prefix+messages.getString("plugin-disabled").replace("[plugin_name]", plugin_name));
                             } else {
-                                IDK.idk.logger.warning(messages.getString("plugin-disable-egg"));
+                                IDK.idk.logger.warning(prefix+messages.getString("plugin-disable-egg"));
                             }
                             return true;
                         }
@@ -462,11 +455,11 @@ public class IDKCommand implements CommandExecutor {
                                 try {
                                     Bukkit.getPluginManager().enablePlugin(plugin);
                                 } catch (Exception e) {
-                                    IDK.idk.logger.warning(messages.getString("plugin-enable-error"));
+                                    IDK.idk.logger.warning(prefix+messages.getString("plugin-enable-error"));
                                 }
-                                IDK.idk.logger.info(messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
+                                IDK.idk.logger.info(prefix+messages.getString("plugin-enabled").replace("[plugin_name]", plugin_name));
                             } else {
-                                IDK.idk.logger.warning(messages.getString("plugin-enable-egg"));
+                                IDK.idk.logger.warning(prefix+messages.getString("plugin-enable-egg"));
                             }
                             return true;
                         }
@@ -536,27 +529,27 @@ public class IDKCommand implements CommandExecutor {
                     return false;
                 }
                 else {
-                    IDK.idk.logger.warning("Plugin management function is not enabled in config.");
+                    IDK.idk.logger.warning(prefix+"Plugin management function is not enabled in config.");
                     return true;
                 }
             }
             if(strings.length == 2 && strings[0].equals("gm")) {
-                IDK.idk.logger.warning(messages.getString("no-console"));
+                IDK.idk.logger.warning(prefix+messages.getString("no-console"));
                 return true;
             }
             if(strings.length == 1 && strings[0].equals("menu")) {
-                IDK.idk.logger.warning(messages.getString("no-console"));
+                IDK.idk.logger.warning(prefix+messages.getString("no-console"));
                 return true;
             }
             if(strings.length == 2 && strings[0].equals("open")) {
-                IDK.idk.logger.warning(messages.getString("no-console"));
+                IDK.idk.logger.warning(prefix+messages.getString("no-console"));
                 return true;
             }
             if(strings.length == 1 && strings[0].equals("help")) {
                 List<String> help_msg = messages.getStringList("Help");
                 Object[] help_msg_fix = help_msg.toArray();
                 for(int i = 0; i < help_msg_fix.length; i++) {
-                    IDK.idk.logger.info(help_msg_fix[i].toString());
+                    IDK.idk.logger.info(prefix+help_msg_fix[i].toString());
                 }
                 return true;
             }
@@ -565,20 +558,20 @@ public class IDKCommand implements CommandExecutor {
                     List<String> help_msg = messages.getStringList("Plugin_command_help");
                     Object[] help_msg_fix = help_msg.toArray();
                     for(int i = 0; i < help_msg_fix.length; i++) {
-                        IDK.idk.logger.info(help_msg_fix[i].toString());
+                        IDK.idk.logger.info(prefix+help_msg_fix[i].toString());
                     }
                     return true;
                 }
                 return false;
             }
             if(strings.length == 1 && strings[0].equals("ping")) {
-                IDK.idk.logger.warning(messages.getString("no-console"));
+                IDK.idk.logger.warning(prefix+messages.getString("no-console"));
                 return true;
             }
             if(IDK.idk.test_build) {
                 if(strings.length == 1 && strings[0].equals("test")) {
                     try {
-                        IDK.idk.logger.info(IDKnetHandler.update_plugins(commandSender));
+                        IDK.idk.logger.info(prefix+IDKnetHandler.update_plugins(commandSender));
                     }
                     catch (IOException e) {
                         throw new RuntimeException(e);

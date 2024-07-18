@@ -8,6 +8,7 @@ import java.io.File;
 
 public class FileManager {
     public boolean deleteDir(CommandSender sender, File dir) {
+        String prefix = IDK.idk.prefix;
         FileConfiguration config = IDK.idk.getConfig();
         IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, config.getString("lang")) {
             protected void finalize() throws Throwable {
@@ -23,9 +24,9 @@ public class FileManager {
             for (String element : children) {
                 File file = new File(dir, element);
                 if (!deleteDir(file)) {
-                    sender.sendMessage(del_fail.replace("[file]", file.getAbsolutePath()));
+                    sender.sendMessage(prefix+del_fail.replace("[file]", file.getAbsolutePath()));
                 } else {
-                    sender.sendMessage(del_complete.replace("[file]", file.getAbsolutePath()));
+                    sender.sendMessage(prefix+del_complete.replace("[file]", file.getAbsolutePath()));
                 }
             }
         }

@@ -27,6 +27,7 @@ import java.net.URLEncoder;
 import java.util.*;
 
 public class IDKnetHandler implements Runnable {
+    static String prefix = IDK.idk.prefix;
     static FileConfiguration config = IDK.idk.getConfig();
     static IDKMessageConfig messages = new IDKMessageConfig(IDK.idk.data_folder, config.getString("lang")) {
         @Override
@@ -38,34 +39,35 @@ public class IDKnetHandler implements Runnable {
 
     private static void refresh_download_source() {
         download_source = IDK.idk.getConfig().getString("download-source");
+        prefix = IDK.idk.prefix;
     }
 
     public static void get_10_top_projects(CommandSender commandSender) throws IOException {
         if (IDK.idk.debug) {
             if (commandSender instanceof Player) {
-                commandSender.sendMessage(messages.getString("debug_p"));
+                commandSender.sendMessage(prefix+messages.getString("debug_p"));
             } else {
-                commandSender.sendMessage(messages.getString("debug_c"));
+                commandSender.sendMessage(prefix+messages.getString("debug_c"));
             }
         }
         refresh_download_source();
         String get_10_top_plugin = messages.getString("get_10_top_plugin");
         if (Objects.equals(download_source, "papermc")) {
-            commandSender.sendMessage(get_10_top_plugin.replace("[source]", download_source));
+            commandSender.sendMessage(prefix+get_10_top_plugin.replace("[source]", download_source));
             int limit = 10;
             if (IDK.idk.debug) {
-                commandSender.sendMessage("limit="+limit);
+                commandSender.sendMessage(prefix+"limit="+limit);
             }
             String version = Bukkit.getServer().getMinecraftVersion();
             if (IDK.idk.debug) {
-                commandSender.sendMessage("version="+version);
+                commandSender.sendMessage(prefix+"version="+version);
             }
             String url = "https://hangar.papermc.io/api/v1/projects?limit="+limit+"&version="+version;
             if (IDK.idk.debug) {
-                commandSender.sendMessage("url="+url);
+                commandSender.sendMessage(prefix+"url="+url);
             }
             String result = sendGet(url);
-            commandSender.sendMessage(messages.getString("10_top_plugin"));
+            commandSender.sendMessage(prefix+messages.getString("10_top_plugin"));
             for(int i = 0; i < 10; i++) {
                 String plugin_title = decoder.decode_json(result, i, "result", "name");
                 String plugin_description = decoder.decode_json(result, i, "result", "description");
@@ -79,38 +81,38 @@ public class IDKnetHandler implements Runnable {
                         fixed.append("\n");
                     }
                 }
-                commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[description]", plugin_description));
+                commandSender.sendMessage(prefix+fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[description]", plugin_description));
             }
-            commandSender.sendMessage(messages.getString("install_tip"));
+            commandSender.sendMessage(prefix+messages.getString("install_tip"));
         }
         else if (Objects.equals(download_source, "modrinth")) {
-            commandSender.sendMessage(get_10_top_plugin.replace("[source]", download_source));
+            commandSender.sendMessage(prefix+get_10_top_plugin.replace("[source]", download_source));
             int limit = 10;
             if (IDK.idk.debug) {
-                commandSender.sendMessage("limit="+limit);
+                commandSender.sendMessage(prefix+"limit="+limit);
             }
             String url = "https://api.modrinth.com/v2/search?limit="+limit+"&facets=";
             if (IDK.idk.debug) {
-                commandSender.sendMessage("url="+url);
+                commandSender.sendMessage(prefix+"url="+url);
             }
             String categories = "paper";
             if (IDK.idk.debug) {
-                commandSender.sendMessage("categories="+categories);
+                commandSender.sendMessage(prefix+"categories="+categories);
             }
             String versions = Bukkit.getServer().getMinecraftVersion();
             if (IDK.idk.debug) {
-                commandSender.sendMessage("versions="+versions);
+                commandSender.sendMessage(prefix+"versions="+versions);
             }
             String arg = "[[\"categories:"+categories+"\"],[\"versions:"+versions+"\"],[\"project_type:plugin\"]]";
             if (IDK.idk.debug) {
-                commandSender.sendMessage("arg="+arg);
+                commandSender.sendMessage(prefix+"arg="+arg);
             }
             String real_uri = argument_handler(url, arg);
             if (IDK.idk.debug) {
-                commandSender.sendMessage("real_uri="+real_uri);
+                commandSender.sendMessage(prefix+"real_uri="+real_uri);
             }
             String result = sendGet(real_uri);
-            commandSender.sendMessage(messages.getString("10_top_plugin"));
+            commandSender.sendMessage(prefix+messages.getString("10_top_plugin"));
             for(int i = 0; i < 10; i++) {
                 String plugin_title = decoder.decode_json(result, i, "hits", "title");
                 String plugin_description = decoder.decode_json(result, i, "hits", "description");
@@ -125,27 +127,27 @@ public class IDKnetHandler implements Runnable {
                         fixed.append("\n");
                     }
                 }
-                commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
+                commandSender.sendMessage(prefix+fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
             }
-            commandSender.sendMessage(messages.getString("install_tip"));
+            commandSender.sendMessage(prefix+messages.getString("install_tip"));
         }
         else if (Objects.equals(download_source, "both")) {
             try {
-                commandSender.sendMessage(get_10_top_plugin.replace("[source]", "papermc"));
+                commandSender.sendMessage(prefix+get_10_top_plugin.replace("[source]", "papermc"));
                 int limit = 10;
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("limit="+limit);
+                    commandSender.sendMessage(prefix+"limit="+limit);
                 }
                 String version = Bukkit.getServer().getMinecraftVersion();
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("version="+version);
+                    commandSender.sendMessage(prefix+"version="+version);
                 }
                 String url = "https://hangar.papermc.io/api/v1/projects?limit="+limit+"&version="+version;
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("url="+url);
+                    commandSender.sendMessage(prefix+"url="+url);
                 }
                 String result = sendGet(url);
-                commandSender.sendMessage(messages.getString("10_top_plugin"));
+                commandSender.sendMessage(prefix+messages.getString("10_top_plugin"));
                 for(int i = 0; i < 10; i++) {
                     String plugin_title = decoder.decode_json(result, i, "result", "name");
                     String plugin_description = decoder.decode_json(result, i, "result", "description");
@@ -159,46 +161,46 @@ public class IDKnetHandler implements Runnable {
                             fixed.append("\n");
                         }
                     }
-                    commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[description]", plugin_description));
+                    commandSender.sendMessage(prefix+fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[description]", plugin_description));
                 }
-                commandSender.sendMessage(messages.getString("install_tip"));
+                commandSender.sendMessage(prefix+messages.getString("install_tip"));
             }
             catch (Exception e) {
                 e.printStackTrace();
                 if (commandSender instanceof Player) {
-                    commandSender.sendMessage(messages.getString("error_papermc_p"));
+                    commandSender.sendMessage(prefix+messages.getString("error_papermc_p"));
                 }
                 else {
-                    commandSender.sendMessage(messages.getString("error_papermc_c"));
+                    commandSender.sendMessage(prefix+messages.getString("error_papermc_c"));
                 }
-                commandSender.sendMessage(messages.getString("switch_to_source").replace("[source]", "modrinth"));
-                commandSender.sendMessage(get_10_top_plugin.replace("[source]", "modrinth"));
+                commandSender.sendMessage(prefix+messages.getString("switch_to_source").replace("[source]", "modrinth"));
+                commandSender.sendMessage(prefix+get_10_top_plugin.replace("[source]", "modrinth"));
                 int limit = 10;
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("limit="+limit);
+                    commandSender.sendMessage(prefix+"limit="+limit);
                 }
                 String url = "https://api.modrinth.com/v2/search?limit="+limit+"&facets=";
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("url="+url);
+                    commandSender.sendMessage(prefix+"url="+url);
                 }
                 String categories = "paper";
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("categories="+categories);
+                    commandSender.sendMessage(prefix+"categories="+categories);
                 }
                 String versions = Bukkit.getServer().getMinecraftVersion();
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("versions="+versions);
+                    commandSender.sendMessage(prefix+"versions="+versions);
                 }
                 String arg = "[[\"categories:"+categories+"\"],[\"versions:"+versions+"\"],[\"project_type:plugin\"]]";
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("arg="+arg);
+                    commandSender.sendMessage(prefix+"arg="+arg);
                 }
                 String real_uri = argument_handler(url, arg);
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("real_uri="+real_uri);
+                    commandSender.sendMessage(prefix+"real_uri="+real_uri);
                 }
                 String result = sendGet(real_uri);
-                commandSender.sendMessage(messages.getString("10_top_plugin"));
+                commandSender.sendMessage(prefix+messages.getString("10_top_plugin"));
                 for(int i = 0; i < 10; i++) {
                     String plugin_title = decoder.decode_json(result, i, "hits", "title");
                     String plugin_description = decoder.decode_json(result, i, "hits", "description");
@@ -213,13 +215,13 @@ public class IDKnetHandler implements Runnable {
                             fixed.append("\n");
                         }
                     }
-                    commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
+                    commandSender.sendMessage(prefix+fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
                 }
-                commandSender.sendMessage(messages.getString("install_tip"));
+                commandSender.sendMessage(prefix+messages.getString("install_tip"));
             }
         }
         else {
-            commandSender.sendMessage(messages.getString("error_download_source"));
+            commandSender.sendMessage(prefix+messages.getString("error_download_source"));
         }
     }
 
@@ -231,34 +233,34 @@ public class IDKnetHandler implements Runnable {
     public static void install_project(CommandSender commandSender, String project_id, boolean skipable) throws IOException {
         if (IDK.idk.debug) {
             if (commandSender instanceof Player) {
-                commandSender.sendMessage(messages.getString("debug_p"));
+                commandSender.sendMessage(prefix+messages.getString("debug_p"));
             } else {
-                commandSender.sendMessage(messages.getString("debug_c"));
+                commandSender.sendMessage(prefix+messages.getString("debug_c"));
             }
-            commandSender.sendMessage("project_id="+project_id);
+            commandSender.sendMessage(prefix+"project_id="+project_id);
         }
         refresh_download_source();
         String find_plugin = messages.getString("find_plugin");
         if (Objects.equals(download_source, "papermc")) {
-            commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
+            commandSender.sendMessage(prefix+find_plugin.replace("[name]", project_id).replace("[source]", download_source));
             int limit = 10;
             if (IDK.idk.debug) {
-                commandSender.sendMessage("limit="+limit);
+                commandSender.sendMessage(prefix+"limit="+limit);
             }
             String version = Bukkit.getServer().getMinecraftVersion();
             if (IDK.idk.debug) {
-                commandSender.sendMessage("version="+version);
+                commandSender.sendMessage(prefix+"version="+version);
             }
             String url = "https://hangar.papermc.io/api/v1/projects/{id|slug}?limit="+limit+"&version="+version;
             if (IDK.idk.debug) {
-                commandSender.sendMessage("url="+url);
+                commandSender.sendMessage(prefix+"url="+url);
             }
             String real_uri = url.replace("{id|slug}", project_id);
             String result = sendGet(real_uri);
             String plugin_title = decoder.decode_json(result, "name");
             if (!skipable) {
                 if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                    commandSender.sendMessage(messages.getString("no_duplicate"));
+                    commandSender.sendMessage(prefix+messages.getString("no_duplicate"));
                 }
                 else {
                     try {
@@ -314,7 +316,7 @@ public class IDKnetHandler implements Runnable {
             }
         }
         else if (Objects.equals(download_source, "modrinth")) {
-            commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
+            commandSender.sendMessage(prefix+find_plugin.replace("[name]", project_id).replace("[source]", download_source));
             boolean featured = true;
             String loader = "paper";
             String game_version = Bukkit.getMinecraftVersion();
@@ -326,7 +328,7 @@ public class IDKnetHandler implements Runnable {
             String plugin_title = decoder.decode_json(result, "title");
             if (!skipable) {
                 if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                    commandSender.sendMessage(messages.getString("no_duplicate"));
+                    commandSender.sendMessage(prefix+messages.getString("no_duplicate"));
                 }
                 else {
                     try {
@@ -383,25 +385,25 @@ public class IDKnetHandler implements Runnable {
         }
         else if (Objects.equals(download_source, "both")) {
             try {
-                commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", "papermc"));
+                commandSender.sendMessage(prefix+find_plugin.replace("[name]", project_id).replace("[source]", "papermc"));
                 int limit = 10;
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("limit="+limit);
+                    commandSender.sendMessage(prefix+"limit="+limit);
                 }
                 String version = Bukkit.getServer().getMinecraftVersion();
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("version="+version);
+                    commandSender.sendMessage(prefix+"version="+version);
                 }
                 String url = "https://hangar.papermc.io/api/v1/projects/{id|slug}?limit="+limit+"&version="+version;
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("url="+url);
+                    commandSender.sendMessage(prefix+"url="+url);
                 }
                 String real_uri = url.replace("{id|slug}", project_id);
                 String result = sendGet(real_uri);
                 String plugin_title = decoder.decode_json(result, "name");
                 if (!skipable) {
                     if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                        commandSender.sendMessage(messages.getString("no_duplicate"));
+                        commandSender.sendMessage(prefix+messages.getString("no_duplicate"));
                     }
                     else {
                         try {
@@ -459,13 +461,13 @@ public class IDKnetHandler implements Runnable {
             catch (Exception e) {
                 e.printStackTrace();
                 if (commandSender instanceof Player) {
-                    commandSender.sendMessage(messages.getString("error_papermc_p"));
+                    commandSender.sendMessage(prefix+messages.getString("error_papermc_p"));
                 }
                 else {
                     commandSender.sendMessage(messages.getString("error_papermc_c"));
                 }
-                commandSender.sendMessage(messages.getString("switch_to_source").replace("[source]", "modrinth"));
-                commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", "modrinth"));
+                commandSender.sendMessage(prefix+messages.getString("switch_to_source").replace("[source]", "modrinth"));
+                commandSender.sendMessage(prefix+find_plugin.replace("[name]", project_id).replace("[source]", "modrinth"));
                 boolean featured = true;
                 String loader = "paper";
                 String game_version = Bukkit.getMinecraftVersion();
@@ -477,7 +479,7 @@ public class IDKnetHandler implements Runnable {
                 String plugin_title = decoder.decode_json(result, "title");
                 if (!skipable) {
                     if (Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
-                        commandSender.sendMessage(messages.getString("no_duplicate"));
+                        commandSender.sendMessage(prefix+messages.getString("no_duplicate"));
                     }
                     else {
                         try {
@@ -534,33 +536,34 @@ public class IDKnetHandler implements Runnable {
             }
         }
         else {
-            commandSender.sendMessage("Download source is invalid!");
+            commandSender.sendMessage(prefix+"Download source is invalid!");
         }
     }
 
     public static void enable_plugin(String file_path, String plugin_title, CommandSender commandSender) throws InvalidPluginException, InvalidDescriptionException {
-        commandSender.sendMessage(messages.getString("load_plugin").replace("[name]", plugin_title));
+        refresh_download_source();
+        commandSender.sendMessage(prefix+messages.getString("load_plugin").replace("[name]", plugin_title));
         Bukkit.getPluginManager().loadPlugin(new File(file_path));
-        commandSender.sendMessage(messages.getString("plugin_loaded").replace("[name]", plugin_title));
-        commandSender.sendMessage(messages.getString("enable_plugin").replace("[name]", plugin_title));
+        commandSender.sendMessage(prefix+messages.getString("plugin_loaded").replace("[name]", plugin_title));
+        commandSender.sendMessage(prefix+messages.getString("enable_plugin").replace("[name]", plugin_title));
         Bukkit.getPluginManager().enablePlugin(Bukkit.getPluginManager().getPlugin(plugin_title));
-        commandSender.sendMessage(messages.getString("install_complete").replace("[name]", plugin_title));
+        commandSender.sendMessage(prefix+messages.getString("install_complete").replace("[name]", plugin_title));
     }
 
     public static void get_projects_by_title(CommandSender commandSender, String title) throws IOException {
         if (IDK.idk.debug) {
             if (commandSender instanceof Player) {
-                commandSender.sendMessage(messages.getString("debug_p"));
+                commandSender.sendMessage(prefix+messages.getString("debug_p"));
             } else {
-                commandSender.sendMessage(messages.getString("debug_c"));
+                commandSender.sendMessage(prefix+messages.getString("debug_c"));
             }
-            commandSender.sendMessage("title="+title);
+            commandSender.sendMessage(prefix+"title="+title);
         }
         refresh_download_source();
         String get_plugin_info = messages.getString("get_plugin_info");
         if (Objects.equals(download_source, "papermc")) {
             try {
-                commandSender.sendMessage(get_plugin_info.replace("[name]", title).replace("[source]", download_source));
+                commandSender.sendMessage(prefix+get_plugin_info.replace("[name]", title).replace("[source]", download_source));
                 int limit = 10;
                 if (IDK.idk.debug) {
                     commandSender.sendMessage("limit=" + limit);
@@ -588,7 +591,7 @@ public class IDKnetHandler implements Runnable {
                         fixed.append("\n");
                     }
                 }
-                commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(1)).replace("[name]", plugin_title).replace("[description]", plugin_description));
+                commandSender.sendMessage(prefix+fixed.toString().replace("[number]", String.valueOf(1)).replace("[name]", plugin_title).replace("[description]", plugin_description));
                 tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
             }
             catch (Exception e) {
@@ -602,35 +605,35 @@ public class IDKnetHandler implements Runnable {
             }
         }
         else if (Objects.equals(download_source, "modrinth")) {
-            commandSender.sendMessage(get_plugin_info.replace("[name]", title).replace("[source]", download_source));
+            commandSender.sendMessage(prefix+get_plugin_info.replace("[name]", title).replace("[source]", download_source));
             int limit = 10;
             if (IDK.idk.debug) {
-                 commandSender.sendMessage("limit=" + limit);
+                 commandSender.sendMessage(prefix+"limit=" + limit);
              }
             String url = "https://api.modrinth.com/v2/search?query=" + title + "&limit=" + limit + "&facets=";
             if (IDK.idk.debug) {
-                 commandSender.sendMessage("url=" + url);
+                 commandSender.sendMessage(prefix+"url=" + url);
              }
             String categories = "paper";
             if (IDK.idk.debug) {
-                 commandSender.sendMessage("categories=" + categories);
+                 commandSender.sendMessage(prefix+"categories=" + categories);
              }
             String versions = Bukkit.getServer().getMinecraftVersion();
             if (IDK.idk.debug) {
-                 commandSender.sendMessage("versions=" + versions);
+                 commandSender.sendMessage(prefix+"versions=" + versions);
              }
             String arg = "[[\"categories:" + categories + "\"],[\"versions:" + versions + "\"],[\"project_type:plugin\"]]";
             if (IDK.idk.debug) {
-                 commandSender.sendMessage("arg=" + arg);
+                 commandSender.sendMessage(prefix+"arg=" + arg);
              }
             String real_uri = argument_handler(url, arg);
             if (IDK.idk.debug) {
-                 commandSender.sendMessage("real_uri=" + real_uri);
+                 commandSender.sendMessage(prefix+"real_uri=" + real_uri);
              }
             String result = sendGet(real_uri);
             int total_hits = decoder.get_total_hits(result);
             if (IDK.idk.debug) {
-                 commandSender.sendMessage("total_hits=" + total_hits);
+                 commandSender.sendMessage(prefix+"total_hits=" + total_hits);
              }
             if (total_hits > limit) {
                  for (int i = 0; i < limit; i++) {
@@ -647,7 +650,7 @@ public class IDKnetHandler implements Runnable {
                              fixed.append("\n");
                          }
                      }
-                     commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
+                     commandSender.sendMessage(prefix+fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
                      tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
                  }
              }
@@ -666,7 +669,7 @@ public class IDKnetHandler implements Runnable {
                              fixed.append("\n");
                          }
                      }
-                     commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
+                     commandSender.sendMessage(prefix+fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
                      tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
                  }
              }
@@ -682,22 +685,22 @@ public class IDKnetHandler implements Runnable {
         else if (Objects.equals(download_source, "both")) {
              try {
                  try {
-                     commandSender.sendMessage(get_plugin_info.replace("[name]", title).replace("[source]", "papermc"));
+                     commandSender.sendMessage(prefix+get_plugin_info.replace("[name]", title).replace("[source]", "papermc"));
                      int limit = 10;
                      if (IDK.idk.debug) {
-                         commandSender.sendMessage("limit=" + limit);
+                         commandSender.sendMessage(prefix+"limit=" + limit);
                      }
                      String url = "https://hangar.papermc.io/api/v1/projects/{id/slug}?limit=" + limit;
                      if (IDK.idk.debug) {
-                         commandSender.sendMessage("url=" + url);
+                         commandSender.sendMessage(prefix+"url=" + url);
                      }
                      String real_uri = url.replace("{id/slug}", title);
                      if (IDK.idk.debug) {
-                         commandSender.sendMessage("real_uri=" + real_uri);
+                         commandSender.sendMessage(prefix+"real_uri=" + real_uri);
                      }
                      String result = sendGet(real_uri);
                      if (IDK.idk.debug) {
-                         commandSender.sendMessage("result="+result);
+                         commandSender.sendMessage(prefix+"result="+result);
                      }
                      String plugin_title = decoder.decode_json(result, "title");
                      String plugin_description = decoder.decode_json(result, "description");
@@ -710,7 +713,7 @@ public class IDKnetHandler implements Runnable {
                              fixed.append("\n");
                          }
                      }
-                     commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(1)).replace("[name]", plugin_title).replace("[description]", plugin_description));
+                     commandSender.sendMessage(prefix+fixed.toString().replace("[number]", String.valueOf(1)).replace("[name]", plugin_title).replace("[description]", plugin_description));
                      tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
                  }
                  catch (Exception e) {
@@ -726,41 +729,41 @@ public class IDKnetHandler implements Runnable {
              catch (Exception e) {
                  e.printStackTrace();
                  if (commandSender instanceof Player) {
-                     commandSender.sendMessage(messages.getString("error_papermc_p"));
+                     commandSender.sendMessage(prefix+messages.getString("error_papermc_p"));
                  }
                  else {
                      commandSender.sendMessage(messages.getString("error_papermc_c"));
                  }
-                 commandSender.sendMessage(messages.getString("switch_to_source").replace("[source]", "modrinth"));
-                 commandSender.sendMessage(get_plugin_info.replace("[name]", title).replace("[source]", "modrinth"));
+                 commandSender.sendMessage(prefix+messages.getString("switch_to_source").replace("[source]", "modrinth"));
+                 commandSender.sendMessage(prefix+get_plugin_info.replace("[name]", title).replace("[source]", "modrinth"));
                  int limit = 10;
                  if (IDK.idk.debug) {
-                     commandSender.sendMessage("limit=" + limit);
+                     commandSender.sendMessage(prefix+"limit=" + limit);
                  }
                  String url = "https://api.modrinth.com/v2/search?query=" + title + "&limit=" + limit + "&facets=";
                  if (IDK.idk.debug) {
-                     commandSender.sendMessage("url=" + url);
+                     commandSender.sendMessage(prefix+"url=" + url);
                  }
                  String categories = "paper";
                  if (IDK.idk.debug) {
-                     commandSender.sendMessage("categories=" + categories);
+                     commandSender.sendMessage(prefix+"categories=" + categories);
                  }
                  String versions = Bukkit.getServer().getMinecraftVersion();
                  if (IDK.idk.debug) {
-                     commandSender.sendMessage("versions=" + versions);
+                     commandSender.sendMessage(prefix+"versions=" + versions);
                  }
                  String arg = "[[\"categories:" + categories + "\"],[\"versions:" + versions + "\"],[\"project_type:plugin\"]]";
                  if (IDK.idk.debug) {
-                     commandSender.sendMessage("arg=" + arg);
+                     commandSender.sendMessage(prefix+"arg=" + arg);
                  }
                  String real_uri = argument_handler(url, arg);
                  if (IDK.idk.debug) {
-                     commandSender.sendMessage("real_uri=" + real_uri);
+                     commandSender.sendMessage(prefix+"real_uri=" + real_uri);
                  }
                  String result = sendGet(real_uri);
                  int total_hits = decoder.get_total_hits(result);
                  if (IDK.idk.debug) {
-                     commandSender.sendMessage("total_hits=" + total_hits);
+                     commandSender.sendMessage(prefix+"total_hits=" + total_hits);
                  }
                  if (total_hits > limit) {
                      for (int i = 0; i < limit; i++) {
@@ -777,7 +780,7 @@ public class IDKnetHandler implements Runnable {
                                  fixed.append("\n");
                              }
                          }
-                         commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
+                         commandSender.sendMessage(prefix+fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
                          tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
                      }
                  }
@@ -796,7 +799,7 @@ public class IDKnetHandler implements Runnable {
                                  fixed.append("\n");
                              }
                          }
-                         commandSender.sendMessage(fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
+                         commandSender.sendMessage(prefix+fixed.toString().replace("[number]", String.valueOf(a)).replace("[name]", plugin_title).replace("[id]", plugin_id).replace("[description]", plugin_description));
                          tell_raw(convert_to_minecraft_clickable_string(plugin_title), commandSender);
                      }
                  }
@@ -811,16 +814,16 @@ public class IDKnetHandler implements Runnable {
              }
         }
         else {
-            commandSender.sendMessage(messages.getString("error_download_source"));
+            commandSender.sendMessage(prefix+messages.getString("error_download_source"));
         }
     }
 
     public static String update_plugins(CommandSender commandSender) throws IOException {
         if (IDK.idk.debug) {
             if (commandSender instanceof Player) {
-                commandSender.sendMessage(messages.getString("debug_p"));
+                commandSender.sendMessage(prefix+messages.getString("debug_p"));
             } else {
-                commandSender.sendMessage(messages.getString("debug_c"));
+                commandSender.sendMessage(prefix+messages.getString("debug_c"));
             }
         }
         refresh_download_source();
@@ -833,43 +836,43 @@ public class IDKnetHandler implements Runnable {
         Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
         int max = plugins.length;
         if (Objects.equals(download_source, "papermc")) {
-            commandSender.sendMessage(update_plugin.replace("[source]", download_source));
+            commandSender.sendMessage(prefix+update_plugin.replace("[source]", download_source));
             for (int i = 0; i < plugins.length; i++) {
                 String project_id = plugins[i].getPluginMeta().getName();
                 if (Objects.equals(project_id, "IDK")) {
                     continue;
                 }
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("project_id="+project_id);
+                    commandSender.sendMessage(prefix+"project_id="+project_id);
                 }
-                commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
+                commandSender.sendMessage(prefix+find_plugin.replace("[name]", project_id).replace("[source]", download_source));
                 int limit = 10;
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("limit="+limit);
+                    commandSender.sendMessage(prefix+"limit="+limit);
                 }
                 String version = Bukkit.getServer().getMinecraftVersion();
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("version="+version);
+                    commandSender.sendMessage(prefix+"version="+version);
                 }
                 String url = "https://hangar.papermc.io/api/v1/projects/{id|slug}?limit="+limit+"&version="+version;
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("url="+url);
+                    commandSender.sendMessage(prefix+"url="+url);
                 }
                 String real_uri = url.replace("{id|slug}", project_id);
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("real_uri="+real_uri);
+                    commandSender.sendMessage(prefix+"real_uri="+real_uri);
                 }
                 String result = sendGet(real_uri);
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("result="+result);
+                    commandSender.sendMessage(prefix+"result="+result);
                 }
                 String plugin_title = decoder.decode_json(result, "name");
                 if (Bukkit.getPluginManager().getPlugin(project_id) == null) {
                     if (commandSender instanceof Player) {
-                        commandSender.sendMessage(messages.getString("error_install_p"));
+                        commandSender.sendMessage(prefix+messages.getString("error_install_p"));
                     }
                     else {
-                        commandSender.sendMessage(messages.getString("error_install_c"));
+                        commandSender.sendMessage(prefix+messages.getString("error_install_c"));
                     }
                     return null;
                 }
@@ -886,22 +889,22 @@ public class IDKnetHandler implements Runnable {
                         String fix_plugin_ver = plugin_ver.replaceAll("[^0-9.]+", "");
                         String fix_ver = ver.replaceAll("[^0-9.]+", "");
                         if(IDK.idk.debug) {
-                            commandSender.sendMessage("plugin_ver="+plugin_ver);
-                            commandSender.sendMessage("fix_plugin_ver="+fix_plugin_ver);
-                            commandSender.sendMessage("ver="+ver);
-                            commandSender.sendMessage("fix_ver="+fix_ver);
-                            commandSender.sendMessage("plugin_title==\"viaversion\" =" + (plugin_title.equals("viaversion")));
-                            commandSender.sendMessage("fix_plugin_ver==fix_ver =" + (fix_plugin_ver.equals(fix_ver)));
+                            commandSender.sendMessage(prefix+"plugin_ver="+plugin_ver);
+                            commandSender.sendMessage(prefix+"fix_plugin_ver="+fix_plugin_ver);
+                            commandSender.sendMessage(prefix+"ver="+ver);
+                            commandSender.sendMessage(prefix+"fix_ver="+fix_ver);
+                            commandSender.sendMessage(prefix+"plugin_title==\"viaversion\" =" + (plugin_title.equals("viaversion")));
+                            commandSender.sendMessage(prefix+"fix_plugin_ver==fix_ver =" + (fix_plugin_ver.equals(fix_ver)));
                         }
                         if (plugin_title.equals("viaversion")) {
                             fix_ver = fix_ver.substring(0, fix_ver.length() - 3);
                         }
                         if (fix_plugin_ver.equals(fix_ver)) {
-                            commandSender.sendMessage(no_need_to_update.replace("[plugin]", plugin_title));
+                            commandSender.sendMessage(prefix+no_need_to_update.replace("[plugin]", plugin_title));
                             counter++;
                         }
                         else {
-                            commandSender.sendMessage("Start updating plugin" + plugin_title + ".");
+                            commandSender.sendMessage(prefix+"Start updating plugin" + plugin_title + ".");
                             IDKPluginManagement idkpm = new IDKPluginManagement();
                             idkpm.delete_plugin(plugin_title, commandSender, true);
                             install_project(commandSender, plugin_title, true);
@@ -927,16 +930,16 @@ public class IDKnetHandler implements Runnable {
             }
         }
         else if (Objects.equals(download_source, "modrinth")) {
-            commandSender.sendMessage(update_plugin.replace("[source]", download_source));
+            commandSender.sendMessage(prefix+update_plugin.replace("[source]", download_source));
             for (int i = 0; i < plugins.length; i++) {
                 String project_id = plugins[i].getPluginMeta().getName();
                 if (Objects.equals(project_id, "IDK")) {
                     continue;
                 }
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("project_id="+project_id);
+                    commandSender.sendMessage(prefix+"project_id="+project_id);
                 }
-                commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
+                commandSender.sendMessage(prefix+find_plugin.replace("[name]", project_id).replace("[source]", download_source));
                 boolean featured = true;
                 String loader = "paper";
                 String game_version = Bukkit.getMinecraftVersion();
@@ -945,25 +948,25 @@ public class IDKnetHandler implements Runnable {
                 String args = "&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
                 String real_url = argument_handler(real_uri, args);
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("featured="+featured);
-                    commandSender.sendMessage("loader="+loader);
-                    commandSender.sendMessage("game_version="+game_version);
-                    commandSender.sendMessage("url="+url);
-                    commandSender.sendMessage("real_uri="+real_uri);
-                    commandSender.sendMessage("args="+args);
-                    commandSender.sendMessage("real_url="+real_url);
+                    commandSender.sendMessage(prefix+"featured="+featured);
+                    commandSender.sendMessage(prefix+"loader="+loader);
+                    commandSender.sendMessage(prefix+"game_version="+game_version);
+                    commandSender.sendMessage(prefix+"url="+url);
+                    commandSender.sendMessage(prefix+"real_uri="+real_uri);
+                    commandSender.sendMessage(prefix+"args="+args);
+                    commandSender.sendMessage(prefix+"real_url="+real_url);
                 }
                 String result = sendGet(real_url);
                 String plugin_title = decoder.decode_json(result, "title");
                 if (IDK.idk.debug) {
-                    commandSender.sendMessage("plugin_title="+plugin_title);
+                    commandSender.sendMessage(prefix+"plugin_title="+plugin_title);
                 }
                 if (Bukkit.getPluginManager().getPlugin(project_id) == null) {
                     if (commandSender instanceof Player) {
-                        commandSender.sendMessage(messages.getString("error_install_p"));
+                        commandSender.sendMessage(prefix+messages.getString("error_install_p"));
                     }
                     else {
-                        commandSender.sendMessage(messages.getString("error_install_c"));
+                        commandSender.sendMessage(prefix+messages.getString("error_install_c"));
                     }
                     return null;
                 }
@@ -977,11 +980,11 @@ public class IDKnetHandler implements Runnable {
                         String new_args = "\"featured\"=\""+featured+"\"&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
                         String new_real_url = argument_handler(new_real_uri, new_args);
                         if (IDK.idk.debug) {
-                            commandSender.sendMessage("plugin_ver="+plugin_ver);
-                            commandSender.sendMessage("new_url="+new_url);
-                            commandSender.sendMessage("new_real_uri="+new_real_uri);
-                            commandSender.sendMessage("new_args="+new_args);
-                            commandSender.sendMessage("new_real_url="+new_real_url);
+                            commandSender.sendMessage(prefix+"plugin_ver="+plugin_ver);
+                            commandSender.sendMessage(prefix+"new_url="+new_url);
+                            commandSender.sendMessage(prefix+"new_real_uri="+new_real_uri);
+                            commandSender.sendMessage(prefix+"new_args="+new_args);
+                            commandSender.sendMessage(prefix+"new_real_url="+new_real_url);
                         }
                         String new_result = sendGet(new_real_url);
                         String fixed_new_result = convert_list_string_to_json_string(new_result);
@@ -992,11 +995,11 @@ public class IDKnetHandler implements Runnable {
                             fix_ver = fix_ver.substring(0, fix_ver.length() - 3);
                         }
                         if (fix_plugin_ver.equals(fix_ver)) {
-                            commandSender.sendMessage(no_need_to_update.replace("[plugin]", plugin_title));
+                            commandSender.sendMessage(prefix+no_need_to_update.replace("[plugin]", plugin_title));
                             counter++;
                         }
                         else {
-                            commandSender.sendMessage("Start updating plugin" + plugin_title + ".");
+                            commandSender.sendMessage(prefix+"Start updating plugin" + plugin_title + ".");
                             IDKPluginManagement idkpm = new IDKPluginManagement();
                             idkpm.delete_plugin(plugin_title, commandSender, true);
                             install_project(commandSender, plugin_title, true);
@@ -1022,43 +1025,43 @@ public class IDKnetHandler implements Runnable {
         }
         else if (Objects.equals(download_source, "both")) {
             try {
-                commandSender.sendMessage(update_plugin.replace("[source]", "papermc"));
+                commandSender.sendMessage(prefix+update_plugin.replace("[source]", "papermc"));
                 for (int i = 0; i < plugins.length; i++) {
                     String project_id = plugins[i].getPluginMeta().getName();
                     if (Objects.equals(project_id, "IDK")) {
                         continue;
                     }
                     if (IDK.idk.debug) {
-                        commandSender.sendMessage("project_id="+project_id);
+                        commandSender.sendMessage(prefix+"project_id="+project_id);
                     }
-                    commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
+                    commandSender.sendMessage(prefix+find_plugin.replace("[name]", project_id).replace("[source]", download_source));
                     int limit = 10;
                     if (IDK.idk.debug) {
-                        commandSender.sendMessage("limit="+limit);
+                        commandSender.sendMessage(prefix+"limit="+limit);
                     }
                     String version = Bukkit.getServer().getMinecraftVersion();
                     if (IDK.idk.debug) {
-                        commandSender.sendMessage("version="+version);
+                        commandSender.sendMessage(prefix+"version="+version);
                     }
                     String url = "https://hangar.papermc.io/api/v1/projects/{id|slug}?limit="+limit+"&version="+version;
                     if (IDK.idk.debug) {
-                        commandSender.sendMessage("url="+url);
+                        commandSender.sendMessage(prefix+"url="+url);
                     }
                     String real_uri = url.replace("{id|slug}", project_id);
                     if (IDK.idk.debug) {
-                        commandSender.sendMessage("real_uri="+real_uri);
+                        commandSender.sendMessage(prefix+"real_uri="+real_uri);
                     }
                     String result = sendGet(real_uri);
                     if (IDK.idk.debug) {
-                        commandSender.sendMessage("result="+result);
+                        commandSender.sendMessage(prefix+"result="+result);
                     }
                     String plugin_title = decoder.decode_json(result, "name");
                     if (Bukkit.getPluginManager().getPlugin(project_id) == null) {
                         if (commandSender instanceof Player) {
-                            commandSender.sendMessage(messages.getString("error_install_p"));
+                            commandSender.sendMessage(prefix+messages.getString("error_install_p"));
                         }
                         else {
-                            commandSender.sendMessage(messages.getString("error_install_c"));
+                            commandSender.sendMessage(prefix+messages.getString("error_install_c"));
                         }
                         return null;
                     }
@@ -1075,22 +1078,22 @@ public class IDKnetHandler implements Runnable {
                             String fix_plugin_ver = plugin_ver.replaceAll("[^0-9.]+", "");
                             String fix_ver = ver.replaceAll("[^0-9.]+", "");
                             if(IDK.idk.debug) {
-                                commandSender.sendMessage("plugin_ver="+plugin_ver);
-                                commandSender.sendMessage("fix_plugin_ver="+fix_plugin_ver);
-                                commandSender.sendMessage("ver="+ver);
-                                commandSender.sendMessage("fix_ver="+fix_ver);
-                                commandSender.sendMessage("plugin_title==\"viaversion\" =" + (plugin_title.equals("viaversion")));
-                                commandSender.sendMessage("fix_plugin_ver==fix_ver =" + (fix_plugin_ver.equals(fix_ver)));
+                                commandSender.sendMessage(prefix+"plugin_ver="+plugin_ver);
+                                commandSender.sendMessage(prefix+"fix_plugin_ver="+fix_plugin_ver);
+                                commandSender.sendMessage(prefix+"ver="+ver);
+                                commandSender.sendMessage(prefix+"fix_ver="+fix_ver);
+                                commandSender.sendMessage(prefix+"plugin_title==\"viaversion\" =" + (plugin_title.equals("viaversion")));
+                                commandSender.sendMessage(prefix+"fix_plugin_ver==fix_ver =" + (fix_plugin_ver.equals(fix_ver)));
                             }
                             if (plugin_title.equals("viaversion")) {
                                 fix_ver = fix_ver.substring(0, fix_ver.length() - 3);
                             }
                             if (fix_plugin_ver.equals(fix_ver)) {
-                                commandSender.sendMessage(no_need_to_update.replace("[plugin]", plugin_title));
+                                commandSender.sendMessage(prefix+no_need_to_update.replace("[plugin]", plugin_title));
                                 counter++;
                             }
                             else {
-                                commandSender.sendMessage("Start updating plugin" + plugin_title + ".");
+                                commandSender.sendMessage(prefix+"Start updating plugin" + plugin_title + ".");
                                 IDKPluginManagement idkpm = new IDKPluginManagement();
                                 idkpm.delete_plugin(plugin_title, commandSender, true);
                                 install_project(commandSender, plugin_title, true);
@@ -1117,18 +1120,18 @@ public class IDKnetHandler implements Runnable {
             }
             catch (Exception e) {
                 e.printStackTrace();
-                commandSender.sendMessage(messages.getString("error_get_update").replace("[source]", "papermc"));
-                commandSender.sendMessage(messages.getString("switch_to_source").replace("[source]", "modrinth"));
-                commandSender.sendMessage(update_plugin.replace("[source]", "modrinth"));
+                commandSender.sendMessage(prefix+messages.getString("error_get_update").replace("[source]", "papermc"));
+                commandSender.sendMessage(prefix+messages.getString("switch_to_source").replace("[source]", "modrinth"));
+                commandSender.sendMessage(prefix+update_plugin.replace("[source]", "modrinth"));
                 for (int i = 0; i < plugins.length; i++) {
                     String project_id = plugins[i].getPluginMeta().getName();
                     if (Objects.equals(project_id, "IDK")) {
                         continue;
                     }
                     if (IDK.idk.debug) {
-                        commandSender.sendMessage("project_id="+project_id);
+                        commandSender.sendMessage(prefix+"project_id="+project_id);
                     }
-                    commandSender.sendMessage(find_plugin.replace("[name]", project_id).replace("[source]", download_source));
+                    commandSender.sendMessage(prefix+find_plugin.replace("[name]", project_id).replace("[source]", download_source));
                     boolean featured = true;
                     String loader = "paper";
                     String game_version = Bukkit.getMinecraftVersion();
@@ -1137,25 +1140,25 @@ public class IDKnetHandler implements Runnable {
                     String args = "&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
                     String real_url = argument_handler(real_uri, args);
                     if (IDK.idk.debug) {
-                        commandSender.sendMessage("featured="+featured);
-                        commandSender.sendMessage("loader="+loader);
-                        commandSender.sendMessage("game_version="+game_version);
-                        commandSender.sendMessage("url="+url);
-                        commandSender.sendMessage("real_uri="+real_uri);
-                        commandSender.sendMessage("args="+args);
-                        commandSender.sendMessage("real_url="+real_url);
+                        commandSender.sendMessage(prefix+"featured="+featured);
+                        commandSender.sendMessage(prefix+"loader="+loader);
+                        commandSender.sendMessage(prefix+"game_version="+game_version);
+                        commandSender.sendMessage(prefix+"url="+url);
+                        commandSender.sendMessage(prefix+"real_uri="+real_uri);
+                        commandSender.sendMessage(prefix+"args="+args);
+                        commandSender.sendMessage(prefix+"real_url="+real_url);
                     }
                     String result = sendGet(real_url);
                     String plugin_title = decoder.decode_json(result, "title");
                     if (IDK.idk.debug) {
-                        commandSender.sendMessage("plugin_title="+plugin_title);
+                        commandSender.sendMessage(prefix+"plugin_title="+plugin_title);
                     }
                     if (Bukkit.getPluginManager().getPlugin(project_id) == null) {
                         if (commandSender instanceof Player) {
-                            commandSender.sendMessage(messages.getString("error_install_p"));
+                            commandSender.sendMessage(prefix+messages.getString("error_install_p"));
                         }
                         else {
-                            commandSender.sendMessage(messages.getString("error_install_c"));
+                            commandSender.sendMessage(prefix+messages.getString("error_install_c"));
                         }
                         return null;
                     }
@@ -1169,11 +1172,11 @@ public class IDKnetHandler implements Runnable {
                             String new_args = "\"featured\"=\""+featured+"\"&loaders=[\""+loader+"\"]&game_version=[\""+game_version+"\"]";
                             String new_real_url = argument_handler(new_real_uri, new_args);
                             if (IDK.idk.debug) {
-                                commandSender.sendMessage("plugin_ver="+plugin_ver);
-                                commandSender.sendMessage("new_url="+new_url);
-                                commandSender.sendMessage("new_real_uri="+new_real_uri);
-                                commandSender.sendMessage("new_args="+new_args);
-                                commandSender.sendMessage("new_real_url="+new_real_url);
+                                commandSender.sendMessage(prefix+"plugin_ver="+plugin_ver);
+                                commandSender.sendMessage(prefix+"new_url="+new_url);
+                                commandSender.sendMessage(prefix+"new_real_uri="+new_real_uri);
+                                commandSender.sendMessage(prefix+"new_args="+new_args);
+                                commandSender.sendMessage(prefix+"new_real_url="+new_real_url);
                             }
                             String new_result = sendGet(new_real_url);
                             String fixed_new_result = convert_list_string_to_json_string(new_result);
@@ -1184,11 +1187,11 @@ public class IDKnetHandler implements Runnable {
                                 fix_ver = fix_ver.substring(0, fix_ver.length() - 3);
                             }
                             if (fix_plugin_ver.equals(fix_ver)) {
-                                commandSender.sendMessage(no_need_to_update.replace("[plugin]", plugin_title));
+                                commandSender.sendMessage(prefix+no_need_to_update.replace("[plugin]", plugin_title));
                                 counter++;
                             }
                             else {
-                                commandSender.sendMessage("Start updating plugin" + plugin_title + ".");
+                                commandSender.sendMessage(prefix+"Start updating plugin" + plugin_title + ".");
                                 IDKPluginManagement idkpm = new IDKPluginManagement();
                                 idkpm.delete_plugin(plugin_title, commandSender, true);
                                 install_project(commandSender, plugin_title, true);
@@ -1214,7 +1217,7 @@ public class IDKnetHandler implements Runnable {
             }
         }
         else {
-            commandSender.sendMessage("Download source is invalid!");
+            commandSender.sendMessage(prefix+"Download source is invalid!");
         }
         return null;
     }
@@ -1293,7 +1296,7 @@ public class IDKnetHandler implements Runnable {
 
     public static boolean downloadFileByUrl(String plugin_title, String urlPath, String downloadPath, String fileName, CommandSender commandSender) throws IOException {
         try {
-            commandSender.sendMessage(messages.getString("download_start").replace("%filename%", fileName).replace("%url%", urlPath));
+            commandSender.sendMessage(prefix+messages.getString("download_start").replace("%filename%", fileName).replace("%url%", urlPath));
             File file = new File(downloadPath);
             if(file.exists()) {
                 if(Bukkit.getPluginManager().getPlugin(plugin_title) != null) {
@@ -1327,7 +1330,7 @@ public class IDKnetHandler implements Runnable {
             pbt.finish();//文件读取完成，关闭进度条
             fos.flush();
             fos.close();
-            commandSender.sendMessage(messages.getString("download_complete2").replace("%path%", downloadPath));
+            commandSender.sendMessage(prefix+messages.getString("download_complete2").replace("%path%", downloadPath));
             return true;
         }
         catch (Exception e) {
@@ -1348,27 +1351,27 @@ public class IDKnetHandler implements Runnable {
     }
 
     public static void update_self(CommandSender commandSender) throws IOException {
-        commandSender.sendMessage(messages.getString("start_update_idk"));
+        commandSender.sendMessage(prefix+messages.getString("start_update_idk"));
         String json_url = "https://idk.minecraftisbest.top/idk.json";
         if (IDK.idk.debug) {
-            commandSender.sendMessage("json_url="+json_url);
+            commandSender.sendMessage(prefix+"json_url="+json_url);
         }
         String result = sendGet(json_url).replace("\n", "").replace(" ", "");
         if (IDK.idk.debug) {
-            commandSender.sendMessage("result="+result);
+            commandSender.sendMessage(prefix+"result="+result);
         }
         String ver = decoder.decode_json(result, "ver");
         PluginMeta idkMeta = Bukkit.getPluginManager().getPlugin("IDK").getPluginMeta();
         String plugins_folder = Bukkit.getPluginsFolder().getAbsolutePath();
         String now_ver = idkMeta.getVersion();
         if (IDK.idk.debug) {
-            commandSender.sendMessage("ver="+ver);
-            commandSender.sendMessage("now_ver="+now_ver);
-            commandSender.sendMessage("plugins_folder="+plugins_folder);
-            commandSender.sendMessage("ver==now_ver = "+Objects.equals(ver, now_ver));
+            commandSender.sendMessage(prefix+"ver="+ver);
+            commandSender.sendMessage(prefix+"now_ver="+now_ver);
+            commandSender.sendMessage(prefix+"plugins_folder="+plugins_folder);
+            commandSender.sendMessage(prefix+"ver==now_ver = "+Objects.equals(ver, now_ver));
         }
         if (Objects.equals(ver, now_ver)) {
-            commandSender.sendMessage("You are running the latest version! No need to update!");
+            commandSender.sendMessage(prefix+"You are running the latest version! No need to update!");
         }
         else {
             String url = decoder.decode_json(result, "url");
@@ -1376,10 +1379,10 @@ public class IDKnetHandler implements Runnable {
             String new_plugin_path = plugins_folder+"\\"+filename;
             String plugin_title = idkMeta.getName();
             if (IDK.idk.debug) {
-                commandSender.sendMessage("url="+url);
-                commandSender.sendMessage("filename="+filename);
-                commandSender.sendMessage("new_plugin_path="+new_plugin_path);
-                commandSender.sendMessage("plugin_titile="+plugin_title);
+                commandSender.sendMessage(prefix+"url="+url);
+                commandSender.sendMessage(prefix+"filename="+filename);
+                commandSender.sendMessage(prefix+"new_plugin_path="+new_plugin_path);
+                commandSender.sendMessage(prefix+"plugin_titile="+plugin_title);
             }
             Boolean download = downloadFileByUrl(plugin_title, url, new_plugin_path, filename, commandSender);
             if (download) {
@@ -1387,14 +1390,14 @@ public class IDKnetHandler implements Runnable {
                 IDKPluginManagement IDKPM = new IDKPluginManagement();
                 File old_plugin = new File(IDKPM.getPluginFile(IDK).getAbsolutePath());
                 if (old_plugin.exists()) {old_plugin.delete();}
-                commandSender.sendMessage(messages.getString("update_idk_complete"));
+                commandSender.sendMessage(prefix+messages.getString("update_idk_complete"));
             }
             else {
                 if (commandSender instanceof Player) {
-                    commandSender.sendMessage(messages.getString("update_idk_failed_p"));
+                    commandSender.sendMessage(prefix+messages.getString("update_idk_failed_p"));
                 }
                 else {
-                    commandSender.sendMessage(messages.getString("update_idk_failed_c"));
+                    commandSender.sendMessage(prefix+messages.getString("update_idk_failed_c"));
                 }
             }
         }
@@ -1458,20 +1461,20 @@ public class IDKnetHandler implements Runnable {
                         }
                         if (showProgress == 25 || showProgress == 50 || showProgress == 75) {
                             if (is_a_console){
-                                System.err.println(messages.getString("current_progress").replace("%progress%", String.valueOf(showProgress)));
+                                IDK.idk.logger.warning(prefix+messages.getString("current_progress").replace("%progress%", String.valueOf(showProgress)));
                                 //System.err.println("Current Progress："+showProgress+"%");
                             } else {
-                                player.sendMessage(messages.getString("current_progress").replace("%progress%", String.valueOf(showProgress)));
+                                player.sendMessage(prefix+messages.getString("current_progress").replace("%progress%", String.valueOf(showProgress)));
                                 //player.sendMessage("Current Progress："+showProgress+"%");
                             }
                         }
                     }
                 }
                 if (is_a_console){
-                    System.out.println(messages.getString("download_complete"));
+                    IDK.idk.logger.info(prefix+messages.getString("download_complete"));
                     //System.err.println("Download Complete!");
                 } else {
-                    player.sendMessage(messages.getString("download_complete"));
+                    player.sendMessage(prefix+messages.getString("download_complete"));
                     //player.sendMessage("Download Complete!");
                 }
             } catch (Exception e) {

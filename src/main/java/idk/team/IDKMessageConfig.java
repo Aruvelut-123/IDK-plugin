@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class IDKMessageConfig {
-    static int ver = 7;
+    static int ver = 8;
     protected IDK idk;
     private File file;
     public FileConfiguration config;
@@ -26,7 +26,8 @@ public abstract class IDKMessageConfig {
         }
         if (file_path != null && !file_path.isEmpty() && fileName != null && !fileName.isEmpty()) {
             file = new File(file_path, fileName);
-            String str = "message-ver: 7\n" +
+            String str = "message-ver: 8\n" +
+                    "prefix:&" +
                     "main:\n" +
                     "  -  'IDK Plugin Version 1.2.5-pre-test'\n" +
                     "  -  'Made by Baymaxawa'\n" +
