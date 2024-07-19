@@ -42,28 +42,42 @@ public class IDKListener implements Listener {
         String warning_title = messages.getString("warning_title");
         String warning_test = messages.getString("warning_test");
         String warning_beta = messages.getString("warning_beta");
+        String warning_alpha = messages.getString("warning_alpha");
         String warning_2 = messages.getString("warning_2");
-        if (IDK.idk.test_build) {
-            player.sendTitle(prefix+warning_title, prefix+warning_test);
-            Timer timer = new Timer();
-            TimerTask use_at_own_risks = new TimerTask() {
-                @Override
-                public void run() {
-                    player.sendTitle(prefix+warning_title, prefix+warning_2);
-                }
-            };
-            timer.schedule(use_at_own_risks,5000);
-        }
-        else if (IDK.idk.beta_build) {
-            player.sendTitle(prefix+warning_title, warning_beta);
-            Timer timer = new Timer();
-            TimerTask use_at_own_risks = new TimerTask() {
-                @Override
-                public void run() {
-                    player.sendTitle(prefix+warning_title, warning_2);
-                }
-            };
-            timer.schedule(use_at_own_risks,5000);
+        if (config.getBoolean("test-notify")) {
+            if (IDK.idk.test_build) {
+                player.sendTitle(prefix+warning_title, prefix+warning_test);
+                Timer timer = new Timer();
+                TimerTask use_at_own_risks = new TimerTask() {
+                    @Override
+                    public void run() {
+                        player.sendTitle(prefix+warning_title, prefix+warning_2);
+                    }
+                };
+                timer.schedule(use_at_own_risks,5000);
+            }
+            else if (IDK.idk.alpha_build) {
+                player.sendTitle(prefix+warning_title, warning_alpha);
+                Timer timer = new Timer();
+                TimerTask use_at_own_risks = new TimerTask() {
+                    @Override
+                    public void run() {
+                        player.sendTitle(prefix+warning_title, warning_2);
+                    }
+                };
+                timer.schedule(use_at_own_risks,5000);
+            }
+            else if (IDK.idk.beta_build) {
+                player.sendTitle(prefix+warning_title, warning_beta);
+                Timer timer = new Timer();
+                TimerTask use_at_own_risks = new TimerTask() {
+                    @Override
+                    public void run() {
+                        player.sendTitle(prefix+warning_title, warning_2);
+                    }
+                };
+                timer.schedule(use_at_own_risks,5000);
+            }
         }
     }
 

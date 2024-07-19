@@ -1,7 +1,7 @@
-message-ver: 8
-prefix: '&'
+message-ver: 9
+prefix: '§1'
 main:
-  -  'IDK插件，版本1.2.7-alpha-2'
+  -  'IDK插件，版本1.2.7-alpha-3'
   -  '由Baymaxawa制作'
 reload: '配置文件已重载！'
 failed: '配置文件重载失败！请查看下面的详情信息！'
@@ -114,3 +114,7 @@ start_update_idk: '正在检查更新...'
 update_idk_complete: '更新完成!重启后生效!'
 update_idk_failed_p: '更新失败!查看控制台了解详情!'
 update_idk_failed_c: '更新失败!'
+plugin_loaded_a: '插件 [name] [file] 已成功加载！'
+error_load: '插件加载失败：('.
+plugin_management_not_enable: '插件管理功能未启用。'
+warning_alpha: '你正在使用Alpha版的IDK插件！'

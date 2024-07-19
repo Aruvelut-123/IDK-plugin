@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class IDKMessageConfig {
-    static int ver = 8;
+    static int ver = 9;
     protected IDK idk;
     private File file;
     public FileConfiguration config;
@@ -26,10 +26,10 @@ public abstract class IDKMessageConfig {
         }
         if (file_path != null && !file_path.isEmpty() && fileName != null && !fileName.isEmpty()) {
             file = new File(file_path, fileName);
-            String str = "message-ver: 8\n" +
-                    "prefix:&" +
+            String str = "message-ver: 9\n" +
+                    "prefix: '§1'" +
                     "main:\n" +
-                    "  -  'IDK Plugin Version 1.2.5-pre-test'\n" +
+                    "  -  'IDK Plugin Version 1.2.7-alpha-3'\n" +
                     "  -  'Made by Baymaxawa'\n" +
                     "reload: 'Config reloaded!'\n" +
                     "failed: 'Config reload failed! Check details below!'\n" +
@@ -143,7 +143,11 @@ public abstract class IDKMessageConfig {
                     "start_update_idk: 'Checking for updates...'\n" +
                     "update_idk_complete: 'Update Complete! Needs restart to take effort!'\n" +
                     "update_idk_failed_p: 'Update Failed! Check the console for details!'\n" +
-                    "update_idk_failed_c: 'Update Failed!'\n";
+                    "update_idk_failed_c: 'Update Failed!'\n" +
+                    "plugin_loaded_a: 'Plugin [name] [file] loaded!'\n" +
+                    "error_load: 'Plugin failed to load with some errors...'.\n" +
+                    "plugin_management_not_enable: 'Plugin management function is not enabled in config.'\n" +
+                    "warning_alpha: 'You are currently using a alpha build of IDK plugin!'\n";
             if(Objects.equals(lang, "zh")) {
                 if(!file.exists()) {
                     File new_file = new File(file_path, "messages.yml");

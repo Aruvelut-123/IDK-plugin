@@ -6,7 +6,7 @@
 
   <groupId>idk</groupId>
   <artifactId>IDK</artifactId>
-  <version>1.2.7-alpha-2</version>
+  <version>1.2.7-alpha-3</version>
   <packaging>jar</packaging>
 
   <name>IDK</name>

@@ -75,19 +75,25 @@ public class IDKCommand implements CommandExecutor {
                             String folder = Bukkit.getPluginsFolder().getAbsolutePath();
                             if(!strings[2].isEmpty()) {
                                 String file_name = strings[2];
-                                String file_path = folder + "\\" + file_name;
+                                String file_path = "";
+                                if (file_name.contains(".jar")) {
+                                    file_path = folder + "\\" + file_name;
+                                }
+                                else {
+                                    file_path = folder + "\\" + file_name + ".jar";
+                                }
                                 try {
                                     Plugin plugin = Bukkit.getPluginManager().loadPlugin(new File(file_path));
                                     if (plugin != null) {
                                         Bukkit.getPluginManager().enablePlugin(plugin);
-                                        player.sendMessage(prefix+"Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
+                                        player.sendMessage(prefix+messages.getString("plugin_loaded_a").replace("[name]", plugin.getName()).replace("[file]", file_name));
                                     }
                                     return true;
                                 } catch (InvalidPluginException | InvalidDescriptionException e) {
                                     return true;
                                 }
                             } else {
-                                player.sendMessage(prefix+"Error!");
+                                player.sendMessage(prefix+messages.getString("error_load"));
                                 return true;
                             }
                         }
@@ -194,7 +200,7 @@ public class IDKCommand implements CommandExecutor {
                     return false;
                 }
                 else {
-                    player.sendMessage(prefix+"Plugin management function is not enabled in config.");
+                    player.sendMessage(prefix+messages.getString("plugin_management_not_enable"));
                     return true;
                 }
             }
@@ -347,7 +353,7 @@ public class IDKCommand implements CommandExecutor {
             }
             if(strings.length == 1 && strings[0].equals("ping")) {
                 if(player.hasPermission("IDK.command.IDK.ping")) {
-                    player.sendMessage(prefix+messages.getString("ping") + player.getPing() + "ms!"); //给玩家发送消息
+                    player.sendMessage(prefix+messages.getString("ping").replace("[ping]", String.valueOf(player.getPing()))); //给玩家发送消息
                 }
                 return true;
             }
@@ -419,14 +425,14 @@ public class IDKCommand implements CommandExecutor {
                                 Plugin plugin = Bukkit.getPluginManager().loadPlugin(new File(file_path));
                                 if (plugin != null) {
                                     Bukkit.getPluginManager().enablePlugin(plugin);
-                                    IDK.idk.logger.info(prefix+"Plugin file " + file_name + " " + "plugin name " + plugin.getName() + " loaded!");
+                                    IDK.idk.logger.info(prefix+messages.getString("plugin_loaded_a").replace("[name]", plugin.getName()).replace("[file]", file_name));
                                 }
                                 return true;
                             } catch (InvalidPluginException | InvalidDescriptionException e) {
                                 return true;
                             }
                         } else {
-                            IDK.idk.logger.warning(prefix+"Error!");
+                            IDK.idk.logger.warning(prefix+messages.getString("error_load"));
                             return true;
                         }
                     }
@@ -529,7 +535,7 @@ public class IDKCommand implements CommandExecutor {
                     return false;
                 }
                 else {
-                    IDK.idk.logger.warning(prefix+"Plugin management function is not enabled in config.");
+                    IDK.idk.logger.warning(prefix+messages.getString("plugin_management_not_enable"));
                     return true;
                 }
             }

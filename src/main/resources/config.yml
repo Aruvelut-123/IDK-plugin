@@ -1,6 +1,6 @@
 #config version, do not change it!!!
-#default: 3
-config-version: 3
+#default: 4
+config-version: 4
 #enable plugin management function
 #default: true
 plugin-management: true
@@ -19,3 +19,5 @@ download-source: "papermc"
 #or extract it from the jar of plugin.
 #default: "en"
 lang: "en"
+#enable test/beta/alpha build notify
+test-notify: true

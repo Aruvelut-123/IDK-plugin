@@ -1,7 +1,7 @@
-message-ver: 8
-prefix: '&'
+message-ver: 9
+prefix: '§1'
 main:
-  -  'IDK Plugin Version 1.2.7-alpha-2'
+  -  'IDK Plugin Version 1.2.7-alpha-3'
   -  'Made by Baymaxawa'
 reload: 'Config reloaded!'
 failed: 'Config reload failed! Check details below!'
@@ -10,7 +10,7 @@ survival: 'You"re now in SURVIVAL!'
 creative: 'You"re now in CREATIVE!'
 adventure: 'You"re now in ADVENTURE!'
 spectator: 'You"re now in SPECTATOR!'
-ping: 'Your ping is: '
+ping: 'Your ping is: [ping]ms!'
 no-console: 'Console not avalible right now.'
 available-plugins: 'Available plugins: '
 plugin-disable-error: 'Cannot disable this plugin or already disabled!'
@@ -116,3 +116,7 @@ start_update_idk: 'Checking for updates...'
 update_idk_complete: 'Update Complete! Needs restart to take effort!'
 update_idk_failed_p: 'Update Failed! Check the console for details!'
 update_idk_failed_c: 'Update Failed!'
+plugin_loaded_a: 'Plugin [name] [file] loaded!'
+error_load: 'Plugin failed to load with some errors...'.
+plugin_management_not_enable: 'Plugin management function is not enabled in config.'
+warning_alpha: 'You are currently using a alpha build of IDK plugin!'
