@@ -1,7 +1,7 @@
 message-ver: 9
 prefix: '§1'
 main:
-  -  'IDK Plugin Version 1.2.7-alpha-3'
+  -  'IDK Plugin Version 1.2.7'
   -  'Made by Baymaxawa'
 reload: 'Config reloaded!'
 failed: 'Config reload failed! Check details below!'

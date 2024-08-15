@@ -1,17 +1,12 @@
 package idk.team;
 
-import idk.team.plugin.IDKPluginManagement;
 import org.apache.logging.log4j.LogManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.MemoryConfiguration;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Objects;
@@ -20,23 +15,36 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 public final class IDK extends JavaPlugin {
+    //获取插件数据文件夹的绝对路径
     public String data_folder = this.getDataFolder().getAbsolutePath();
+    //获取插件消息配置
     public IDKMessageConfig messages = new IDKMessageConfig(data_folder, this.getConfig().getString("lang")) {
         protected void finalize() throws Throwable {
             super.finalize();
         }
     };
+    //获取Bukkit的Logger
     public Logger logger = Bukkit.getLogger();
+    //获取Bukkit的Logger
     public static Logger log = Bukkit.getLogger();
+    //获取IDK的实例
     public static IDK idk;
+    //测试版本
     public boolean test_build = false;
+    //Beta版本
     public boolean beta_build = false;
+    //Alpha版本
     public boolean alpha_build = true;
+    //调试模式
     public boolean debug = true;
+    //插件前缀
     public String prefix = messages.getString("prefix");
+    //配置版本
     int config_ver = 4;
+    //插件列表
     String plugins = null;
 
+    //解压jar包
     public static void unzipJar(String destinationDir, String jarPath) throws IOException {
         File file = new File(jarPath);
         JarFile jar = new JarFile(file);
@@ -77,19 +85,21 @@ public final class IDK extends JavaPlugin {
         }
     }
 
+    //插件加载逻辑
     @Override
     public void onLoad() {
         this.plugins = Arrays.toString(Bukkit.getPluginManager().getPlugins());
         Configuration defaults = new MemoryConfiguration();
         defaults.set("config-version", 4);
         defaults.set("plugin-management", true);
-        defaults.set("debug", true);
+        defaults.set("debug", false);
         defaults.set("download-source", "papermc");
         defaults.set("lang", "en");
         defaults.set("test-notify", "true");
         this.getConfig().setDefaults(defaults);
     }
 
+    //插件启用逻辑
     private boolean notfirsttime = false;
 
     @Override
@@ -116,6 +126,7 @@ public final class IDK extends JavaPlugin {
         }
     }
 
+    //重新加载插件
     public void reload() {
         this.reloadConfig();
         messages.reload(this.getConfig().getString("lang"));
@@ -131,6 +142,7 @@ public final class IDK extends JavaPlugin {
         }
     }
 
+    //插件关闭逻辑
     @Override
     public void onDisable() {
         //插件关闭逻辑

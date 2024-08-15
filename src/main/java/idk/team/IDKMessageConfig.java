@@ -29,7 +29,7 @@ public abstract class IDKMessageConfig {
             String str = "message-ver: 9\n" +
                     "prefix: '§1'" +
                     "main:\n" +
-                    "  -  'IDK Plugin Version 1.2.7-alpha-3'\n" +
+                    "  -  'IDK Plugin Version 1.2.7'\n" +
                     "  -  'Made by Baymaxawa'\n" +
                     "reload: 'Config reloaded!'\n" +
                     "failed: 'Config reload failed! Check details below!'\n" +

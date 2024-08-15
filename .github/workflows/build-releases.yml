@@ -26,8 +26,6 @@ jobs:
         if: success() || failure()
         with:
           report_paths: '**/build/test-results/test*/TEST-*.xml'
-      - name: Fix before uploads
-        run: rm ./target/IDK-1.2.6.jar && cp ./target/IDK-jar-with-dependencies.jar ./target/IDK-1.2.6.jar && rm ./target/IDK-jar-with-dependencies.jar
       - name: Upload Jar Asset
         uses: JasonEtco/upload-to-release@master
         env:
